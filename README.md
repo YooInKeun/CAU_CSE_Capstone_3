@@ -8,12 +8,13 @@ CAU_CSE_Capstone_3(Tuesday Class)
 http://bfm-test.2tkqxpj42m.us-west-2.elasticbeanstalk.com/
 ```
 
-### Django Version
+### Django Version & DRF
 
 ```
 (Django 2.1.1)
 
 pip install django==2.1.1 
+pip install djangorestframework
 ```
 
 ### mysql Version

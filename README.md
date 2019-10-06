@@ -2,6 +2,11 @@
 
 CAU_CSE_Capstone_3(Tuesday Class)
 ----------------------------------
+### deploy test URL
+
+```
+http://bfm-test.2tkqxpj42m.us-west-2.elasticbeanstalk.com/
+```
 
 ### Django Version
 
@@ -21,10 +26,10 @@ pip install mysqlclient
 pip install pymysql
 ```
 
-### settings.py
+### path of settings.py
 
 ```
-*path: beautyforme/beautyforme/settings.py
+beautyforme/beautyforme/settings.py
 ```
 
 ```

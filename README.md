@@ -2,7 +2,7 @@
 
 CAU_CSE_Capstone_3(Tuesday Class)
 ----------------------------------
-### deploy test URL
+### 배포 테스트 URL
 
 ```
 http://bfm-test.2tkqxpj42m.us-west-2.elasticbeanstalk.com/
@@ -26,7 +26,7 @@ pip install mysqlclient
 pip install pymysql
 ```
 
-### path of settings.py
+### settings.py 경로 및 
 
 ```
 beautyforme/beautyforme/settings.py

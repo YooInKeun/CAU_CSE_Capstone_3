@@ -24,7 +24,7 @@ pip install pymysql
 ### settings.py 추가
 
 ```
--path: beautyforme/beautyforme/settings.py
+*path: beautyforme/beautyforme/settings.py
 ```
 
 ```

@@ -1,0 +1,6 @@
+Django==2.1.1
+djangorestframework==3.10.3
+mysqlclient==1.4.4
+PyMySQL==0.9.3
+pytz==2019.2
+sqlparse==0.3.0

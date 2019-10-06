@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block extra-style %}
+<style>
+  .form-invalid{
+      color : red;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <form method="POST" action="{% url 'accounts:login' %}" class="sign-in-form">
+      <h2 class="sub-title">로그인</h2>
+      {% csrf_token %}
+      <span class="form-invalid">{{ form_invalid_message }}</span>
+      <div class="form-group">
+        <label for="{{ form.username.id_for_label }}">아이디</label>
+        <input class="form-control" id="{{ form.username.id_for_label }}" maxlength="15" name="{{ form.username.html_name }}" type="text" />
+      </div>
+      <div class="form-group">
+        <label for="{{ form.password.id_for_label }}">패스워드</label>
+        <input class="form-control" id="{{ form.password.id_for_label }}" maxlength="120" name="{{ form.password.html_name }}" type="password" />
+      </div>
+      <input type="submit" class="save btn btn-success" value="로그인">
+      <a href="{% url 'home' %}">
+        <button type="button" class="btn btn-danger">취소</button>
+      </a>
+      <input type="hidden" name="next" value="">
+  </form>
+
+  <br><br><br><br>
+  <h2 class="sub-title">아직 ID가 없으신가요?</h2>
+  <a href="{% url 'accounts:signup' %}">
+    <button type="button" class="btn btn-primary">회원가입</button>
+  </a>
+{% endblock %}
+
+{% block extra-script %}
+{% endblock %}

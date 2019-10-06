@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block extra-style %}
+{% endblock extra-style %}
+
+{% block content %}
+    <div class="home-window">
+        <h2 class="title">뷰티폴미 메인 페이지</h2>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}
+
+{% block extra-script %}
+<script>
+    $(function () {
+        $('[data-toggle=tooltip]').tooltip();
+    });
+</script>
+{% endblock extra-script %}

@@ -17,8 +17,7 @@ pip install django==2.1.1
 (mysql Ver 8.0.17 Win 64)
 
 pip install mysqlclient
-(오류시, mysqlclient-1.4.4-cp37-cp37m-win32.whl 수동 다운 후, pip install mysqlclient-1.4.4-cp37-cp37m-win32 실행)
-
+-> 오류시 mysqlclient-1.4.4-cp37-cp37m-win32.whl 수동 다운 후, pip install mysqlclient-1.4.4-cp37-cp37m-win32 실행
 pip install pymysql
 ```
 

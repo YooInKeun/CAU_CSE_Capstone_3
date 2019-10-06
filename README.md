@@ -26,7 +26,7 @@ pip install mysqlclient
 pip install pymysql
 ```
 
-### settings.py 경로 및 
+### settings.py 경로 및 코드
 
 ```
 beautyforme/beautyforme/settings.py

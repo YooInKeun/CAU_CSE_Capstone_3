@@ -3,7 +3,7 @@
 CAU_CSE_Capstone_3(Tuesday Class)
 ----------------------------------
 
-### 장고 버전
+### Django Version
 
 ```
 (Django 2.1.1)
@@ -11,7 +11,7 @@ CAU_CSE_Capstone_3(Tuesday Class)
 pip install django==2.1.1 
 ```
 
-### mysql 버전
+### mysql Version
 
 ```
 (mysql Ver 8.0.17 Win 64)
@@ -21,7 +21,7 @@ pip install mysqlclient
 pip install pymysql
 ```
 
-### settings.py 추가
+### settings.py
 
 ```
 *path: beautyforme/beautyforme/settings.py

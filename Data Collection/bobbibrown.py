@@ -8,6 +8,54 @@ urls = []
 # 페이스/파운데이션
 urls.append("https://www.bobbibrown.co.kr/products/14017/")
 
+# 페이스/쿠션
+urls.append("https://www.bobbibrown.co.kr/products/21888/")
+
+# 페이스/프라이머
+urls.append("https://www.bobbibrown.co.kr/products/22322/")
+
+# 페이스/코렉터&컨실러
+urls.append("https://www.bobbibrown.co.kr/products/14018/")
+
+# 페이스/파우더
+urls.append("https://www.bobbibrown.co.kr/products/14019/")
+
+# 페이스/브러쉬&툴
+urls.append("https://www.bobbibrown.co.kr/products/13995/")
+
+# 립/립스틱
+urls.append("https://www.bobbibrown.co.kr/products/2342/")
+
+# 립/립케어
+urls.append("https://www.bobbibrown.co.kr/products/2341/")
+
+# 립/립글로스
+urls.append("https://www.bobbibrown.co.kr/products/2340/")
+
+# 립/립라이너
+urls.append("https://www.bobbibrown.co.kr/products/2343/")
+
+# 아이/아이섀도우
+urls.append("https://www.bobbibrown.co.kr/products/2330/")
+
+# 아이/아이라이너
+urls.append("https://www.bobbibrown.co.kr/products/2328/")
+
+# 아이/마스카라
+urls.append("https://www.bobbibrown.co.kr/products/2332/")
+
+# 아이/브라우
+urls.append("https://www.bobbibrown.co.kr/products/2327/")
+
+# 아이/브러쉬&툴
+urls.append("https://www.bobbibrown.co.kr/products/13995/")
+
+# 치크/블러쉬
+urls.append("https://www.bobbibrown.co.kr/products/14021/")
+
+# 치크/하이라이터
+urls.append("https://www.bobbibrown.co.kr/products/14022/")
+
 for url in urls:
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     main_html = urlopen(req).read()

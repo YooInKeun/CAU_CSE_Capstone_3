@@ -56,6 +56,25 @@ urls.append("https://www.bobbibrown.co.kr/products/14021/")
 # 치크/하이라이터
 urls.append("https://www.bobbibrown.co.kr/products/14022/")
 
+# 스킨케어/모이스춰라이저
+urls.append("https://www.bobbibrown.co.kr/products/14007/")
+
+# 스킨케어/아이케어
+urls.append("https://www.bobbibrown.co.kr/products/14008/")
+
+# 스킨케어/썬케어
+urls.append("https://www.bobbibrown.co.kr/products/19142/")
+
+# 스킨케어/클렌저&토너
+urls.append("https://www.bobbibrown.co.kr/products/14013/")
+
+# 스킨케어/마스크
+urls.append("https://www.bobbibrown.co.kr/products/16155/")
+
+# 스킨케어/메이크업리무버
+urls.append("https://www.bobbibrown.co.kr/products/14011/")
+
+
 for url in urls:
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     main_html = urlopen(req).read()

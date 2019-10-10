@@ -114,6 +114,4 @@ for url in urls:
     # 결과 확인
     for i in range(len(product_names)):
         for j in range(len(product_color_names)):
-            # print(len(product_color_names))
-            # print(len(product_color_values))
             print(product_names[i] + product_color_names[j] + '\n' + product_color_values[j])

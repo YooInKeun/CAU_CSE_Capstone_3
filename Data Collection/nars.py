@@ -78,7 +78,7 @@ for url in urls:
     foundation_info = j6['product']
 
     foundation_id = []
-    product_name = []
+    product_names = []
     product_color_names = []
     product_color_values = []
 
@@ -94,7 +94,7 @@ for url in urls:
         product_html = urlopen(product_url)
         soup = BeautifulSoup(product_html, "html.parser")
         if soup.find("h1", {"id": "products-name"}) is not None:
-            product_name.append(soup.find("h1", {"id": "products-name"}).text)
+            product_names.append(soup.find("h1", {"id": "products-name"}).text)
 
         product_color_name_tags = soup.findAll("img", {"class": "hide"})
 
@@ -112,6 +112,8 @@ for url in urls:
             product_color_values.append(str_tag_content[sharp_pos:sharp_pos+7])
         
     # 결과 확인
-    for i in range(len(product_name)):
+    for i in range(len(product_names)):
         for j in range(len(product_color_names)):
-            print(product_name[i] + product_color_names[j] + '\n' + product_color_values[j])
+            # print(len(product_color_names))
+            # print(len(product_color_values))
+            print(product_names[i] + product_color_names[j] + '\n' + product_color_values[j])

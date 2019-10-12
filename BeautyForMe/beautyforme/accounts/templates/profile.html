@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block extra-style %}
+{% endblock %}
+
+{% block content %}
+<h1>유저 프로필</h1>
+{{user.username}}님의 프로필
+<div id='app'>
+    <div class="inputBox">
+        아이디: <input id="user" type="text" value="{{user.pk}}" disabled><br><br>
+        닉네임: <input class="nickname" type="text" v-model.trim="nickname"><br><br>
+        회사: <input class="company" type="text" v-model.trim="company"><br><br>
+        주소: <input class="address" type="text" v-model.trim="address" v-on:keyup.enter="update_profile()"><br><br>
+        <button v-on:click="update_profile()" class="btn btn-primary">수정완료</button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra-script %}
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    var user = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            user: '',
+            nickname: '',
+            company: '',
+            address: '',
+        },
+        created: function () {
+            console.log("created()");
+            this.user = document.getElementById("user").value; 
+            this.fetch_profile();
+        },
+        methods: {
+            update_profile: function() {
+                var postData = {user: this.user, nickname: this.nickname, company: this.company, location: this.address};
+                console.log(postData)
+
+                axios.post('/api/profile/', postData)
+                    .then(function (res) {
+                        console.log("POST SUCCESS", res);
+                        alert("수정 완료되었습니다");
+                    })
+                    .catch(function (err) {
+                        console.log("POST FAIL", err);
+                        alert("오류가 발생했습니다");
+                    })
+                    this.fetch_profile();
+            },
+            
+            fetch_profile: function () {
+                console.log("fetch_profile()");
+
+                axios.get('/api/profile/')
+                    .then(function (res) {
+                        console.log("GET SUCCESS", res);
+                        this.nickname = res.data[0].nickname;
+                        this.company = res.data[0].company;
+                        this.address = res.data[0].location;
+                    })
+                    .catch(function (err) {
+                        console.log("GET FAIL", err);
+                    })
+            },
+        },
+    })
+</script>
+{% endblock %}

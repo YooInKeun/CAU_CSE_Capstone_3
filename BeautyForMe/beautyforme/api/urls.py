@@ -1,8 +1,8 @@
-from django.urls import path
+from django.conf.urls import url
+from rest_framework.authtoken import views as token_views
 
-from . import views
+from api import views
 
-
-app_name = 'api'
 urlpatterns = [
+    url(r'^profile/$', views.ProfileInfo.as_view()),
 ]

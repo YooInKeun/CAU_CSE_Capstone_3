@@ -35,3 +35,6 @@ class ConfirmIsValidUserView(LoginView):
             using=self.template_engine,
             **response_kwargs
         )
+
+class UserProfileView(TemplateView):
+    template_name = 'profile.html'

@@ -57,7 +57,7 @@
         <div class="navbar-nav ml-3 mr-4">
             {% if user.is_active %}
                 <div class="nav-item">
-                    <span class="username"><a href="{% url 'home' %}">{{user.username}}</a>님 환영합니다!</span>
+                    <span class="username"><a href="{% url 'accounts:profile' %}">{{user.username}}</a>님 환영합니다!</span>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
                 <div class="nav-item">

@@ -61,12 +61,13 @@
             fetch_profile: function () {
                 console.log("fetch_profile()");
 
+                var user = this;
                 axios.get('/api/profile/')
                     .then(function (res) {
                         console.log("GET SUCCESS", res);
-                        this.nickname = res.data[0].nickname;
-                        this.company = res.data[0].company;
-                        this.address = res.data[0].address;
+                        user.nickname = res.data[0].nickname;
+                        user.company = res.data[0].company;
+                        user.address = res.data[0].address;
                     })
                     .catch(function (err) {
                         console.log("GET FAIL", err);

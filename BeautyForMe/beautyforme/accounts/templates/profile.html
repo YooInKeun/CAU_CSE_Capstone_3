@@ -49,11 +49,11 @@
                     .then(function (res) {
                         console.log("POST SUCCESS", res);
                         alert("수정 완료되었습니다");
-                        location.reload();
                     })
                     .catch(function (err) {
                         console.log("POST FAIL", err);
                         alert("오류가 발생했습니다");
+                        location.reload();
                     })
             },
             

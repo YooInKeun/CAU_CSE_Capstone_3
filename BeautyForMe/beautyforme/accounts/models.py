@@ -5,4 +5,4 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nickname = models.TextField(max_length=10)
     company = models.TextField(max_length=15)
-    location = models.TextField(max_length=20)
+    address = models.TextField(max_length=20)

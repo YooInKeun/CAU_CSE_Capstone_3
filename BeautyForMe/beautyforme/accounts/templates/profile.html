@@ -43,7 +43,7 @@
         },
         methods: {
             update_profile: function() {
-                var postData = {user: this.user, nickname: this.nickname, company: this.company, location: this.address};
+                var postData = {user: this.user, nickname: this.nickname, company: this.company, address: this.address};
                 console.log(postData)
 
                 axios.post('/api/profile/', postData)
@@ -66,7 +66,7 @@
                         console.log("GET SUCCESS", res);
                         this.nickname = res.data[0].nickname;
                         this.company = res.data[0].company;
-                        this.address = res.data[0].location;
+                        this.address = res.data[0].address;
                     })
                     .catch(function (err) {
                         console.log("GET FAIL", err);

@@ -10,7 +10,7 @@
 {{user.username}}님의 프로필
 <div id='app'>
     <div class="inputBox">
-        아이디: <input id="user" type="text" value="{{user.pk}}" disabled><br><br>
+        아이디: <input id="user_id" type="text" value="{{user.pk}}" disabled><br><br>
         닉네임: <input class="nickname" type="text" v-model.trim="nickname"><br><br>
         회사: <input class="company" type="text" v-model.trim="company"><br><br>
         주소: <input class="address" type="text" v-model.trim="address" v-on:keyup.enter="update_profile()"><br><br>
@@ -31,31 +31,30 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-            user: '',
+            user_id: '',
             nickname: '',
             company: '',
             address: '',
         },
         created: function () {
             console.log("created()");
-            this.user = document.getElementById("user").value; 
+            this.user_id = document.getElementById("user_id").value; 
             this.fetch_profile();
         },
         methods: {
             update_profile: function() {
-                var postData = {user: this.user, nickname: this.nickname, company: this.company, address: this.address};
+                var postData = {user: this.user_id, nickname: this.nickname, company: this.company, address: this.address};
                 console.log(postData)
-
-                axios.post('/api/profile/', postData)
+                axios.put('/api/profile/' + this.user_id + '/', postData)
                     .then(function (res) {
                         console.log("POST SUCCESS", res);
                         alert("수정 완료되었습니다");
+                        location.reload();
                     })
                     .catch(function (err) {
                         console.log("POST FAIL", err);
                         alert("오류가 발생했습니다");
                     })
-                    this.fetch_profile();
             },
             
             fetch_profile: function () {

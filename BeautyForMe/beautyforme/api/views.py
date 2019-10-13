@@ -14,12 +14,20 @@ class ProfileInfo(APIView):
         serializer = ProfileSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
-        serializer = ProfileSerializer(data=request.data)
-        # print(serializer)
-        # print(serializer.is_valid())
-        # print(serializer.errors)
+    def put(self, request, pk, format=None):
+        queryset = Profile.objects.get(user=pk)
+        serializer = ProfileSerializer(queryset, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def post(self, request, format=None):
+    #     serializer = ProfileSerializer(data=request.data)
+    #     print(serializer)
+    #     print(serializer.is_valid())
+    #     print(serializer.errors)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

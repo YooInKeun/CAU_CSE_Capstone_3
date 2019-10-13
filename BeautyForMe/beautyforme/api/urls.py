@@ -5,4 +5,5 @@ from api import views
 
 urlpatterns = [
     url(r'^profile/$', views.ProfileInfo.as_view()),
+    url(r'^profile/(?P<pk>[\w:|-]+)/$', views.ProfileInfo.as_view()),
 ]

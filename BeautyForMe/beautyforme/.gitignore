@@ -18,3 +18,7 @@ media
 # settings
 beautyforme/settings.py
 .config/*
+
+# virtual environments
+myvenv
+venv

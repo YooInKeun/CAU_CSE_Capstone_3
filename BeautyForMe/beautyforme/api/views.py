@@ -6,9 +6,10 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from rest_framework import status
 
+
 class ProfileInfo(APIView):
     # permission_classes = [IsAdminUser]
-    
+
     def get(self, request, format=None):
         queryset = Profile.objects.filter(user=request.user)
         serializer = ProfileSerializer(queryset, many=True)

@@ -5,10 +5,16 @@
 {% block extra-style %}
 {% endblock extra-style %}
 
+{% block navbar %}
+{% include 'navbar.html' %}
+{% endblock %}
+
 {% block content %}
+<div class="container" style="padding-top: 80px;">
     <div class="home-window">
         <h2 class="title">뷰티폴미 메인 페이지</h2>
     </div>
+</div>
 {% endblock content %}
 
 {% block footer %}

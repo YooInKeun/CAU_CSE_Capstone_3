@@ -1,34 +1,38 @@
-{% extends 'base.html' %} {% block title %}{% endblock %} {% block extra-style%}
-{% endblock %} {% block content %}
-<h1>유저 프로필</h1>
-{{ user.username }}님의 프로필
-<div id="app">
-  <div class="inputBox">
-    아이디:
-    <input
-      id="user_id"
-      type="text"
-      value="{{ user.pk }}"
-      disabled
-    /><br /><br />
-    닉네임:
-    <input class="nickname" type="text" v-model.trim="nickname" /><br /><br />
-    회사:
-    <input class="company" type="text" v-model.trim="company" /><br /><br />
-    주소:
-    <input
-      class="address"
-      type="text"
-      v-model.trim="address"
-      v-on:keyup.enter="update_profile()"
-    /><br /><br />
-    <button v-on:click="update_profile()" class="btn btn-primary">
-      수정완료
-    </button>
+{% extends 'base.html' %}
+{% block title %}
+{% endblock %}
+
+{% block extra-style%}
+{% endblock %}
+
+
+{% block navbar%}
+{% include 'navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:80px;">
+  <h1>유저 프로필</h1>
+  {{ user.username }}님의 프로필
+  <div id="app">
+    <div class="inputBox">
+      아이디:
+      <input id="user_id" type="text" value="{{ user.pk }}" disabled /><br /><br />
+      닉네임:
+      <input class="nickname" type="text" v-model.trim="nickname" /><br /><br />
+      회사:
+      <input class="company" type="text" v-model.trim="company" /><br /><br />
+      주소:
+      <input class="address" type="text" v-model.trim="address" v-on:keyup.enter="update_profile()" /><br /><br />
+      <button v-on:click="update_profile()" class="btn btn-primary">
+        수정완료
+      </button>
+    </div>
   </div>
 </div>
+{% endblock %}
 
-{% endblock %} {% block extra-script %}
+{% block extra-script %}
 <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
@@ -44,13 +48,13 @@
       company: "",
       address: ""
     },
-    created: function() {
+    created: function () {
       console.log("created()");
       this.user_id = document.getElementById("user_id").value;
       this.fetch_profile();
     },
     methods: {
-      update_profile: function() {
+      update_profile: function () {
         var postData = {
           user: this.user_id,
           nickname: this.nickname,
@@ -60,30 +64,30 @@
         console.log(postData);
         axios
           .put("/api/profile/" + this.user_id + "/", postData)
-          .then(function(res) {
+          .then(function (res) {
             console.log("POST SUCCESS", res);
             alert("수정 완료되었습니다");
           })
-          .catch(function(err) {
+          .catch(function (err) {
             console.log("POST FAIL", err);
             alert("오류가 발생했습니다");
             location.reload();
           });
       },
 
-      fetch_profile: function() {
+      fetch_profile: function () {
         console.log("fetch_profile()");
 
         var user = this;
         axios
           .get("/api/profile/")
-          .then(function(res) {
+          .then(function (res) {
             console.log("GET SUCCESS", res);
             user.nickname = res.data[0].nickname;
             user.company = res.data[0].company;
             user.address = res.data[0].address;
           })
-          .catch(function(err) {
+          .catch(function (err) {
             console.log("GET FAIL", err);
           });
       }

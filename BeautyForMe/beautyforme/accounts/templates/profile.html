@@ -4,16 +4,17 @@
 {{ user.username }}님의 프로필
 <div id="app">
   <div class="inputBox">
-    <input id="user_id" type="text" value="{{ user.pk }}" style="visibility:hidden;" disabled/><br/><br/>
-    이름: <input class="name" type="text" value="{{ user.last_name }}" disabled/><br/><br/>
-    아이디: <input class="username" type="text" value="{{ user.username }}" disabled/><br/><br/>
-    E-mail: <input class="email" type="text" value="{{ user.email }}" disabled/><br/><br/>
-    <br/>(유저 추가 정보)<br/>
-    닉네임: <input class="nickname" type="text" v-model.trim="nickname"/><br/><br/>
-    전화번호: <input class="phone" type="text" v-model.trim="phone"/><br/><br/>
-    우편번호: <input class="zip_code" type="text" v-model.trim="zip_code"/><br/><br/>
-    주소: <input class="address" type="text" v-model.trim="address"/><br/><br/>
-    상세주소: <input class="address_detail" type="text" v-model.trim="address_detail" v-on:keyup.enter="update_profile()"/><br/><br/>
+    <input id="user_id" type="text" value="{{ user.pk }}" style="visibility:hidden;" disabled /><br /><br />
+    이름: <input class="name" type="text" value="{{ user.last_name }}" disabled /><br /><br />
+    아이디: <input class="username" type="text" value="{{ user.username }}" disabled /><br /><br />
+    E-mail: <input class="email" type="text" value="{{ user.email }}" disabled /><br /><br />
+    <br />(유저 추가 정보)<br />
+    닉네임: <input class="nickname" type="text" v-model.trim="nickname" /><br /><br />
+    전화번호: <input class="phone" type="text" v-model.trim="phone" /><br /><br />
+    우편번호: <input class="zip_code" type="text" v-model.trim="zip_code" /><br /><br />
+    주소: <input class="address" type="text" v-model.trim="address" /><br /><br />
+    상세주소: <input class="address_detail" type="text" v-model.trim="address_detail"
+      v-on:keyup.enter="update_profile()" /><br /><br />
     <button v-on:click="update_profile()" class="btn btn-primary">수정완료</button>
   </div>
 </div>
@@ -36,13 +37,13 @@
       address: "",
       address_detail: ""
     },
-    created: function() {
+    created: function () {
       console.log("created()");
       this.user_id = document.getElementById("user_id").value;
       this.fetch_profile();
     },
     methods: {
-      update_profile: function() {
+      update_profile: function () {
         var postData = {
           user: this.user_id,
           nickname: this.nickname,
@@ -54,24 +55,24 @@
         console.log(postData);
         axios
           .put("/api/profile/" + this.user_id + "/", postData)
-          .then(function(res) {
+          .then(function (res) {
             console.log("POST SUCCESS", res);
             alert("수정 완료되었습니다");
           })
-          .catch(function(err) {
+          .catch(function (err) {
             console.log("POST FAIL", err);
             alert("오류가 발생했습니다");
             location.reload();
           });
       },
 
-      fetch_profile: function() {
+      fetch_profile: function () {
         console.log("fetch_profile()");
 
         var user = this;
         axios
           .get("/api/profile/")
-          .then(function(res) {
+          .then(function (res) {
             console.log("GET SUCCESS", res);
             user.nickname = res.data[0].nickname;
             user.phone = res.data[0].phone;
@@ -79,7 +80,7 @@
             user.address = res.data[0].address;
             user.address_detail = res.data[0].address_detail;
           })
-          .catch(function(err) {
+          .catch(function (err) {
             console.log("GET FAIL", err);
           });
       }

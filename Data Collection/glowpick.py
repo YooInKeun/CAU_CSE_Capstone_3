@@ -33,7 +33,7 @@ soup = BeautifulSoup(html, 'html.parser')
 # 크림
 # https://www.glowpick.com/search/result?query=%ED%81%AC%EB%A6%BC
 
-SCROLL_PAUSE_TIME = 10
+SCROLL_PAUSE_TIME = 1
 
 # # Get scroll height
 # last_height = driver.execute_script("return document.body.scrollHeight")
@@ -53,6 +53,12 @@ SCROLL_PAUSE_TIME = 10
 #     print(i)
 #     i += 1
 times=0;
+f = open(f'skin.csv','w',encoding='cp949',newline='')
+csvWriter = csv.writer(f)
+
+
+skinSearchList = [];
+
 skin = [2, 3, 4, 5, 1, 7, 6, 210]
 skin_name = ["스킨","로션","에센스","크림","미스트","메이크업픽서","페이스오일","토너/필링패드"]
 color = [68, 48, 50, 49, 47, 69, 204,
@@ -63,6 +69,11 @@ base_name=["메이크업베이스","톤업크림","베이스프라이머","포�
 
 notices = soup.select('ul.brand-list__result__wrap li meta')
 print(len(notices))
+temp = [];
+temp2 = []
+
+    
+
 for n in notices:
     if('https://' in(n.get('content'))):
         a = n.get('content')
@@ -74,91 +85,121 @@ for n in notices:
             if(notices_twp != 0):
                 for z in notices_twp:
                     if('https://' in(z.get('content'))):
+                        # temp = []]
+                        # temp2 = []
                         b = z.get('content')
                         driver.get(b)
                         html = driver.page_source
                         soup = BeautifulSoup(html, 'html.parser')
                         print("스킨케어")
-                        print(skin_name[w])
-                        times=times+1;
-                        if(len(soup.select('div.product-detail__color-type-list')) != 0):
-                            print(('색감 : '+soup.select('div.product-detail__color-type-list')[0].text).strip())
+
                         print(('상표 : '+soup.select('div.section-wrap p.product-main-info__brand_name')[0].text))
+                        data = soup.select('div.section-wrap p.product-main-info__brand_name')[0].text
+                        csvWriter.writerow(data)
 
                         print('이름 : '+(soup.select('h1.product-main-info__product_name span.product-main-info__product_name__text')[0].text).replace("[단종]", "").strip())
+                        data = (soup.select('h1.product-main-info__product_name span.product-main-info__product_name__text')[0].text).replace("[단종]", "").strip()
+                        csvWriter.writerow(data)
+
+                        
+                        
+                        data = soup.select('span.product-detail__tags')
+                        for c in range(len(data)):
+                            #print('태그 : '+data[c].text)
+                            csvWriter.writerow(data)
+
+                        
                         img = soup.select('img.product-image__dump')
-                        print('사진 : 'img[0]["src"])
+                        print('사진 : '+img[0]["src"])
+                        data = img[0]["src"]
+                        csvWriter.writerow(data)
+
+
+                        print(skin_name[w])
+                        temp.append(skin_name[w])
+                        data = skin_name[w]
+                        csvWriter.writerow(data)
+                        
+
+                        if(len(soup.select('div.product-detail__color-type-list')) != 0):
+                            print(('색감 : '+soup.select('div.product-detail__color-type-list')[0].text).strip())
+                            temp.append(soup.select('div.product-detail__color-type-list')[0].text).strip()
+                       
+                        
+                        times=times+1;
                         #print('사진 : '+ img.get('src'))
-                        data = soup.select('span.product-detail__tags')
-                        for c in range(len(data)):
-                            print('태그 : '+data[c].text)
+                        
+                
+
+
+
 
 print("---------------------------------------------------------------------------------------------------------------------------------")
 
-for n in notices:
-    if('https://' in(n.get('content'))):
-        a = n.get('content')
-        for w in range(len(color)):
-            driver.get(a+"&main_category_id=1&sub_category_id="+str(color[w]))
-            html = driver.page_source
-            soup = BeautifulSoup(html, 'html.parser')
-            notices_twp = soup.select('ul.list-wrap li div meta')
-            if(notices_twp != 0):
-                for z in notices_twp:
-                    if('https://' in(z.get('content'))):
-                        b = z.get('content')
-                        driver.get(b)
-                        html = driver.page_source
-                        soup = BeautifulSoup(html, 'html.parser')
-                        print("색조")
-                        print(color_name[w])
-                        times=times+1;
-                        if(len(soup.select('div.product-detail__color-type-list')) != 0):
-                            print(
-                                ('색감 : '+soup.select('div.product-detail__color-type-list')[0].text).strip())
-                        print(
-                            ('상표 : '+soup.select('div.section-wrap p.product-main-info__brand_name')[0].text))
-                        print('이름 : '+(soup.select(
-                            'h1.product-main-info__product_name span.product-main-info__product_name__text')[0].text).replace("[단종]", "").strip())
-                        img = soup.select('img.product-image__dump')
-                        print('사진 : 'img[0]["src"])
+# for n in notices:
+#     if('https://' in(n.get('content'))):
+#         a = n.get('content')
+#         for w in range(len(color)):
+#             driver.get(a+"&main_category_id=1&sub_category_id="+str(color[w]))
+#             html = driver.page_source
+#             soup = BeautifulSoup(html, 'html.parser')
+#             notices_twp = soup.select('ul.list-wrap li div meta')
+#             if(notices_twp != 0):
+#                 for z in notices_twp:
+#                     if('https://' in(z.get('content'))):
+#                         b = z.get('content')
+#                         driver.get(b)
+#                         html = driver.page_source
+#                         soup = BeautifulSoup(html, 'html.parser')
+#                         print("색조")
+#                         print(color_name[w])
+#                         times=times+1;
+#                         if(len(soup.select('div.product-detail__color-type-list')) != 0):
+#                             print(
+#                                 ('색감 : '+soup.select('div.product-detail__color-type-list')[0].text).strip())
+#                         print(
+#                             ('상표 : '+soup.select('div.section-wrap p.product-main-info__brand_name')[0].text))
+#                         print('이름 : '+(soup.select(
+#                             'h1.product-main-info__product_name span.product-main-info__product_name__text')[0].text).replace("[단종]", "").strip())
+#                         img = soup.select('img.product-image__dump')
+#                         print('사진 : '+img[0]["src"])
 
-                        data = soup.select('span.product-detail__tags')
-                        for c in range(len(data)):
-                            print('태그 : '+data[c].text)
+#                         data = soup.select('span.product-detail__tags')
+#                         for c in range(len(data)):
+#                             print('태그 : '+data[c].text)
 
-print("---------------------------------------------------------------------------------------------------------------------------------")
+# print("---------------------------------------------------------------------------------------------------------------------------------")
 
-for n in notices:
-    if('https://' in(n.get('content'))):
-        a = n.get('content')
-        for w in range(len(base)):
-            driver.get(a+"&main_category_id=1&sub_category_id="+str(base[w]))
-            html = driver.page_source
-            soup = BeautifulSoup(html, 'html.parser')
-            notices_twp = soup.select('ul.list-wrap li div meta')
-            if(notices_twp != 0):
-                for z in notices_twp:
-                    if('https://' in(z.get('content'))):
-                        b = z.get('content')
-                        driver.get(b)
-                        html = driver.page_source
-                        soup = BeautifulSoup(html, 'html.parser')
-                        print("베이스")
-                        print(base_name[w])
-                        times=times+1;
-                        if(len(soup.select('div.product-detail__color-type-list')) != 0):
-                            print(
-                                ('색감 : '+soup.select('div.product-detail__color-type-list')[0].text).strip())
-                        print(
-                            ('상표 : '+soup.select('div.section-wrap p.product-main-info__brand_name')[0].text))
-                        print('이름 : '+(soup.select(
-                            'h1.product-main-info__product_name span.product-main-info__product_name__text')[0].text).replace("[단종]", "").strip())
-                        img = soup.select('img.product-image__dump')
-                        print('사진 : 'img[0]["src"])
-                        data = soup.select('span.product-detail__tags')
-                        for c in range(len(data)):
-                            print('태그 : '+data[c].text)
+# for n in notices:
+#     if('https://' in(n.get('content'))):
+#         a = n.get('content')
+#         for w in range(len(base)):
+#             driver.get(a+"&main_category_id=1&sub_category_id="+str(base[w]))
+#             html = driver.page_source
+#             soup = BeautifulSoup(html, 'html.parser')
+#             notices_twp = soup.select('ul.list-wrap li div meta')
+#             if(notices_twp != 0):
+#                 for z in notices_twp:
+#                     if('https://' in(z.get('content'))):
+#                         b = z.get('content')
+#                         driver.get(b)
+#                         html = driver.page_source
+#                         soup = BeautifulSoup(html, 'html.parser')
+#                         print("베이스")
+#                         print(base_name[w])
+#                         times=times+1;
+#                         if(len(soup.select('div.product-detail__color-type-list')) != 0):
+#                             print(
+#                                 ('색감 : '+soup.select('div.product-detail__color-type-list')[0].text).strip())
+#                         print(
+#                             ('상표 : '+soup.select('div.section-wrap p.product-main-info__brand_name')[0].text))
+#                         print('이름 : '+(soup.select(
+#                             'h1.product-main-info__product_name span.product-main-info__product_name__text')[0].text).replace("[단종]", "").strip())
+#                         img = soup.select('img.product-image__dump')
+#                         print('사진 : '+img[0]["src"])
+#                         data = soup.select('span.product-detail__tags')
+#                         for c in range(len(data)):
+#                             print('태그 : '+data[c].text)
         # html = driver.page_source
         # soup = BeautifulSoup(html, 'html.parser')
 
@@ -194,6 +235,7 @@ for n in notices:
 #         data = soup.select('span.product-detail__tags')
 #         for c in range(len(data)):
 #             print(data[c].text)
+
 
 
 print(times)

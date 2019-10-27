@@ -1,3 +1,7 @@
+body {
+    font-family: "Nanum Gothic", sans-serif !important
+}
+
 .home-window {
     background-image: url('../img/Test.jpg');
     background-repeat: no-repeat;

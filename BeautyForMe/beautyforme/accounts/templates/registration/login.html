@@ -1,42 +1,71 @@
-{% extends 'base.html' %}
-
-{% block title %}{% endblock %}
-
-{% block extra-style %}
+{% extends 'base.html' %} {% block title %}{% endblock %} {% block extra-style %}
 <style>
-  .form-invalid{
-      color : red;
-  }
+    .form-invalid {
+        color: red;
+    }
+
+    body {
+        background-color: pink;
+        background-image: url(/static/img/main.jpeg);
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+        background-position: center top;
+        background-attachment: fixed;
+        height: 100vh;
+        /* padding-top: 90px; */
+        align-items: center;
+        display: flex;
+    }
+
+    .login-content {
+        background-color: white;
+        box-shadow: 0 0 10px 5px pink;
+    }
 </style>
-{% endblock %}
+{% endblock %} {% block content %}
 
-{% block content %}
+<div class="container mt-5">
+    <div class="row d-flex justify-content-center align-content-center">
+        <div class="login-content col-md-8 col-lg-5 px-5 py-4">
+            <div class="row d-flex justify-content-center">
+                <h1><a href="">Beauty For Me</a></h1>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <p>스타 유튜버들의 화장법을 공유하세요!</p>
+            </div>
 
-  <form method="POST" action="{% url 'accounts:login' %}" class="sign-in-form">
-      <h2 class="sub-title">로그인</h2>
-      {% csrf_token %}
-      <span class="form-invalid">{{ form_invalid_message }}</span>
-      <div class="form-group">
-        <label for="{{ form.username.id_for_label }}">아이디</label>
-        <input class="form-control" id="{{ form.username.id_for_label }}" maxlength="15" name="{{ form.username.html_name }}" type="text" />
-      </div>
-      <div class="form-group">
-        <label for="{{ form.password.id_for_label }}">패스워드</label>
-        <input class="form-control" id="{{ form.password.id_for_label }}" maxlength="120" name="{{ form.password.html_name }}" type="password" />
-      </div>
-      <input type="submit" class="save btn btn-success" value="로그인">
-      <a href="{% url 'home' %}">
-        <button type="button" class="btn btn-danger">취소</button>
-      </a>
-      <input type="hidden" name="next" value="">
-  </form>
+            <div class="content row d-flex justify-content-center">
+                <form action="{% url 'accounts:login' %}" method="post" class="w-100 p-1">
+                    {% csrf_token %}
+                    <span class="form-invalid">{{ form_invalid_message }}</span>
 
-  <br><br><br><br>
-  <h2 class="sub-title">아직 ID가 없으신가요?</h2>
-  <a href="{% url 'accounts:signup' %}">
-    <button type="button" class="btn btn-primary">회원가입</button>
-  </a>
-{% endblock %}
+                    <input type="text" name="{{ form.username.html_name }}" class="form-control mb-2" autofocus required
+                        id="{{ form.username.id_for_label }}" placeholder="ID" maxlength="15" />
+                    <input type="password" name="{{ form.password.html_name }}" class="form-control mb-2" required
+                        id="{{ form.password.id_for_label }}" placeholder="Password" maxlength="120" />
 
-{% block extra-script %}
-{% endblock %}
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        로그인
+                    </button>
+                </form>
+            </div>
+            <hr />
+            <div class="row d-flex justify-content-center">
+                <p>계정이 없으신가요?</p>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <button type="submit" class="btn btn-outline-primary w-100 m-1">
+                    <a href="{% url 'accounts:signup' %}">회원가입</a>
+                </button>
+            </div>
+            <hr />
+            <div class="row d-flex justify-content-center">
+                <p>회원가입 없이</p>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <a href="{% url 'makeup:recommend' %}">둘러보기</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block extra-script %} {% endblock %}

@@ -6,14 +6,77 @@
 {% endblock %}
 
 {% block content %}
-<h1>회원가입</h1>
+<div class="container mt-5">
+    <div class="row d-flex justify-content-center align-content-center">
+        <div class="col-10 col-md-6 col-lg-5 px-5 py-4 border border-primary">
+            <div class="row d-flex justify-content-center">
+                <h1><a href="">Beauty For Me</a></h1>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <p>스타 유튜버들의 화장법을 공유하세요!</p>
+            </div>
 
-<form method="post" action="{% url 'accounts:signup' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">회원가입</button>
-</form>
+            <div class="row d-flex justify-content-center">
+                {% for field in form %}
+                {% for error in field.errors %}
+                <div class="w-100 alert alert-danger alert-dismissable show fade m-1" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    {{ error }}
+                </div>
+                {% endfor %}
+                {% endfor %}
+                <form method="post" action="{% url 'accounts:signup' %}" class="w-100 p-1">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <p class="{{field.name}}-signup">
+                        {{ field }}
+                        {% for error in field.errors %}
+                        <p style="color: red">{{ error }}</p>
+                        {% endfor %}
+                    </p>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-outline-primary w-100">가입하기</button>
+                </form>
+            </div>
+            <hr />
+            <div class="row  d-flex justify-content-center">
+                <p>회원가입 없이</p>
+            </div>
+            <div class="row  d-flex justify-content-center">
+                <a href="">둘러보기</a>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script>
+    const usernameInput = document.querySelector("#id_username");
+    const password1Input = document.querySelector("#id_password1");
+    const password2Input = document.querySelector("#id_password2");
+    const nicknameInput = document.querySelector("#id_nickname");
+    const emailInput = document.querySelector("#id_email");
+    const phoneInput = document.querySelector("#id_phone");
+    const zipCodeInput = document.querySelector("#id_zip_code");
+    const addressInput = document.querySelector("#id_address");
+    const addressDetailInput = document.querySelector("#id_address_detail");
+
+    const inputArray = [usernameInput, password1Input, password2Input, nicknameInput, emailInput, phoneInput, zipCodeInput, addressInput, addressDetailInput];
+
+    for (var index in inputArray) {
+        if (inputArray[index] != null) {
+            inputArray[index].classList.add("form-control");
+            inputArray[index].classList.add("mb-2");
+        }
+    }
+
+    usernameInput.placeholder = "ID";
+    password1Input.placeholder = "Password";
+    password2Input.placeholder = "Password Confirmation";
+    emailInput.placeholder = "Email";
+    nicknameInput.placeholder = "Nick Name";
+</script>
 {% endblock %}
 
 {% block extra-script %}

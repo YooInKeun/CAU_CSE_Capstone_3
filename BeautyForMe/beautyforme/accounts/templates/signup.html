@@ -3,12 +3,35 @@
 {% block title %}{% endblock %}
 
 {% block extra-style %}
+<style>
+    .form-invalid {
+        color: red;
+    }
+
+    body {
+        background-color: pink;
+        background-image: url(/static/img/main.jpeg);
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+        background-position: center top;
+        background-attachment: fixed;
+        height: 100vh;
+        /* padding-top: 90px; */
+        align-items: center;
+        display: flex;
+    }
+
+    .signup-content {
+        background-color: white;
+        box-shadow: 0 0 10px 5px pink;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row d-flex justify-content-center align-content-center">
-        <div class="col-10 col-md-6 col-lg-5 px-5 py-4 border border-primary">
+        <div class="signup-content col-10 col-md-6 col-lg-5 px-5 py-4">
             <div class="row d-flex justify-content-center">
                 <h1><a href="">Beauty For Me</a></h1>
             </div>
@@ -42,10 +65,19 @@
             </div>
             <hr />
             <div class="row  d-flex justify-content-center">
+                <p>이미 계정이 있으신가요?</p>
+            </div>
+            <div class="row  d-flex justify-content-center">
+                <button type="submit" class="btn btn-outline-primary w-100 ml-1 mr-1"><a
+                        href="{% url 'accounts:login' %}">로그인
+                        하기</a></button>
+            </div>
+            <hr />
+            <div class="row  d-flex justify-content-center">
                 <p>회원가입 없이</p>
             </div>
             <div class="row  d-flex justify-content-center">
-                <a href="">둘러보기</a>
+                <a href="{% url 'makeup:recommend' %}">둘러보기</a>
             </div>
         </div>
     </div>

@@ -21,9 +21,6 @@ class ProfileInfo(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-<<<<<<< HEAD
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-=======
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     '''
@@ -34,4 +31,3 @@ class ProfileInfo(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     '''
->>>>>>> [UPDATE] 프로필 생성 코드 제거

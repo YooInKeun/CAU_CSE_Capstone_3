@@ -87,14 +87,10 @@
     const usernameInput = document.querySelector("#id_username");
     const password1Input = document.querySelector("#id_password1");
     const password2Input = document.querySelector("#id_password2");
-    const nicknameInput = document.querySelector("#id_nickname");
+    const lastNameInput = document.querySelector("#id_last_name");
     const emailInput = document.querySelector("#id_email");
-    const phoneInput = document.querySelector("#id_phone");
-    const zipCodeInput = document.querySelector("#id_zip_code");
-    const addressInput = document.querySelector("#id_address");
-    const addressDetailInput = document.querySelector("#id_address_detail");
 
-    const inputArray = [usernameInput, password1Input, password2Input, nicknameInput, emailInput, phoneInput, zipCodeInput, addressInput, addressDetailInput];
+    const inputArray = [usernameInput, password1Input, password2Input, lastNameInput, emailInput];
 
     for (var index in inputArray) {
         if (inputArray[index] != null) {
@@ -107,7 +103,7 @@
     password1Input.placeholder = "Password";
     password2Input.placeholder = "Password Confirmation";
     emailInput.placeholder = "Email";
-    nicknameInput.placeholder = "Nick Name";
+    lastNameInput.placeholder = "Name";
 </script>
 {% endblock %}
 

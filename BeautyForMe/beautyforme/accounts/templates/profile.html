@@ -17,11 +17,9 @@
   <div id="app">
     <div class="inputBox">
       아이디:
-      <input id="user_id" type="text" value="{{ user.pk }}" disabled /><br /><br />
+      <input id="user_id" type="text" value="{{ user.username }}" disabled /><br /><br />
       닉네임:
-      <input class="nickname" type="text" v-model.trim="nickname" /><br /><br />
-      회사:
-      <input class="company" type="text" v-model.trim="company" /><br /><br />
+      <input class=" nickname" type="text" v-model.trim="nickname" /><br /><br />
       주소:
       <input class="address" type="text" v-model.trim="address" v-on:keyup.enter="update_profile()" /><br /><br />
       <button v-on:click="update_profile()" class="btn btn-primary">

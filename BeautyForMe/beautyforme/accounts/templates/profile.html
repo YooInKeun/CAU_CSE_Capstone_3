@@ -103,6 +103,12 @@
     },
     methods: {
       update_profile: function () {
+        var userData = {
+          user: this.user_id,
+          username: this.username,
+          password: this.password,
+          email: this.email
+        }
         var postData = {
           user: this.user_id,
           nickname: this.nickname,
@@ -111,13 +117,14 @@
           address: this.address,
           address_detail: this.address_detail,
         };
-        var userData = {
-          user: this.user_id,
-          username: this.username,
-          password: this.password,
-          email: this.email
-        }
         console.log(postData);
+        axios
+          .put("/api/user/" + this.user_id + "/", userData)
+          .then(function (res) {
+          })
+          .catch(function (err) {
+          });
+
         axios
           .put("/api/profile/" + this.user_id + "/", postData)
           .then(function (res) {
@@ -128,20 +135,20 @@
             console.log("POST FAIL", err);
             alert("오류가 발생했습니다");
           });
-
-        axios
-          .put("/api/user/" + this.user_id + "/", userData)
-          .then(function (res) {
-          })
-          .catch(function (err) {
-            location.reload();
-          });
       },
 
       fetch_profile: function () {
         console.log("fetch_profile()");
-
         var user = this;
+        axios
+          .get("/api/user/")
+          .then(function (res) {
+            console.log("GET SUCCESS", res);
+            user.email = res.data[0].email;
+          })
+          .catch(function (err) {
+            console.log("GET FAIL", err);
+          });
         axios
           .get("/api/profile/")
           .then(function (res) {
@@ -151,16 +158,6 @@
             user.zip_code = res.data[0].zip_code;
             user.address = res.data[0].address;
             user.address_detail = res.data[0].address_detail;
-          })
-          .catch(function (err) {
-            console.log("GET FAIL", err);
-          });
-
-        axios
-          .get("/api/user/")
-          .then(function (res) {
-            console.log("GET SUCCESS", res);
-            user.email = res.data[0].email;
           })
           .catch(function (err) {
             console.log("GET FAIL", err);

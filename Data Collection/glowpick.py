@@ -14,7 +14,7 @@ driver = webdriver.Chrome('./chromedriver')
 
 driver.get(
     'https://www.glowpick.com/brand/list')
-sleep(10)
+sleep(600)
 html = driver.page_source
 soup = BeautifulSoup(html, 'html.parser')
 # driver.execute_script("window.scrollTo(0, 200)")
@@ -33,7 +33,7 @@ soup = BeautifulSoup(html, 'html.parser')
 # 크림
 # https://www.glowpick.com/search/result?query=%ED%81%AC%EB%A6%BC
 
-SCROLL_PAUSE_TIME = 1
+SCROLL_PAUSE_TIME = 10
 
 # # Get scroll height
 # last_height = driver.execute_script("return document.body.scrollHeight")
@@ -56,6 +56,10 @@ times=0;
 f = open(f'skin.csv','w',encoding='cp949',newline='')
 csvWriter = csv.writer(f)
 
+    
+    
+
+print("완료")
 
 skinSearchList = [];
 
@@ -72,12 +76,11 @@ print(len(notices))
 temp = [];
 temp2 = []
 
-    
-
 for n in notices:
     if('https://' in(n.get('content'))):
         a = n.get('content')
         for w in range(len(skin)):
+
             driver.get(a+"&main_category_id=1&sub_category_id="+str(skin[w]))
             html = driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
@@ -85,8 +88,8 @@ for n in notices:
             if(notices_twp != 0):
                 for z in notices_twp:
                     if('https://' in(z.get('content'))):
-                        # temp = []]
-                        # temp2 = []
+                        del temp[-1:]
+                        del temp2[-1:]
                         b = z.get('content')
                         driver.get(b)
                         html = driver.page_source
@@ -94,44 +97,61 @@ for n in notices:
                         print("스킨케어")
 
                         print(('상표 : '+soup.select('div.section-wrap p.product-main-info__brand_name')[0].text))
-                        data = soup.select('div.section-wrap p.product-main-info__brand_name')[0].text
-                        csvWriter.writerow(data)
+                        #temp.append(soup.select('div.section-wrap p.product-main-info__brand_name')[0].text)
+                        csvWriter.writerow([soup.select('div.section-wrap p.product-main-info__brand_name')[0].text])
+
 
                         print('이름 : '+(soup.select('h1.product-main-info__product_name span.product-main-info__product_name__text')[0].text).replace("[단종]", "").strip())
-                        data = (soup.select('h1.product-main-info__product_name span.product-main-info__product_name__text')[0].text).replace("[단종]", "").strip()
-                        csvWriter.writerow(data)
-
+                        csvWriter.writerow([(soup.select('h1.product-main-info__product_name span.product-main-info__product_name__text')[0].text).replace("[단종]", "").strip()])
                         
-                        
-                        data = soup.select('span.product-detail__tags')
-                        for c in range(len(data)):
-                            #print('태그 : '+data[c].text)
-                            csvWriter.writerow(data)
-
-                        
-                        img = soup.select('img.product-image__dump')
-                        print('사진 : '+img[0]["src"])
-                        data = img[0]["src"]
-                        csvWriter.writerow(data)
-
-
-                        print(skin_name[w])
-                        temp.append(skin_name[w])
-                        data = skin_name[w]
-                        csvWriter.writerow(data)
-                        
-
+                        temp3 = []
+                        bada=''
                         if(len(soup.select('div.product-detail__color-type-list')) != 0):
-                            print(('색감 : '+soup.select('div.product-detail__color-type-list')[0].text).strip())
-                            temp.append(soup.select('div.product-detail__color-type-list')[0].text).strip()
-                       
+                            bada = soup.select('div.product-detail__color-type-list')[0].text.strip()
+                            print(len(bada))
+                            print(('색감 : '+bada))
+
+                            temp3 = [item for item in bada.split(',')]
+                            #print(len(temp3))
+                            print(temp3[0])
+                        
+                        csvWriter.writerow(temp3)
+
+                        #print('사진 : '+ img.get('src'))
+                        data = soup.select('span.product-detail__tags')
+                        temp2 = []
+                        for c in range(len(data)):
+                            temp2.append(data[c].text)
+                        
+                        #for d in temp2
+                        csvWriter.writerow(temp2)
+
                         
                         times=times+1;
-                        #print('사진 : '+ img.get('src'))
+
+                        img = soup.select('img.product-image__dump')
+                        print('사진 : '+img[0]["src"])
+                        #temp.append(img[0]["src"])
+                        csvWriter.writerow([img[0]["src"]])
+
+
+                        temp.append(skin_name[w])
+                        csvWriter.writerow([skin_name[w]])
+
+                        print(skin_name[w])
                         
-                
 
-
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        temp.append(temp2)
+                        skinSearchList.append(temp)
+            
 
 
 print("---------------------------------------------------------------------------------------------------------------------------------")
@@ -237,6 +257,6 @@ print("-------------------------------------------------------------------------
 #             print(data[c].text)
 
 
-
+f.close()
 print(times)
 driver.close()

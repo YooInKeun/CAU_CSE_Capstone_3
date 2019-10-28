@@ -21,6 +21,8 @@
   <div id="app" class="d-flex justify-content-center">
     <div class="inputBox w-50">
       <input id="user_id" type="text" value="{{ user.pk }}" style="visibility:hidden;" disabled />
+      <input id="username" type="text" value="{{ user.username }}" style="visibility:hidden;" disabled />
+      <input id="password" type="text" value="{{ user.password }}" style="visibility:hidden;" disabled />
 
       <h2 class="text-center m-5">{{ user.last_name }}<small>님의 프로필</span></h2>
       <h4 class="input-title">이름</h4>
@@ -33,7 +35,7 @@
       </div>
       <h4 class="input-title">E-mail</h4>
       <div class="input-wrap">
-        <input class="email form-control mb-3" type="text" value="{{ user.email }}" disabled />
+        <input class="email form-control mb-3" type="text"  v-model.trim= "email"/>
       </div>
 
       <h4 class="input-title">닉네임</h4>
@@ -79,6 +81,9 @@
     el: "#app",
     data: {
       user_id: "",
+      username: "",
+      password: "",
+      email: "",
       nickname: "",
       phone: "",
       zip_code: "",
@@ -88,6 +93,8 @@
     created: function () {
       console.log("created()");
       this.user_id = document.getElementById("user_id").value;
+      this.username = document.getElementById("username").value;
+      this.password = document.getElementById("password").value;
       this.fetch_profile();
     },
     mounted() {
@@ -104,6 +111,12 @@
           address: this.address,
           address_detail: this.address_detail,
         };
+        var userData = {
+          user: this.user_id,
+          username: this.username,
+          password: this.password,
+          email: this.email
+        }
         console.log(postData);
         axios
           .put("/api/profile/" + this.user_id + "/", postData)
@@ -114,6 +127,13 @@
           .catch(function (err) {
             console.log("POST FAIL", err);
             alert("오류가 발생했습니다");
+          });
+
+        axios
+          .put("/api/user/" + this.user_id + "/", userData)
+          .then(function (res) {
+          })
+          .catch(function (err) {
             location.reload();
           });
       },
@@ -131,6 +151,16 @@
             user.zip_code = res.data[0].zip_code;
             user.address = res.data[0].address;
             user.address_detail = res.data[0].address_detail;
+          })
+          .catch(function (err) {
+            console.log("GET FAIL", err);
+          });
+
+        axios
+          .get("/api/user/")
+          .then(function (res) {
+            console.log("GET SUCCESS", res);
+            user.email = res.data[0].email;
           })
           .catch(function (err) {
             console.log("GET FAIL", err);

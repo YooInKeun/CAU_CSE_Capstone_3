@@ -35,7 +35,8 @@
       </div>
       <h4 class="input-title">E-mail</h4>
       <div class="input-wrap">
-        <input class="email form-control mb-3" type="text"  v-model.trim= "email"/>
+        <input class="email form-control mb-3" type="text"  value="{{ user.email }}"/>
+        <!-- <input class="email form-control mb-3" type="text"  v-model.trim= "email" disabled/> -->
       </div>
 
       <h4 class="input-title">닉네임</h4>
@@ -118,18 +119,19 @@
           address_detail: this.address_detail,
         };
         console.log(postData);
-        axios
-          .put("/api/user/" + this.user_id + "/", userData)
-          .then(function (res) {
-          })
-          .catch(function (err) {
-          });
+        // axios
+        //   .put("/api/user/" + this.user_id + "/", userData)
+        //   .then(function (res) {
+        //   })
+        //   .catch(function (err) {
+        //   });
 
         axios
           .put("/api/profile/" + this.user_id + "/", postData)
           .then(function (res) {
             console.log("POST SUCCESS", res);
             alert("수정 완료되었습니다");
+            location.reload();
           })
           .catch(function (err) {
             console.log("POST FAIL", err);
@@ -140,15 +142,15 @@
       fetch_profile: function () {
         console.log("fetch_profile()");
         var user = this;
-        axios
-          .get("/api/user/")
-          .then(function (res) {
-            console.log("GET SUCCESS", res);
-            user.email = res.data[0].email;
-          })
-          .catch(function (err) {
-            console.log("GET FAIL", err);
-          });
+        // axios
+        //   .get("/api/user/")
+        //   .then(function (res) {
+        //     console.log("GET SUCCESS", res);
+        //     user.email = res.data[0].email;
+        //   })
+        //   .catch(function (err) {
+        //     console.log("GET FAIL", err);
+        //   });
         axios
           .get("/api/profile/")
           .then(function (res) {

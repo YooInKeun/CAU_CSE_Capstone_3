@@ -9,6 +9,9 @@ __pycache__/
 local_settings.py
 db.sqlite3
 media
+base.csv
+chromedriver.exe
+glowpick.py
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

@@ -15,6 +15,7 @@ docutils==0.15.2
 future==0.16.0
 idna==2.7
 jmespath==0.9.4
+jsonfield==2.0.2
 pathspec==0.5.9
 phonenumbers==8.10.21
 pycparser==2.19

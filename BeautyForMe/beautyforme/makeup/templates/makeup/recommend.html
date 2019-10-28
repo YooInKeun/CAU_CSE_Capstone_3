@@ -5,33 +5,39 @@
 {% block extra-style %}
 {% endblock extra-style %}
 
+{% block navbar%}
+{% include 'navbar.html' %}
+{% endblock %}
+
 {% block content %}
+<div class="container">
     <h2>화장법 추천 페이지</h2>
 
     <a href="{% url 'home' %}">
         <button type="button" class="btn btn-success">홈으로 가기</button>
     </a>
+</div>
 {% endblock content %}
 
 {% block footer %}
 {% endblock footer %}
 
 {% block extra-script %}
-    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-        axios.defaults.xsrfCookieName = 'csrftoken';
-        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-        var vm = new Vue({
-            delimiters: ['[[', ']]'],
-            el: '#app',
-            data: {
+    var vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
 
-            },
-            methods: {
+        },
+        methods: {
 
-            },
-        })
-    </script>
+        },
+    })
+</script>
 {% endblock extra-script %}

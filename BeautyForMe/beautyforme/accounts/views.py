@@ -4,9 +4,8 @@ from django.views.generic.edit import CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 
-from .forms import CreateUserForm
+from .forms import CreateUserForm, ProfileForm
 from django.urls import reverse_lazy
-
 
 class CreateUserView(CreateView):
     template_name = 'signup.html'
@@ -38,3 +37,4 @@ class ConfirmIsValidUserView(LoginView):
 
 class UserProfileView(TemplateView):
     template_name = 'profile.html'
+    

@@ -47,3 +47,47 @@ body {
 .logo-str{
     font-size: 24px;
 }
+
+.carousel-inner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    height: 600px;
+    background-image: cover;
+}
+
+.carousel-title .title {
+    position: absolute;
+    transform: translateY(-50%);
+    top: 260px;
+    left: 0;
+    font-size: 75px;
+    color:white;
+    width: 100%;
+    padding: 0 0;
+    text-align: center;
+    /* text-shadow: 0 0 2px black; */
+}
+
+.carousel-title .subtitle {
+    position: absolute;
+    transform: translateY(-50%);
+    top: 340px;
+    left: 0;
+    font-size: 40px;
+    color:white;
+    width: 100%;
+    padding: 0 0;
+    text-align: center;
+    /* text-shadow: 0 0 2px black; */
+}
+
+.carousel-item {
+    background-color:gray;
+    opacity: 1.0;
+}
+
+/* .image-cover {
+    background-color: gray;
+    opacity: 1;
+} */

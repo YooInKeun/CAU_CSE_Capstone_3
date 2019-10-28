@@ -9,15 +9,234 @@
 {% include 'navbar.html' %}
 {% endblock %}
 
+
 {% block content %}
-<div class="container" style="padding-top: 80px;">
-    <div class="home-window">
-        <h2 class="title">뷰티폴미 메인 페이지</h2>
+<div class="container d-flex justify-content-center">
+    <div class="image-slider m-2" v-if="sliderImg">
+        <transition-group name="fade" tag="div">
+            <div v-for="num in [currentImg]" :key="num">
+                <img class="slider-img" :src="sliderImg[num]" />
+            </div>
+        </transition-group>
+        <div class="slider-btns">
+            <div :class="[currentImg == findImg(value) ? 'slider-btn-active' : 'slider-btn']" v-for="value in sliderImg"
+                :key="value.image" @click="indexTo(findImg(value))"></div>
+        </div>
+        <div class="slider-direction-btn">
+            <div class="btn-prev" @click="prev" href="#">
+                <img src="{% static 'img/arrow-left.png' %}" />
+            </div>
+            <div class="btn-next" @click="next" href="#">
+                <img src="{% static 'img/arrow-right.png' %}" />
+            </div>
+        </div>
     </div>
 </div>
+
+<div class="container mt-5 mb-5 p-5">
+    <div class="row">
+        <h5 class="pl-3">HOT Makeup Video</h5>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div class="col-3">
+            <div class="card">
+                <img src="{% static 'img/main.jpeg' %}" width="100%" height="100%">
+                <div class="card-title pl-2 pr-2 pt-2">테일러스위프트 메이크업</div>
+                <div class="card-content  pl-2 pr-2 mb-2 text-right">PONY</div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <img src="{% static 'img/main.jpeg' %}" width="100%" height="100%">
+                <div class="card-title pl-2 pr-2 pt-2">테일러스위프트 메이크업</div>
+                <div class="card-content  pl-2 pr-2 mb-2 text-right">PONY</div>
+            </div>
+        </div>
+        <div class=" col-3">
+            <div class="card">
+                <img src="{% static 'img/main.jpeg' %}" width="100%" height="100%">
+                <div class="card-title pl-2 pr-2 pt-2">테일러스위프트 메이크업</div>
+                <div class="card-content  pl-2 pr-2 mb-2 text-right">PONY</div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <img src="{% static 'img/main.jpeg' %}" width="100%" height="100%">
+                <div class="card-title pl-2 pr-2 pt-2">테일러스위프트 메이크업</div>
+                <div class="card-content  pl-2 pr-2 mb-2 text-right">PONY</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <h5 class="pl-3">HOT Post</h5>
+    </div>
+    <div class="row d-flex justify-content-center mb-5">
+        <div class="col-3">
+            <div class="card">
+                <img src="{% static 'img/Test.jpg' %}" width="100%" height="100%">
+                <div class="card-title pl-2 pr-2 pt-2">여자보다 이쁘게 화장하기</div>
+                <div class="card-content  pl-2 pr-2 mb-2 text-right">유인근</div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <img src="{% static 'img/Test.jpg' %}" width="100%" height="100%">
+                <div class="card-title pl-2 pr-2 pt-2">여자보다 이쁘게 화장하기</div>
+                <div class="card-content  pl-2 pr-2 mb-2 text-right">유인근</div>
+            </div>
+        </div>
+        <div class=" col-3">
+            <div class="card">
+                <img src="{% static 'img/Test.jpg' %}" width="100%" height="100%">
+                <div class="card-title pl-2 pr-2 pt-2">여자보다 이쁘게 화장하기</div>
+                <div class="card-content  pl-2 pr-2 mb-2 text-right">유인근</div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <img src="{% static 'img/Test.jpg' %}" width="100%" height="100%">
+                <div class="card-title pl-2 pr-2 pt-2">여자보다 이쁘게 화장하기</div>
+                <div class="card-content  pl-2 pr-2 mb-2 text-right">유인근</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    var user = new Vue({
+        el: ".image-slider",
+        data() {
+            return {
+                currentIndex: 0,
+                sliderImg: ["{% static 'img/pony.jpg' %}", "{% static 'img/ssin.jpg' %}", "{% static 'img/risabae.jpg' %}"]
+            };
+        },
+        computed: {
+            currentImg() {
+                return Math.abs(this.currentIndex) % (this.sliderImg.length);
+            },
+        },
+
+        methods: {
+            indexTo(index) {
+                this.currentIndex = index;
+            },
+            next() {
+                this.currentIndex += 1;
+            },
+            prev() {
+                this.currentIndex -= 1;
+            },
+            findImg(val) {
+                return this.sliderImg.indexOf(val);
+            },
+        },
+    });
+</script>
+
+<style lang="scss" scoped>
+    .image-slider {
+        position: fixed;
+        width: 1000px;
+        height: 562.5px;
+        overflow: hidden;
+        position: relative;
+    }
+
+
+    .image-slider .slider-img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .image-slider .slider-btns {
+        width: 100%;
+        display: flex;
+        position: absolute;
+        justify-content: center;
+        bottom: 30px;
+    }
+
+    .image-slider .slider-btns .slider-btn-active {
+        margin: 0 2px;
+        width: 10px;
+        height: 10px;
+        border-radius: 20px;
+        background-color: white;
+        opacity: 1;
+    }
+
+    .image-slider .slider-btns .slider-btn {
+        margin: 0 2px;
+        width: 10px;
+        height: 10px;
+        border-radius: 20px;
+        opacity: 0.5;
+        background-color: white;
+    }
+
+    .image-slider .slider-direction-btn {
+        width: 100%;
+        display: flex;
+        position: absolute;
+        top: 250px;
+    }
+
+    .image-slider .slider-direction-btn .btn-prev {
+        opacity: 0.5;
+        text-align: left;
+        width: 50%;
+        font-size: 30px;
+        color: white;
+        text-decoration: none;
+    }
+
+    .slider-direction-btn img {
+        margin-left: 5px;
+        width: 20px;
+        height: 40px;
+    }
+
+    .image-slider .slider-direction-btn .btn-next {
+        opacity: 0.5;
+        text-align: right;
+        width: 50%;
+        font-size: 30px;
+        color: white;
+        text-decoration: none;
+    }
+
+    .slider-direction-btn img {
+        margin-right: 5px;
+        width: 20px;
+        height: 40px;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: all 0.9s ease;
+        overflow: hidden;
+        visibility: visible;
+        position: absolute;
+        width: 100%;
+        opacity: 1;
+    }
+
+    .fade-enter,
+    .fade-leave-to {
+        visibility: hidden;
+        width: 100%;
+        opacity: 0;
+    }
+</style>
+
 {% endblock content %}
 
 {% block footer %}
+{% include 'footer.html' %}
 {% endblock footer %}
 
 {% block extra-script %}

@@ -3,6 +3,12 @@
 {% endblock %}
 
 {% block extra-style%}
+<style>
+  .input-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+</style>
 {% endblock %}
 
 
@@ -11,20 +17,50 @@
 {% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top:80px;">
-  <h1>유저 프로필</h1>
-  {{ user.username }}님의 프로필
-  <div id="app">
-    <div class="inputBox">
-      아이디:
-      <input id="user_id" type="text" value="{{ user.username }}" disabled /><br /><br />
-      닉네임:
-      <input class=" nickname" type="text" v-model.trim="nickname" /><br /><br />
-      주소:
-      <input class="address" type="text" v-model.trim="address" v-on:keyup.enter="update_profile()" /><br /><br />
-      <button v-on:click="update_profile()" class="btn btn-primary">
-        수정완료
-      </button>
+<div class="container">
+  <div id="app" class="d-flex justify-content-center">
+    <div class="inputBox w-50">
+      <input id="user_id" type="text" value="{{ user.pk }}" style="visibility:hidden;" disabled />
+
+      <h2 class="text-center m-5">{{ user.last_name }}<small>님의 프로필</span></h2>
+      <h4 class="input-title">이름</h4>
+      <div class="input-wrap">
+        <input class="name form-control mb-3" type="text" value="{{ user.last_name }}" disabled />
+      </div>
+      <h4 class="input-title">아이디</h4>
+      <div class="input-wrap">
+        <input class="username form-control mb-3" type="text" value="{{ user.username }}" disabled />
+      </div>
+      <h4 class="input-title">E-mail</h4>
+      <div class="input-wrap">
+        <input class="email form-control mb-3" type="text" value="{{ user.email }}" disabled />
+      </div>
+
+      <h4 class="input-title">닉네임</h4>
+      <div class="input-wrap">
+        <input class="nickname form-control mb-3" type="text" v-model.trim="nickname" />
+      </div>
+      <h4 class="input-title">전화번호</h4>
+      <div class="input-wrap">
+        <input class="phone form-control mb-3" type="text" v-model.trim="phone" />
+      </div>
+
+      <h4 class="input-title">우편번호</h4>
+      <div class="input-wrap d-flex">
+        <div class="zip-code-wrap w-50 mb-3" @click="searchAddress()">
+          <input type="text" v-model.trim="zip_code" class="input-text input-zip-code form-control" />
+        </div>
+        <button class="adrress-search-btn btn btn-primary w-50 mb-3 ml-1" @click="searchAddress()">주소검색</button>
+      </div>
+      <h4 class="input-title">주소</h4>
+      <div class="address-wrap">
+        <input type="text" v-model.trim="address" class="input-text input-address form-control mb-1" />
+      </div>
+      <div>
+        <input type="text" v-model.trim="address_detail" class="input-text input-address-detail  form-control mb-3"
+          placeholder="상세주소 입력" @focus="insertAddressInfo()" />
+      </div>
+      <button v-on:click="update_profile()" class="btn btn-primary w-100 mb-5">수정하기</button>
     </div>
   </div>
 </div>
@@ -33,6 +69,7 @@
 {% block extra-script %}
 <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
   axios.defaults.xsrfCookieName = "csrftoken";
   axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -52,6 +89,10 @@
       console.log("created()");
       this.user_id = document.getElementById("user_id").value;
       this.fetch_profile();
+    },
+    mounted() {
+      this.$el.querySelector(".input-zip-code").disabled = true;
+      this.$el.querySelector(".input-address").disabled = true;
     },
     methods: {
       update_profile: function () {
@@ -94,7 +135,39 @@
           .catch(function (err) {
             console.log("GET FAIL", err);
           });
-      }
+      },
+      searchAddress() {
+        new daum.Postcode({
+          oncomplete: function (data) {
+            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+            // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+            // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+            var addr = ""; // 주소 변수
+
+            //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+            if (data.userSelectedType === "R") {
+              // 사용자가 도로명 주소를 선택했을 경우
+              addr = data.roadAddress;
+            } else {
+              // 사용자가 지번 주소를 선택했을 경우(J)
+              addr = data.jibunAddress;
+            }
+
+            // 우편번호와 주소 정보를 해당 필드에 넣는다.
+            document.querySelector(".input-zip-code").value =
+              data.zonecode;
+            document.querySelector(".input-address").value = addr;
+            // 커서를 상세주소 필드로 이동한다.
+            document.querySelector(".input-address-detail").value = "";
+            document.querySelector(".input-address-detail").focus();
+          }
+        }).open();
+      },
+      insertAddressInfo() {
+        this.zip_code = this.$el.querySelector(".input-zip-code").value;
+        this.address = this.$el.querySelector(".input-address").value;
+      },
     }
   });
 </script>

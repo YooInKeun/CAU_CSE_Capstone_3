@@ -1,13 +1,14 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from .models import Profile
 
 class CreateUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:
         model = User
-        fields = ("username", "email", "password1", "password2")
+        fields = ("username", "password1", "password2", "email", "last_name")
 
     def save(self, commit=True):
         user = super(CreateUserForm, self).save(commit=False)
@@ -15,3 +16,8 @@ class CreateUserForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ("nickname", "phone", "zip_code", "address", "address_detail")

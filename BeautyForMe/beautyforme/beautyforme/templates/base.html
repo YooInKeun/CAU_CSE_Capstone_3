@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
 
     <meta charset="utf-8">
@@ -13,87 +14,30 @@
     <link rel="stylesheet" href="../../static/css/default.css?ver=0.8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+    <link rel="stylesheet" href="{% static 'css/hello_kiddie.css' %}">
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
     {% block extra-style %}{% endblock %}
 
 </head>
 
-<body style="padding-top:90px;">
+<body>
 
-<!-- Main Menu -->
-<nav class="navbar navbar-expand-lg navbar-light white fixed-top">
+    <!-- Main Menu -->
+    {% block navbar %}{% endblock %}
 
-    <a class="navbar-brand mx-5 mb-0 font-weight-bold" href="{% url 'home' %}">
-        <!-- <img class="logo-img" src="static/img/" width="150" height="45" alt="LOGO"></img> -->
-        (LOGO)<span class="logo-str">뷰티폴미</span>
-    </a>
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item dropdown mx-2 btn">
-                <a class="nav-link" href="{% url 'cosmetic:registered' %}">
-                    <span class="navbar-service">화장품 관리 및 등록</span>
-                </a>
-            </li>
-
-            <li class="nav-item dropdown mx-2 btn">
-                <a class="nav-link" href="{% url 'makeup:recommend' %}">
-                    <span class="navbar-service">메이크업 영상 추천</span>
-                </a>
-            </li>
-
-            <li class="nav-item dropdown mx-2 btn">
-                <a class="nav-link" href="{% url 'sns:index' %}">
-                    <span class="navbar-service">S N S</span>
-                </a>
-            </li>
-        </ul>
-
-        <div class="navbar-nav ml-3 mr-4">
-            {% if user.is_active %}
-                <div class="nav-item">
-                    <span class="username"><a href="{% url 'accounts:profile' %}">{{user.username}}</a>님 환영합니다!</span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </div>
-                <div class="nav-item">
-                    <i class="fas fa-user"></i>
-                </div>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="{% url 'accounts:logout' %}">로그아웃</a>
-            {% else %}
-                <a href="{%url 'accounts:login' %}">로그인</a>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="{% url 'accounts:signup' %}">회원가입</a>
-            {% endif %}
-
-            <!-- <div class="nav-item dropdown mx-1 btn btn-light">
-                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">관리자</a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a>
-                    <div class="dropdown-divider"></div>
-                </div>
-            </div> -->
-        </div>
-    </div>
-</nav>
-
-<div class="container">
     {% block content %}{% endblock %}
-</div>
 
-{% block footer %}{% endblock %}
+    {% block footer %}{% endblock %}
 
-<!-- Bootstrap core JavaScript -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-{% block extra-script %}{% endblock %}
+    {% block extra-script %}{% endblock %}
 
 </body>
 

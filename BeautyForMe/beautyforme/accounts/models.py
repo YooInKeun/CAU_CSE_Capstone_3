@@ -8,7 +8,7 @@ from django.dispatch import receiver
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nickname = models.CharField(max_length=10, blank=True, default="")
-    phone = models.CharField(max_length=10, blank=True, default="")
+    phone = models.CharField(max_length=15, blank=True, default="")
     # phone = PhoneNumberField(blank=True, default="")
     zip_code = models.CharField(max_length=10, blank=True, default="")
     address = models.CharField(max_length=20, blank=True, default="")

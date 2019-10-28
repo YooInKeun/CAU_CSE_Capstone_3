@@ -29,7 +29,11 @@
 {% endblock %}
 
 {% block content %}
+<<<<<<< HEAD
 <div class="container">
+=======
+<div class="container mt-5">
+>>>>>>> 54a70b63858514a108bcbb238f83666ef3f6f759
     <div class="row d-flex justify-content-center align-content-center">
         <div class="signup-content col-10 col-md-6 col-lg-5 px-5 py-4">
             <div class="row d-flex justify-content-center">
@@ -77,7 +81,11 @@
                 <p>회원가입 없이</p>
             </div>
             <div class="row  d-flex justify-content-center">
+<<<<<<< HEAD
                 <a href="{% url 'home' %}">둘러보기</a>
+=======
+                <a href="{% url 'makeup:recommend' %}">둘러보기</a>
+>>>>>>> 54a70b63858514a108bcbb238f83666ef3f6f759
             </div>
         </div>
     </div>
@@ -87,10 +95,21 @@
     const usernameInput = document.querySelector("#id_username");
     const password1Input = document.querySelector("#id_password1");
     const password2Input = document.querySelector("#id_password2");
+<<<<<<< HEAD
     const lastNameInput = document.querySelector("#id_last_name");
     const emailInput = document.querySelector("#id_email");
 
     const inputArray = [usernameInput, password1Input, password2Input, lastNameInput, emailInput];
+=======
+    const nicknameInput = document.querySelector("#id_nickname");
+    const emailInput = document.querySelector("#id_email");
+    const phoneInput = document.querySelector("#id_phone");
+    const zipCodeInput = document.querySelector("#id_zip_code");
+    const addressInput = document.querySelector("#id_address");
+    const addressDetailInput = document.querySelector("#id_address_detail");
+
+    const inputArray = [usernameInput, password1Input, password2Input, nicknameInput, emailInput, phoneInput, zipCodeInput, addressInput, addressDetailInput];
+>>>>>>> 54a70b63858514a108bcbb238f83666ef3f6f759
 
     for (var index in inputArray) {
         if (inputArray[index] != null) {
@@ -103,7 +122,11 @@
     password1Input.placeholder = "Password";
     password2Input.placeholder = "Password Confirmation";
     emailInput.placeholder = "Email";
+<<<<<<< HEAD
     lastNameInput.placeholder = "Name";
+=======
+    nicknameInput.placeholder = "Nick Name";
+>>>>>>> 54a70b63858514a108bcbb238f83666ef3f6f759
 </script>
 {% endblock %}
 

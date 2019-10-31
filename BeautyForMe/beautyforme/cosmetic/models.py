@@ -1,15 +1,45 @@
 from django.db import models
 from jsonfield import JSONField
+from django.contrib.auth.models import User
 
-class Cosmetic(models.Model):
+# 브랜드
+class Brand(models.Model):
+    brand_name = models.CharField(max_length=100, default="")
+
+# 대분류
+class Big_Category(models.Model):
     big_category = models.CharField(max_length=100, default="")
-    small_category = models.CharField(max_length=100, default="")
-    cosmetic_name = models.CharField(max_length=30, default="")
-    brand_name = models.CharField(max_length=30, default="")
-    image_link = models.CharField(max_length=100, default="")
-    option_names = JSONField(default="")
-    tag_names = JSONField(default="")
 
-    def __str__(self):
-        full_name = '[' + self.brand_name + '] '+ self.cosmetic_name
-        return full_name
+# 소분류
+class Small_Category(models.Model):
+    big_category = models.ForeignKey(Big_Category, on_delete=models.CASCADE)
+    small_category = models.CharField(max_length=100, default="")
+
+# 제품
+class Product(models.Model):
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=100, default="")
+    tag_contents = JSONField(default="")
+    category = models.ForeignKey(Small_Category, on_delete=models.CASCADE)
+
+# 화장품
+class Cosmetic(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, default="")
+    type_name = models.CharField(max_length=100, default="")
+    rgb_value = models.CharField(max_length=100, default="")
+    image_link = models.CharField(max_length=100, default="")
+    similar_cosmetics = JSONField(default="")
+
+# 유저 화장품
+class User_Cosmetic(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    cosmetic = models.ForeignKey(Cosmetic, on_delete=models.CASCADE)
+    expiration_date = models.DateTimeField(max_length=100, default="")
+    is_consent_alarm = models.BooleanField(default=True)
+    selected_similar_cosmetics = JSONField(default="")
+
+# 화장품별 중요도
+class Cosmetic_Importance(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Small_Category, on_delete=models.CASCADE)
+    importance = JSONField(default="")

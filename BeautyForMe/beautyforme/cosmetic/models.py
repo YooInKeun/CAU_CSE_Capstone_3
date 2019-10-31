@@ -15,11 +15,15 @@ class Small_Category(models.Model):
     big_category = models.ForeignKey(Big_Category, on_delete=models.CASCADE)
     small_category = models.CharField(max_length=100, default="")
 
+# 태그
+class Tag(models.Model):
+    tag_name = models.CharField(max_length=100, default="")
+
 # 제품
 class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     product_name = models.CharField(max_length=100, default="")
-    tag_contents = JSONField(default="")
+    tag_names = models.ManyToManyField("Tag")
     category = models.ForeignKey(Small_Category, on_delete=models.CASCADE)
 
 # 화장품

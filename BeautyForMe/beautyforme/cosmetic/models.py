@@ -28,6 +28,9 @@ class Small_Category(models.Model):
 class Tag(models.Model):
     tag_name = models.CharField(max_length=100, default="")
 
+    def __str__(self):
+        return self.tag_name
+        
 # 제품
 class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)

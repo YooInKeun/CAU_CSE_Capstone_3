@@ -1,4 +1,3 @@
-import requests
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "beautyforme.settings")
 import django

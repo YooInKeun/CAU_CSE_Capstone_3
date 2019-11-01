@@ -23,6 +23,5 @@ beautyforme/settings.py
 myvenv
 venv
 
-# DB insert files
-Sample Data
+# selenium file
 chromedriver.exe

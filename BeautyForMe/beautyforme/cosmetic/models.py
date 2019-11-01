@@ -26,17 +26,20 @@ class Small_Category(models.Model):
 
 # 태그
 class Tag(models.Model):
-    tag_name = models.CharField(max_length=100, default="")
+    tag_name = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return self.tag_name
-        
+
 # 제품
 class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     product_name = models.CharField(max_length=100, default="")
-    tag_names = models.ManyToManyField("Tag")
+    tag_names = models.ManyToManyField(Tag)
     category = models.ForeignKey(Small_Category, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '[' + str(self.brand) + '] ' + self.product_name
 
 # 화장품
 class Cosmetic(models.Model):

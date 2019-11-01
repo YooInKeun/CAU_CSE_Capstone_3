@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 # 브랜드
 class Brand(models.Model):
     brand_name = models.CharField(max_length=100, default="")
+    
+    def __str__(self):
+        return self.brand_name
 
 # 대분류
 class Big_Category(models.Model):

@@ -10,10 +10,16 @@ class Brand(models.Model):
 class Big_Category(models.Model):
     big_category = models.CharField(max_length=100, default="")
 
+    def __str__(self):
+        return self.big_category
+
 # 소분류
 class Small_Category(models.Model):
     big_category = models.ForeignKey(Big_Category, on_delete=models.CASCADE)
     small_category = models.CharField(max_length=100, default="")
+
+    def __str__(self):
+        return '[' + str(self.big_category) + '] ' + self.small_category
 
 # 태그
 class Tag(models.Model):

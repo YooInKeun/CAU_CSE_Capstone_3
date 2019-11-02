@@ -87,6 +87,7 @@ for url in urls:
     for i in range(len(product_additional_url)):
         product_color_names = []
         product_color_values = []
+        product_images = []
 
         product_url = 'https://www.esteelauder.co.kr' + product_additional_url[i]
         req = Request(product_url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -128,7 +129,19 @@ for url in urls:
             product_color_values.append("None")
 
         product_color_values = product_color_values[len(product_color_values)-len(product_color_names):]
+
+        product_image_tags = []
+        tmp_color_tags = soup.findAll("div", {"itemprop": "color"})
+        if tmp_color_tags:
+            for tag_content in tmp_color_tags:
+                str_tag_content = str(tag_content.findAll("meta", {"itemprop": "image"}))
+                contnet_pos = str_tag_content.find('content')
+                itemprop_pos = str_tag_content.find('itemprop')
+                str_tag_content = str_tag_content[contnet_pos+9:itemprop_pos-2]
+                product_image_tags.append(str_tag_content)
+        else:
+            product_image_tags.append("None")
     
         # 결과 확인
         for j in range(len(product_color_values)):
-            print(product_names[i] + '\n' + product_color_names[j] + '\n' + product_color_values[j] + '\n')
+            print(product_names[i] + '\n' + product_color_names[j] + '\n' + product_color_values[j] + '\n' + product_image_tags[j] + '\n')

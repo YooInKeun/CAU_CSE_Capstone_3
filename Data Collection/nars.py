@@ -81,6 +81,7 @@ for url in urls:
     product_names = []
     product_color_names = []
     product_color_values = []
+    product_images = []
 
     for i in range(len(foundation_info)):
         foundation_id.append(foundation_info[i]['id'])
@@ -110,8 +111,16 @@ for url in urls:
             str_tag_content = str(tag_content)
             sharp_pos = str_tag_content.find("#")
             product_color_values.append(str_tag_content[sharp_pos:sharp_pos+7])
+
+        product_image_tags = soup.findAll("a", {"class": "swatchanchor"})
+
+        for tag_content in product_image_tags:
+            str_tag_content = str(tag_content)
+            url_pos = str_tag_content.find("url")
+            title_pos = str_tag_content.find("title")
+            product_images.append(str_tag_content[url_pos+6:title_pos-3])
         
     # 결과 확인
     for i in range(len(product_names)):
         for j in range(len(product_color_names)):
-            print(product_names[i] + product_color_names[j] + '\n' + product_color_values[j])
+            print(product_names[i] + product_color_names[j] + '\n' + product_color_values[j] + '\n' + product_images[j])

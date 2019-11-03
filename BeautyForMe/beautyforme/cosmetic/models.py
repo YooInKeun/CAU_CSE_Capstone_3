@@ -37,7 +37,7 @@ class Product(models.Model):
     product_name = models.CharField(max_length=100, default="")
     tag_names = models.ManyToManyField(Tag)
     category = models.ForeignKey(Small_Category, on_delete=models.CASCADE)
-    image_link = models.CharField(max_length=100, default="")
+    image_link = models.CharField(max_length=1000, default="")
 
     def __str__(self):
         return '[' + str(self.brand) + '] ' + self.product_name
@@ -47,8 +47,11 @@ class Cosmetic(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, default="")
     type_name = models.CharField(max_length=100, default="")
     rgb_value = models.CharField(max_length=100, default="")
-    image_link = models.CharField(max_length=100, default="")
+    image_link = models.TextField(default="")
     similar_cosmetics = JSONField(default="")
+
+    def __str__(self):
+        return '[' + str(self.product.product_name) + '] ' + self.type_name
 
 # 유저 화장품
 class User_Cosmetic(models.Model):

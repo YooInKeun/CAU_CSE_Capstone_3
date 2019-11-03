@@ -37,6 +37,7 @@ class Product(models.Model):
     product_name = models.CharField(max_length=100, default="")
     tag_names = models.ManyToManyField(Tag)
     category = models.ForeignKey(Small_Category, on_delete=models.CASCADE)
+    image_link = models.CharField(max_length=100, default="")
 
     def __str__(self):
         return '[' + str(self.brand) + '] ' + self.product_name

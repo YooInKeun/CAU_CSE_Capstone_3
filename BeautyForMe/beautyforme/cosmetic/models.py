@@ -62,6 +62,7 @@ class User_Cosmetic(models.Model):
 class User_Interested_Cosmetic(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     cosmetic = models.ForeignKey(Cosmetic, on_delete=models.CASCADE)
+    selected_similar_cosmetics = JSONField(default="")
 
 # 화장품별 중요도
 class Cosmetic_Importance(models.Model):

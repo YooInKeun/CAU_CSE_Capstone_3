@@ -58,6 +58,11 @@ class User_Cosmetic(models.Model):
     is_consent_alarm = models.BooleanField(default=True)
     selected_similar_cosmetics = JSONField(default="")
 
+# 유저 관심 화장품
+class User_Interested_Cosmetic(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    cosmetic = models.ForeignKey(Cosmetic, on_delete=models.CASCADE)
+
 # 화장품별 중요도
 class Cosmetic_Importance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

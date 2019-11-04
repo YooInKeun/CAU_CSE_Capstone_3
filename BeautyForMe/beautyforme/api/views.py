@@ -10,7 +10,6 @@ from rest_framework import status
 from django.contrib.auth.models import User
 
 
-
 class UserInfo(APIView):
     # permission_classes = [IsAdminUser]
 
@@ -49,11 +48,26 @@ class CosmeticInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
-        try:
-            queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.data['query_cosmetic']))
-            serializer = CosmeticSerializer(queryset, many=True)
-            # queryset = Product.objects.filter(product_name__contains=request.data['query_cosmetic'])
-            # serializer = ProductSerializer(queryset, many=True)
-        except:
-            Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # try:
+        queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic']))
+        # queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.data['query_cosmetic']))
+        serializer = CosmeticSerializer(queryset, many=True)
+        # except:
+        #     Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data)
+
+
+class UserCosmeticInfo(APIView):
+    # permission_classes = [IsAdminUser]
+
+    def post(self, request, format=None):
+        serializer = UserCosmeticSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        queryset = User_Cosmetic.objects.filter(user=request.user)
+        serializer = UserCosmeticSerializer(queryset, many=True)
         return Response(serializer.data)

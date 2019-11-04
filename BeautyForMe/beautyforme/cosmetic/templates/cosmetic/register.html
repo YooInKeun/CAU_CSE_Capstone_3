@@ -274,12 +274,15 @@
                 this.$el.querySelector(".interested-cosmetic-tap").classList.add("selected-kind-tap");
             },
             searchCosmetic() {
-                var query_cosmetic = this.query_cosmetic;
+                var postData = {
+                    params: {
+                        query_cosmetic: this.query_cosmetic
+                    }
+                };
 
-                console.log(query_cosmetic);
+                console.log(postData);
 
-                axios
-                    .get("/api/cosmetic/", query_cosmetic)
+                axios.get('/api/cosmetic/', postData)
                     .then(function (res) {
                         console.log("GET SUCCESS", res);
                     })

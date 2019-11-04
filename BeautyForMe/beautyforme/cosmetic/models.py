@@ -58,7 +58,7 @@ class User_Cosmetic(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     cosmetic = models.ForeignKey(Cosmetic, on_delete=models.CASCADE)
     expiration_date = models.DateTimeField(max_length=100, default="")
-    # alarm_cycle = models.IntegerField(blank=True, null=True, default=0)
+    alarm_cycle = models.IntegerField(blank=True, null=True, default=0)
     is_consent_alarm = models.BooleanField(default=True)
     selected_similar_cosmetics = JSONField(default="")
 

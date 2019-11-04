@@ -50,3 +50,10 @@ class CosmeticSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cosmetic
         fields = '__all__'
+
+class UserCosmeticSerializer(serializers.ModelSerializer):
+    cosmetic = CosmeticSerializer()
+
+    class Meta:
+        model = User_Cosmetic
+        fields = '__all__'

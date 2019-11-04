@@ -3,6 +3,108 @@
 {% load staticfiles %}
 
 {% block extra-style %}
+<style>
+    body {
+        height: 98%;
+    }
+
+    .container-fluid * {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .search-wrapper {
+        width: 100%;
+        padding: 0 3%;
+    }
+
+    .search-input {
+        width: 98%;
+        margin-right: 2px;
+    }
+
+    .search-btn {
+        width: 100px;
+        height: 100%;
+        border-radius: 2px;
+        padding: 7px;
+    }
+
+    .img-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .img-wrapper img {
+        width: 300px;
+    }
+
+    .section-wrapper {
+        width: 90%;
+        padding: 5px;
+        border: 1px solid pink;
+        border-radius: 2px;
+    }
+
+    .section-title {
+        width: 200px;
+        text-align: center;
+        border-right: 1px solid lightgray;
+    }
+
+    .date-form {
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+
+    .form-in-box {
+        width: 72%;
+    }
+
+    .register-btn {
+        margin-right: 5%;
+    }
+
+    .kind-tap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 7px;
+        border: 1px solid pink;
+        border-radius: 5px 5px 0px 0px;
+    }
+
+    .selected-kind-tap {
+        border-bottom: 1px solid white;
+        font-weight: bold;
+    }
+
+    .rest-space {
+        border-bottom: 1px solid pink;
+    }
+
+    .kind-row {
+        height: 80vh;
+        border: 1px solid pink;
+        border-radius: 0px 0px 5px 5px;
+        border-top: 0px;
+    }
+
+    .main-row {
+        max-height: 100vh;
+    }
+
+    .left-col {
+        height: 80vh;
+        overflow-y: scroll;
+    }
+
+    .right-col {
+        float: left;
+        overflow-y: scroll;
+    }
+</style>
 {% endblock extra-style %}
 
 {% block navbar%}
@@ -10,33 +112,181 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>화장품 등록 페이지</h2>
+<div class="container-fluid" id="app">
+    <div class="row main-row">
+        <div class="col-8 mt-5 mb-5 pt-1">
+            <div class="search-wrapper d-flex justify-content-center align-items-center">
+                <input @keyup="searchCosmetic" v-model="query_cosmetic" placeholder="화장품을 검색해주세요"
+                    class="form-control search-input pl-2" />
+                <button class="search-btn btn btn-primary">검색</button>
+            </div>
+            <div class="container-fluid left-col">
+                <div class="row mt-4">
+                    <div class="col-6 d-flex justify-content-center align-items-center">
+                        <label class="mr-1">내 화장품 등록</label>
+                        <input type="radio" id="my_cosmetic" value="myCosmetic" v-model="kindSelect"
+                            class="kind-select" />
+                    </div>
+                    <div class="col-6 d-flex justify-content-center align-items-center">
+                        <label class="mr-1">관심 화장품 등록</label>
+                        <input type="radio" id="interested_cosmetic" value="interestedCosmetic" v-model="kindSelect"
+                            class="kind-select" />
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="img-wrapper">
+                        <img :src="[[ imageLink ]]" alt="{% static 'img/main.jpeg' %}">
+                    </div>
+                </div>
+                <div class="row mt-3 justify-content-center">
+                    <div class="section-wrapper d-flex align-items-center">
+                        <div class="section-title">제품명</div>
+                        <div class="section-value ml-2">[[ productName ]]</div>
+                    </div>
+                </div>
+                <div class="row mt-3 justify-content-center">
+                    <div class="section-wrapper d-flex align-items-center">
+                        <div class="section-title">브랜드</div>
+                        <div class="section-value ml-2">[[ brandName ]]</div>
+                    </div>
+                </div>
+                <div class="row mt-3 justify-content-center">
+                    <div class="section-wrapper d-flex align-items-center">
+                        <div class="section-title">색상/타입</div>
+                        <div class="section-value ml-2">[[ productName ]]</div>
+                    </div>
+                </div>
+                <div class="row mt-3 justify-content-center">
+                    <div class="section-wrapper d-flex align-items-center">
+                        <div class="section-title">카테고리</div>
+                        <div class="section-value ml-2">[[ categoryName ]]</div>
+                    </div>
+                </div>
+                <div class="row mt-3 justify-content-center">
+                    <div class="section-wrapper d-flex align-items-center">
+                        <div class="section-title">태그</div>
+                        <div class="section-value ml-2">[[ tagList ]]</div>
+                    </div>
+                </div>
 
-    <a href="{% url 'cosmetic:registered' %}">
-        <button type="button" class="btn btn-success">등록된 화장품 보러 가기</button>
-    </a>
+                <div v-if="kindSelect == 'myCosmetic'">
+                    <div class="row mt-5 d-flex justify-content-between align-items-center">
+                        <div class="col-6 d-flex justify-content-center align-items-center">
+                            <label class="mr-1">유통기한</label>
+                            <input type="radio" id="expiration" value="expiration" v-model="expirationSelect"
+                                class="kind-select" />
+                        </div>
+                        <div class="col-6 d-flex justify-content-center align-items-center">
+                            <label class="mr-1">사용기한</label>
+                            <input type="radio" id="useBy" value="useBy" v-model="expirationSelect"
+                                class="kind-select" />
+                        </div>
+                    </div>
+                    <div v-if="expirationSelect == 'expiration'" class="row mt-3 justify-content-center">
+                        <div class="section-wrapper d-flex align-items-center">
+                            <div class="section-title">유통기한</div>
+                            <input type="text" placeholder="YYYY-MM-DD" onfocus="(this.type='date')"
+                                class="form-in-box date-form form-control pl-2 pr-2 ml-2">
+                        </div>
+                    </div>
+                    <div v-else class="row mt-3 justify-content-center">
+                        <div class="section-wrapper d-flex align-items-center">
+                            <div class="section-title">사용기한</div>
+                            <input type="number" class="form-in-box form-control pl-2 pr-2 ml-2"
+                                placeholder="화장품의 사용기한을 개월 수로 입력해주세요.">
+                        </div>
+                        <div class="section-wrapper d-flex align-items-center mt-3">
+                            <div class="section-title">개봉일자</div>
+                            <input type="text" placeholder="YYYY-MM-DD" onfocus="(this.type='date')"
+                                class="form-in-box date-form form-control pl-2 pr-2 ml-2">
+                        </div>
+                    </div>
+                    <div class="row mt-3 d-flex justify-content-center align-items-center">
+                        <div class="section-wrapper d-flex align-items-center">
+                            <div class="section-title">알람 주기</div>
+                            <select v-model="alramPeriod" class="form-in-box form-control pl-2 pr-2 ml-2">
+                                <option disabled value="">알람 주기를 선택해주세요</option>
+                                <option value="no">알람 없음</option>
+                                <option value="week">일주일 전 알람</option>
+                                <option value="month">1달 전 알람</option>
+                                <option value="twoMonth">2달 전 알람</option>
+                                <option value="threeMonth">3달 전 알람</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3 justify-content-end">
+                    <button class="register-btn btn btn-primary p-2 pr-4 pl-4">등록하기</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 mt-5 mb-5 pt-1 pl-2 right-row">
+            <div class="row">
+                <div @click="showMyCosmetic()" class="col-4 my-cosmetic-tap kind-tap selected-kind-tap">
+                    내 화장품
+                </div>
+                <div @click="showInterestedCosmetic()" class="col-4 interested-cosmetic-tap kind-tap">
+                    관심 화장품
+                </div>
+                <div class="col-4 rest-space"></div>
+            </div>
+            <div class="row kind-row"></div>
+        </div>
+    </div>
 </div>
 {% endblock content %}
 
 {% block footer %}
+{% include 'footer.html' %}
 {% endblock footer %}
 
 {% block extra-script %}
-<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-    var vm = new Vue({
+    var register = new Vue({
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-
+            query_cosmetic: "",
+            productName: "가나다라마바사아",
+            brandName: "이니스프리",
+            categoryName: "립스틱",
+            expirationSelect: "expiration",
+            kindSelect: "myCosmetic",
+            alramPeriod: "",
+            tags: ["생기", "수분보습"],
+            imageLink: "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20171011/1507692535398.png"
+        },
+        computed: {
+            tagList() {
+                return this.tags.join(", ");
+            }
         },
         methods: {
+            showMyCosmetic() {
+                this.$el.querySelector(".my-cosmetic-tap").classList.add("selected-kind-tap");
+                this.$el.querySelector(".interested-cosmetic-tap").classList.remove("selected-kind-tap");
+            },
+            showInterestedCosmetic() {
+                this.$el.querySelector(".my-cosmetic-tap").classList.remove("selected-kind-tap");
+                this.$el.querySelector(".interested-cosmetic-tap").classList.add("selected-kind-tap");
+            },
+            searchCosmetic() {
+                var query_cosmetic = this.query_cosmetic;
 
+                console.log(query_cosmetic);
+
+                axios
+                    .get("/api/cosmetic/", query_cosmetic)
+                    .then(function (res) {
+                        console.log("GET SUCCESS", res);
+                    })
+                    .catch(function (err) {
+                        console.log("GET FAIL", err);
+                    });
+            },
         },
     })
 </script>

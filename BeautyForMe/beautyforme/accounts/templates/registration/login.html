@@ -1,4 +1,9 @@
-{% extends 'base.html' %} {% block title %}{% endblock %} {% block extra-style %}
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% block extra-style %}
 <style>
     .form-invalid {
         color: red;
@@ -12,7 +17,6 @@
         background-position: center top;
         background-attachment: fixed;
         height: 100vh;
-        /* padding-top: 90px; */
         align-items: center;
         display: flex;
     }
@@ -22,49 +26,54 @@
         box-shadow: 0 0 10px 5px pink;
     }
 </style>
-{% endblock %} {% block content %}
+{% endblock %}
+
+{% block content %}
 <div class="container">
-        <div class="row d-flex justify-content-center align-content-center">
-            <div class="login-content col-md-8 col-lg-5 px-5 py-4">
-                <div class="row d-flex justify-content-center">
-                    <h1><a href="">Beauty For Me</a></h1>
-                </div>
-                <div class="row d-flex justify-content-center">
-                    <p>스타 유튜버들의 화장법을 공유하세요!</p>
-                </div>
+    <div class="row d-flex justify-content-center align-content-center">
+        <div class="login-content col-md-8 col-lg-5 px-5 py-4">
+            <div class="row d-flex justify-content-center">
+                <h1><a href="">Beauty For Me</a></h1>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <p>스타 유튜버들의 화장법을 공유하세요!</p>
+            </div>
 
-                <div class="content row d-flex justify-content-center">
-                    <form action="{% url 'accounts:login' %}" method="post" class="w-100 p-1">
-                        {% csrf_token %}
-                        <span class="form-invalid">{{ form_invalid_message }}</span>
+            <div class="content row d-flex justify-content-center">
+                <form action="{% url 'accounts:login' %}" method="post" class="w-100 p-1">
+                    {% csrf_token %}
+                    <span class="form-invalid">{{ form_invalid_message }}</span>
 
-                        <input type="text" name="{{ form.username.html_name }}" class="form-control mb-2" autofocus
-                            required id="{{ form.username.id_for_label }}" placeholder="ID" maxlength="15" />
-                        <input type="password" name="{{ form.password.html_name }}" class="form-control mb-2" required
-                            id="{{ form.password.id_for_label }}" placeholder="Password" maxlength="120" />
+                    <input type="text" name="{{ form.username.html_name }}" class="form-control mb-2" autofocus required
+                        id="{{ form.username.id_for_label }}" placeholder="ID" maxlength="15" />
+                    <input type="password" name="{{ form.password.html_name }}" class="form-control mb-2" required
+                        id="{{ form.password.id_for_label }}" placeholder="Password" maxlength="120" />
 
-                        <button type="submit" class="btn btn-outline-primary w-100">
-                            로그인
-                        </button>
-                    </form>
-                </div>
-                <hr />
-                <div class="row d-flex justify-content-center">
-                    <p>계정이 없으신가요?</p>
-                </div>
-                <div class="row d-flex justify-content-center">
-                    <button type="submit" class="btn btn-outline-primary w-100 m-1">
-                        <a href="{% url 'accounts:signup' %}">회원가입</a>
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        로그인
                     </button>
-                </div>
-                <hr />
-                <div class="row d-flex justify-content-center">
-                    <p>회원가입 없이</p>
-                </div>
-                <div class="row d-flex justify-content-center">
-                    <a href="{% url 'home' %}">둘러보기</a>
-                </div>
+                </form>
+            </div>
+            <hr />
+            <div class="row d-flex justify-content-center">
+                <p>계정이 없으신가요?</p>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <button type="submit" class="btn btn-outline-primary w-100 m-1">
+                    <a href="{% url 'accounts:signup' %}">회원가입</a>
+                </button>
+            </div>
+            <hr />
+            <div class="row d-flex justify-content-center">
+                <p>회원가입 없이</p>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <a href="{% url 'home' %}">둘러보기</a>
             </div>
         </div>
     </div>
-    {% endblock %} {% block extra-script %} {% endblock %}
+</div>
+{% endblock %}
+
+{% block extra-script %}
+{% endblock %}

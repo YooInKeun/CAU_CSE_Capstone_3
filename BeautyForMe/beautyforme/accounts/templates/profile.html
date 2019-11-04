@@ -35,7 +35,7 @@
       </div>
       <h4 class="input-title">E-mail</h4>
       <div class="input-wrap">
-        <input class="email form-control mb-3" type="text"  v-model.trim="email"/>
+        <input class="email form-control mb-3" type="text" v-model.trim="email" />
         <!-- <input class="email form-control mb-3" type="text"  v-model.trim= "email" disabled/> -->
       </div>
 
@@ -70,8 +70,6 @@
 {% endblock %}
 
 {% block extra-script %}
-<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
   axios.defaults.xsrfCookieName = "csrftoken";

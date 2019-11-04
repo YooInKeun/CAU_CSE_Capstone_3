@@ -39,3 +39,16 @@ if __name__=='__main__':
                         product.tag_names.add(Tag.objects.get(tag_name=data[i+3][j]))
                 except:
                     print("tag pass")
+
+        # for i in range(0, len(data), 6):
+        #     try:
+        #         product = Product.objects.get(product_name=data[i+1][0])
+        #         # product.save()
+        #         for j in range(len(data[i])):
+        #              #stripped_tag_name = data[i+3][j].strip()
+        #             product.tag_names.add(Tag.objects.get(tag_name=stripped_tag_name))
+        #             # print(product.product_name)
+        #         # print(product.tag_names.all())print(product.tag_names.all())
+        #             # print('\n')
+        #     except:
+        #         print("tag insert error")

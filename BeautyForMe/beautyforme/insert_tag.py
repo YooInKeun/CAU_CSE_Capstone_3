@@ -6,7 +6,7 @@ from cosmetic.models import *
 import csv
 
 if __name__=='__main__':
-    with open('Sample Data/(전체) 기초.csv') as csvDataFile:
+    with open('db_insert_data/All Data/베이스.csv') as csvDataFile:
         csvReader = csv.reader(csvDataFile)
         data=list(csv.reader(csvDataFile))
 

@@ -2,6 +2,7 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 import json
 import re
+from urllib import parse
 
 urls = []
 
@@ -93,6 +94,7 @@ for url in urls:
     for i in range(len(product_additional_url)):
         product_color_names = []
         product_color_values = []
+        product_images = []
 
         product_url = 'https://www.bobbibrown.co.kr' + product_additional_url[i]
         req = Request(product_url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -121,6 +123,23 @@ for url in urls:
         elif not product_color_value_tags:
             product_color_values.append("None")
 
+        for product_color_name in product_color_names:
+            try:
+                product_color_name = parse.quote(product_color_name)
+                product_url = 'https://www.bobbibrown.co.kr' + product_additional_url[i] + '#/shade' + '/' + product_color_name
+                req = Request(product_url, headers={'User-Agent': 'Mozilla/5.0'})
+                main_html = urlopen(req).read()
+                soup = BeautifulSoup(main_html, "html.parser")
+                product_image = str(soup.find("img", {"class": "product-full-image__photo--thumb"}))
+                src_pos = product_image.find('src')
+                jpg_pos = product_image.find('jpg')
+                product_image = product_image[src_pos+5:jpg_pos+3]
+                product_images.append('https://www.bobbibrown.co.kr' + product_image)
+                # print(product_url)
+                # print(product_images)
+            except:
+                product_images.append("None")
+
         # 결과 확인
         for j in range(len(product_color_values)):
-            print(product_names[i] + '\n' + product_color_names[j] + '\n' + product_color_values[j] + '\n')
+            print(product_names[i] + '\n' + product_color_names[j] + '\n' + product_color_values[j] + '\n' + product_images[j] + '\n')

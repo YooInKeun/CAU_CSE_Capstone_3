@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 # 브랜드
 class Brand(models.Model):
     brand_name = models.CharField(max_length=100, default="")
-    
+
     def __str__(self):
         return self.brand_name
 
@@ -27,7 +27,7 @@ class Small_Category(models.Model):
 # 태그
 class Tag(models.Model):
     tag_name = models.CharField(max_length=100, blank=True)
-
+    
     def __str__(self):
         return self.tag_name
 
@@ -35,7 +35,7 @@ class Tag(models.Model):
 class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     product_name = models.CharField(max_length=100, default="")
-    tag_names = models.ManyToManyField(Tag)
+    tag_names = models.ManyToManyField(Tag, blank=True)
     category = models.ForeignKey(Small_Category, on_delete=models.CASCADE)
     image_link = models.CharField(max_length=1000, default="")
 
@@ -44,7 +44,7 @@ class Product(models.Model):
 
 # 화장품
 class Cosmetic(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, default="")
+    product = models.ForeignKey(Product, related_name='cosmetics', on_delete=models.CASCADE, default="")
     type_name = models.CharField(max_length=100, default="")
     rgb_value = models.CharField(max_length=100, default="")
     image_link = models.TextField(default="")

@@ -20,7 +20,7 @@
 
     .search-input {
         width: 98%;
-        margin-right: 2px;
+        margin-right: 4px;
     }
 
     .search-btn {
@@ -60,10 +60,30 @@
 
     .form-in-box {
         width: 72%;
+        border: 0;
     }
 
-    .register-btn {
+    .register-form {
         margin-right: 5%;
+    }
+
+    .search-result-window {
+        position: absolute;
+        top: 50px;
+        margin: 0 3%;
+        padding: 0 3%;
+        background-color: white;
+        border: 1px solid pink;
+        z-index: 1000;
+    }
+
+    .search-img {
+        width: 15%;
+    }
+
+    .search_result-title {
+        width: 100px;
+        font-size: 13px;
     }
 
     .kind-tap {
@@ -113,12 +133,36 @@
 
 {% block content %}
 <div class="container-fluid" id="app">
+
     <div class="row main-row">
         <div class="col-8 mt-5 mb-5 pt-1">
             <div class="search-wrapper d-flex justify-content-center align-items-center">
-                <input @keyup="searchCosmetic" v-model="query_cosmetic" placeholder="화장품을 검색해주세요"
+                <input @keydown="searchCosmetic" v-model="query_cosmetic" placeholder="화장품을 검색해주세요"
                     class="form-control search-input pl-2" />
                 <button class="search-btn btn btn-primary">검색</button>
+            </div>
+            <div v-if="query_cosmetic" class="search-result-window">
+                <div v-for="i in 4" :key="searchResults[i].id" @click="selectCosmetic(searchResults[i])">
+                    <div class="d-flex align-items-center">
+                        <img :src="[[ searchResults[i].image_link ]]" alt="{% static 'img/main.jpeg' %}"
+                            class="search-img">
+                        <div class="search-result-wrapper">
+                            <div class="search-result-info d-flex align-items-center mb-1">
+                                <div class="search_result-title">브랜드</div>
+                                <div>[[ searchResults[i].brand_name ]]</div>
+                            </div>
+                            <div class="search-result-info d-flex align-items-center mb-1">
+                                <div class="search_result-title">제품명</div>
+                                <div>[[ searchResults[i].product_name ]]</div>
+                            </div>
+                            <div class="search-result-info d-flex align-items-center">
+                                <div class="search_result-title">색상/타입</div>
+                                <div>[[ searchResults[i].type_name ]]</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
             </div>
             <div class="container-fluid left-col">
                 <div class="row mt-4">
@@ -133,12 +177,12 @@
                             class="kind-select" />
                     </div>
                 </div>
-                <div class="row mt-4">
+                <div v-if="query_cosmetic" class="row mt-4">
                     <div class="img-wrapper">
-                        <img :src="[[ imageLink ]]" alt="{% static 'img/main.jpeg' %}">
+                        <img :src="[[ imageLink ]]" alt="화장품을 검색해주세요" class="text-center">
                     </div>
                 </div>
-                <div class="row mt-3 justify-content-center">
+                <div class=" row mt-4 justify-content-center">
                     <div class="section-wrapper d-flex align-items-center">
                         <div class="section-title">제품명</div>
                         <div class="section-value ml-2">[[ productName ]]</div>
@@ -153,7 +197,7 @@
                 <div class="row mt-3 justify-content-center">
                     <div class="section-wrapper d-flex align-items-center">
                         <div class="section-title">색상/타입</div>
-                        <div class="section-value ml-2">[[ productName ]]</div>
+                        <div class="section-value ml-2">[[ typeName ]]</div>
                     </div>
                 </div>
                 <div class="row mt-3 justify-content-center">
@@ -173,50 +217,63 @@
                     <div class="row mt-5 d-flex justify-content-between align-items-center">
                         <div class="col-6 d-flex justify-content-center align-items-center">
                             <label class="mr-1">유통기한</label>
-                            <input type="radio" id="expiration" value="expiration" v-model="expirationSelect"
-                                class="kind-select" />
+                            <input @click="changeDateSelect" type="radio" id="expiration" value="expiration"
+                                v-model="dateSelect" class="kind-select" />
                         </div>
                         <div class="col-6 d-flex justify-content-center align-items-center">
                             <label class="mr-1">사용기한</label>
-                            <input type="radio" id="useBy" value="useBy" v-model="expirationSelect"
+                            <input @click="changeDateSelect" type="radio" id="useBy" value="useBy" v-model="dateSelect"
                                 class="kind-select" />
                         </div>
                     </div>
-                    <div v-if="expirationSelect == 'expiration'" class="row mt-3 justify-content-center">
+                    <div v-if="dateSelect == 'expiration'" class="row mt-3 justify-content-center">
                         <div class="section-wrapper d-flex align-items-center">
                             <div class="section-title">유통기한</div>
-                            <input type="text" placeholder="YYYY-MM-DD" onfocus="(this.type='date')"
-                                class="form-in-box date-form form-control pl-2 pr-2 ml-2">
+                            <input type="text" placeholder="YYYY-MM-DD" v-model="expirationDate"
+                                onfocus="(this.type='date')" class="form-in-box date-form form-control pl-2 pr-2 ml-2">
                         </div>
                     </div>
                     <div v-else class="row mt-3 justify-content-center">
                         <div class="section-wrapper d-flex align-items-center">
                             <div class="section-title">사용기한</div>
-                            <input type="number" class="form-in-box form-control pl-2 pr-2 ml-2"
+                            <input type="number" v-model="monthValue" class="form-in-box form-control pl-2 pr-2 ml-2"
                                 placeholder="화장품의 사용기한을 개월 수로 입력해주세요.">
                         </div>
                         <div class="section-wrapper d-flex align-items-center mt-3">
                             <div class="section-title">개봉일자</div>
-                            <input type="text" placeholder="YYYY-MM-DD" onfocus="(this.type='date')"
+                            <input type="text" placeholder="YYYY-MM-DD" v-model="useByDate" onfocus="(this.type='date')"
                                 class="form-in-box date-form form-control pl-2 pr-2 ml-2">
                         </div>
                     </div>
                     <div class="row mt-3 d-flex justify-content-center align-items-center">
                         <div class="section-wrapper d-flex align-items-center">
                             <div class="section-title">알람 주기</div>
-                            <select v-model="alramPeriod" class="form-in-box form-control pl-2 pr-2 ml-2">
+                            <select v-model="alarmPeriod" class="form-in-box form-control pl-2 pr-2 ml-2">
                                 <option disabled value="">알람 주기를 선택해주세요</option>
-                                <option value="no">알람 없음</option>
-                                <option value="week">일주일 전 알람</option>
-                                <option value="month">1달 전 알람</option>
-                                <option value="twoMonth">2달 전 알람</option>
-                                <option value="threeMonth">3달 전 알람</option>
+                                <option value="0">알람 없음</option>
+                                <option value="7">일주일 전 알람</option>
+                                <option value="30">1달 전 알람</option>
+                                <option value="60">2달 전 알람</option>
+                                <option value="90">3달 전 알람</option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <div class="row mt-3 justify-content-end">
-                    <button class="register-btn btn btn-primary p-2 pr-4 pl-4">등록하기</button>
+                <div class="row justify-content-end">
+                    <form v-if="kindSelect == 'myCosmetic'" method="post" action="{% url 'user:cosmetic' %}"
+                        class="register-form mt-3 pb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="cosmetic_id" v-model="cosmeticID" />
+                        <input type="hidden" name="expiration_data" v-model="expirationData" />
+                        <input type="hidden" name="alarm_cycle" v-model="alarmCycle" />
+                        <input type="hidden" name="is_consent_alarm" v-model="isConsentAlarm" />
+                        <button @click="submitCosmetic" class="btn btn-primary p-2 pr-4 pl-4">등록하기</button>
+                    </form>
+                    <form v-else method="post" action="" class="register-form mt-3 pb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="cosmetic_id" v-model="cosmeticID" />
+                        <button @click="submitCosmetic" class="btn btn-primary p-2 pr-4 pl-4">등록하기</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -230,7 +287,31 @@
                 </div>
                 <div class="col-4 rest-space"></div>
             </div>
-            <div class="row kind-row"></div>
+            <div class="row kind-row">
+                <div class="p-2">
+                    <div v-for="i in 4" :key="searchResults[i].id" @click="selectCosmetic(searchResults[i])">
+                        <div class="d-flex align-items-center">
+                            <img :src="[[ searchResults[i].image_link ]]" alt="{% static 'img/main.jpeg' %}"
+                                class="search-img">
+                            <div class="search-result-wrapper">
+                                <div class="search-result-info d-flex align-items-center mb-1">
+                                    <div class="search_result-title">브랜드</div>
+                                    <div>[[ searchResults[i].brand_name ]]</div>
+                                </div>
+                                <div class="search-result-info d-flex align-items-center mb-1">
+                                    <div class="search_result-title">제품명</div>
+                                    <div>[[ searchResults[i].product_name ]]</div>
+                                </div>
+                                <div class="search-result-info d-flex align-items-center">
+                                    <div class="search_result-title">색상/타입</div>
+                                    <div>[[ searchResults[i].type_name ]]</div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -248,23 +329,65 @@
     var register = new Vue({
         delimiters: ['[[', ']]'],
         el: '#app',
-        data: {
-            query_cosmetic: "",
-            productName: "가나다라마바사아",
-            brandName: "이니스프리",
-            categoryName: "립스틱",
-            expirationSelect: "expiration",
-            kindSelect: "myCosmetic",
-            alramPeriod: "",
-            tags: ["생기", "수분보습"],
-            imageLink: "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20171011/1507692535398.png"
+        data() {
+            return {
+                query_cosmetic: "",
+                cosmeticID: "",
+                productName: "",
+                brandName: "",
+                categoryName: "",
+                typeName: "",
+                tags: [],
+                imageLink: "",
+                expirationDate: "",
+                useByDate: "",
+                monthValue: "",
+                alarmPeriod: "",
+                dateSelect: "expiration",
+                kindSelect: "myCosmetic",
+                searchResults: []
+            }
         },
         computed: {
             tagList() {
                 return this.tags.join(", ");
+            },
+            isConsentAlarm() {
+                if (this.alarmPeriod > 0)
+                    return true;
+                else
+                    return false;
+            },
+            expirationData() {
+                if (this.dateSelect == "expiration")
+                    return this.expirationDate
+                else {
+                    var year, month;
+                    const [splitedYear, splitedMonth, splitedDay] = this.useByDate.split('-').map(item => parseInt(item));
+
+                    month = parseInt((parseInt(this.monthValue) + splitedMonth) % 12);
+                    year = parseInt((parseInt(this.monthValue) + splitedMonth) / 12) + splitedYear;
+
+                    const resultDate = `${year}-${month}-${splitedDay}`;
+
+                    return resultDate;
+                }
+            },
+            alarmCycle() {
+                return parseInt(this.alarmPeriod);
             }
         },
         methods: {
+            selectCosmetic(searchResult) {
+                this.cosmeticID = searchResult.id;
+                this.productName = searchResult.product_name;
+                this.brandName = searchResult.brand_name;
+                this.categoryName = searchResult.small_category;
+                this.tags = searchResult.tag_names;
+                this.imageLink = searchResult.image_link;
+                this.typeName = searchResult.type_name;
+                this.query_cosmetic = "";
+            },
             showMyCosmetic() {
                 this.$el.querySelector(".my-cosmetic-tap").classList.add("selected-kind-tap");
                 this.$el.querySelector(".interested-cosmetic-tap").classList.remove("selected-kind-tap");
@@ -272,6 +395,31 @@
             showInterestedCosmetic() {
                 this.$el.querySelector(".my-cosmetic-tap").classList.remove("selected-kind-tap");
                 this.$el.querySelector(".interested-cosmetic-tap").classList.add("selected-kind-tap");
+            },
+            changeDateSelect() {
+                this.expirationDate = ""
+                this.useByDate = ""
+                this.alarmPeriod = ""
+            },
+            submitCosmetic() {
+                if (this.kindSelect == "myCosmetic") {
+                    if (this.cosmeticID && this.expirationData && this.alarmCycle >= 0) {
+                        console.log("폼 진행");
+                    }
+                    else {
+                        event.preventDefault()
+                        console.log("입력사항을 확인해주세요");
+                    }
+                }
+                else {
+                    if (this.cosmeticID) {
+                        console.log("폼 진행");
+                    }
+                    else {
+                        event.preventDefault()
+                        console.log("입력사항을 확인해주세요");
+                    }
+                }
             },
             searchCosmetic() {
                 var postData = {
@@ -285,12 +433,222 @@
                 axios.get('/api/cosmetic/', postData)
                     .then(function (res) {
                         console.log("GET SUCCESS", res);
+                        this.searchResults = [];
+
+                        for (var i in res.data) {
+                            var data = res.data[i];
+                            var imageLink;
+
+                            if (data.image_link)
+                                imageLink = data.image_link;
+                            else
+                                imageLink = data.product.image_link;
+
+                            var tagNames = [];
+                            for (var tag in data.product.tag_names)
+                                tagNames.push(tag.tag_name);
+
+                            var result = {
+                                id: data.id,
+                                brand_name: data.product.brand.brand_name,
+                                small_category: data.product.category.small_category,
+                                product_name: data.product.data.product_name,
+                                type_name: data.type_name,
+                                image_link: imageLink,
+                                tag_names: tagNames
+                            }
+
+                            this.searchResults.push(result);
+                        }
                     })
                     .catch(function (err) {
                         console.log("GET FAIL", err);
                     });
             },
         },
+        created() {
+            var test = [
+                {
+                    "id": 1658,
+                    "product": {
+                        "id": 36234,
+                        "brand": {
+                            "id": 17717,
+                            "brand_name": "가네보"
+                        },
+                        "category": {
+                            "id": 21,
+                            "big_category": {
+                                "id": 13,
+                                "big_category": "색조"
+                            },
+                            "small_category": "립스틱"
+                        },
+                        "tag_names": [
+                            {
+                                "id": 1,
+                                "tag_name": "보습"
+                            }
+                        ],
+                        "product_name": "센사이 더 립스틱",
+                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg"
+                    },
+                    "type_name": " 06",
+                    "rgb_value": "None",
+                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg",
+                    "similar_cosmetics": ""
+                },
+                {
+                    "id": 3341,
+                    "product": {
+                        "id": 36536,
+                        "brand": {
+                            "id": 15345,
+                            "brand_name": "네이처리퍼블릭"
+                        },
+                        "category": {
+                            "id": 21,
+                            "big_category": {
+                                "id": 13,
+                                "big_category": "색조"
+                            },
+                            "small_category": "립스틱"
+                        },
+                        "tag_names": [
+                            {
+                                "id": 1,
+                                "tag_name": "보습"
+                            },
+                            {
+                                "id": 82,
+                                "tag_name": "매트"
+                            }
+                        ],
+                        "product_name": "크리미 립스틱",
+                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg"
+                    },
+                    "type_name": " 코랄핑크",
+                    "rgb_value": "None",
+                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg",
+                    "similar_cosmetics": ""
+                },
+                {
+                    "id": 9536,
+                    "product": {
+                        "id": 38131,
+                        "brand": {
+                            "id": 15779,
+                            "brand_name": "로레알파리"
+                        },
+                        "category": {
+                            "id": 21,
+                            "big_category": {
+                                "id": 13,
+                                "big_category": "색조"
+                            },
+                            "small_category": "립스틱"
+                        },
+                        "tag_names": [
+                            {
+                                "id": 1,
+                                "tag_name": "보습"
+                            }
+                        ],
+                        "product_name": "루즈 카레스 립스틱",
+                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg"
+                    },
+                    "type_name": " #06 Aphrodite scarlet",
+                    "rgb_value": "None",
+                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg",
+                    "similar_cosmetics": ""
+                },
+                {
+                    "id": 18820,
+                    "product": {
+                        "id": 40443,
+                        "brand": {
+                            "id": 16196,
+                            "brand_name": "블리블리(임블리)"
+                        },
+                        "category": {
+                            "id": 21,
+                            "big_category": {
+                                "id": 13,
+                                "big_category": "색조"
+                            },
+                            "small_category": "립스틱"
+                        },
+                        "tag_names": [
+                            {
+                                "id": 178,
+                                "tag_name": "크레용타입"
+                            }
+                        ],
+                        "product_name": "슬라이딩 버터 크레용 립스틱",
+                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg"
+                    },
+                    "type_name": " 살구 버터",
+                    "rgb_value": "None",
+                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg",
+                    "similar_cosmetics": ""
+                },
+                {
+                    "id": 26306,
+                    "product": {
+                        "id": 42209,
+                        "brand": {
+                            "id": 17999,
+                            "brand_name": "아미옥"
+                        },
+                        "category": {
+                            "id": 21,
+                            "big_category": {
+                                "id": 13,
+                                "big_category": "색조"
+                            },
+                            "small_category": "립스틱"
+                        },
+                        "tag_names": [
+                            {
+                                "id": 82,
+                                "tag_name": "매트"
+                            }
+                        ],
+                        "product_name": "스타일마스터 립스틱",
+                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png"
+                    },
+                    "type_name": " 02 스포티즘",
+                    "rgb_value": "None",
+                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png",
+                    "similar_cosmetics": ""
+                },
+            ];
+            for (var i in test) {
+                var data = test[i];
+                var imageLink;
+
+                if (data.image_link)
+                    imageLink = data.image_link;
+                else
+                    imageLink = data.product.image_link;
+
+                var tag_names = [];
+                for (var j in data.product.tag_names)
+                    tag_names.push(data.product.tag_names[j].tag_name);
+
+                var result = {
+                    id: data.id,
+                    brand_name: data.product.brand.brand_name,
+                    small_category: data.product.category.small_category,
+                    product_name: data.product.product_name,
+                    type_name: data.type_name,
+                    image_link: imageLink,
+                    tag_names: tag_names
+                }
+                console.log(result);
+                this.searchResults.push(result);
+            }
+        }
     })
 </script>
 {% endblock extra-script %}

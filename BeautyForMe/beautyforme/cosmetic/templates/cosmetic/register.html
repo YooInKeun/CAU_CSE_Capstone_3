@@ -141,23 +141,21 @@
                 <button class="search-btn btn btn-primary">검색</button>
             </div>
             <div v-if="query_cosmetic" class="search-result-window">
-                <div v-for="i in searchResultLength" :key=" searchResults[i].id"
-                    @click="selectCosmetic(searchResults[i])">
+                <div v-for="searchResult in searchResults" :key="searchResult.id" @click="selectCosmetic(searchResult)">
                     <div class="d-flex align-items-center">
-                        <img :src="[[ searchResults[i].image_link ]]" alt="{% static 'img/main.jpeg' %}"
-                            class="search-img">
+                        <img :src="[[ searchResult.image_link ]]" alt="{% static 'img/main.jpeg' %}" class="search-img">
                         <div class="search-result-wrapper">
                             <div class="search-result-info d-flex align-items-center mb-1">
                                 <div class="search_result-title">브랜드</div>
-                                <div>[[ searchResults[i].brand_name ]]</div>
+                                <div>[[ searchResult.brand_name ]]</div>
                             </div>
                             <div class="search-result-info d-flex align-items-center mb-1">
                                 <div class="search_result-title">제품명</div>
-                                <div>[[ searchResults[i].product_name ]]</div>
+                                <div>[[ searchResult.product_name ]]</div>
                             </div>
                             <div class="search-result-info d-flex align-items-center">
                                 <div class="search_result-title">색상/타입</div>
-                                <div>[[ searchResults[i].type_name ]]</div>
+                                <div>[[ searchResult.type_name ]]</div>
                             </div>
                         </div>
                     </div>

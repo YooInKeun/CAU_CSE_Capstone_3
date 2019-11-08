@@ -177,12 +177,12 @@
                             class="kind-select" />
                     </div>
                 </div>
-                <div class="row mt-4">
+                <div v-if="query_cosmetic" class="row mt-4">
                     <div class="img-wrapper">
                         <img :src="[[ imageLink ]]" alt="화장품을 검색해주세요" class="text-center">
                     </div>
                 </div>
-                <div class=" row mt-3 justify-content-center">
+                <div class=" row mt-4 justify-content-center">
                     <div class="section-wrapper d-flex align-items-center">
                         <div class="section-title">제품명</div>
                         <div class="section-value ml-2">[[ productName ]]</div>
@@ -217,12 +217,13 @@
                     <div class="row mt-5 d-flex justify-content-between align-items-center">
                         <div class="col-6 d-flex justify-content-center align-items-center">
                             <label class="mr-1">유통기한</label>
-                            <input type="radio" id="expiration" value="expiration" v-model="dateSelect"
-                                class="kind-select" />
+                            <input @click="changeDateSelect" type="radio" id="expiration" value="expiration"
+                                v-model="dateSelect" class="kind-select" />
                         </div>
                         <div class="col-6 d-flex justify-content-center align-items-center">
                             <label class="mr-1">사용기한</label>
-                            <input type="radio" id="useBy" value="useBy" v-model="dateSelect" class="kind-select" />
+                            <input @click="changeDateSelect" type="radio" id="useBy" value="useBy" v-model="dateSelect"
+                                class="kind-select" />
                         </div>
                     </div>
                     <div v-if="dateSelect == 'expiration'" class="row mt-3 justify-content-center">
@@ -259,12 +260,19 @@
                     </div>
                 </div>
                 <div class="row justify-content-end">
-                    <form class="register-form mt-3 pb-3">
+                    <form v-if="kindSelect == 'myCosmetic'" method="post" action="{% url 'user:cosmetic' %}"
+                        class="register-form mt-3 pb-3">
+                        {% csrf_token %}
                         <input type="hidden" name="cosmetic_id" v-model="cosmeticID" />
                         <input type="hidden" name="expiration_data" v-model="expirationData" />
                         <input type="hidden" name="alarm_cycle" v-model="alarmCycle" />
                         <input type="hidden" name="is_consent_alarm" v-model="isConsentAlarm" />
-                        <button type="submit" class="btn btn-primary p-2 pr-4 pl-4">등록하기</button>
+                        <button @click="submitCosmetic" class="btn btn-primary p-2 pr-4 pl-4">등록하기</button>
+                    </form>
+                    <form v-else method="post" action="" class="register-form mt-3 pb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="cosmetic_id" v-model="cosmeticID" />
+                        <button @click="submitCosmetic" class="btn btn-primary p-2 pr-4 pl-4">등록하기</button>
                     </form>
                 </div>
             </div>
@@ -388,6 +396,31 @@
                 this.$el.querySelector(".my-cosmetic-tap").classList.remove("selected-kind-tap");
                 this.$el.querySelector(".interested-cosmetic-tap").classList.add("selected-kind-tap");
             },
+            changeDateSelect() {
+                this.expirationDate = ""
+                this.useByDate = ""
+                this.alarmPeriod = ""
+            },
+            submitCosmetic() {
+                if (this.kindSelect == "myCosmetic") {
+                    if (this.cosmeticID && this.expirationData && this.alarmCycle >= 0) {
+                        console.log("폼 진행");
+                    }
+                    else {
+                        event.preventDefault()
+                        console.log("입력사항을 확인해주세요");
+                    }
+                }
+                else {
+                    if (this.cosmeticID) {
+                        console.log("폼 진행");
+                    }
+                    else {
+                        event.preventDefault()
+                        console.log("입력사항을 확인해주세요");
+                    }
+                }
+            },
             searchCosmetic() {
                 var postData = {
                     params: {
@@ -400,6 +433,7 @@
                 axios.get('/api/cosmetic/', postData)
                     .then(function (res) {
                         console.log("GET SUCCESS", res);
+                        this.searchResults = [];
 
                         for (var i in res.data) {
                             var data = res.data[i];
@@ -410,9 +444,9 @@
                             else
                                 imageLink = data.product.image_link;
 
-                            var tag_names = [];
+                            var tagNames = [];
                             for (var tag in data.product.tag_names)
-                                tag_names.push(tag.tag_name);
+                                tagNames.push(tag.tag_name);
 
                             var result = {
                                 id: data.id,
@@ -421,7 +455,7 @@
                                 product_name: data.product.data.product_name,
                                 type_name: data.type_name,
                                 image_link: imageLink,
-                                tag_names: ["보습최고", "수분"]
+                                tag_names: tagNames
                             }
 
                             this.searchResults.push(result);

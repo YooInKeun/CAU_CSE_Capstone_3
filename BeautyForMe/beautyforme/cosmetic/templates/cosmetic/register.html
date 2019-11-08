@@ -133,11 +133,10 @@
 
 {% block content %}
 <div class="container-fluid" id="app">
-
     <div class="row main-row">
         <div class="col-8 mt-5 mb-5 pt-1">
             <div class="search-wrapper d-flex justify-content-center align-items-center">
-                <input @keydown="searchCosmetic" v-model="query_cosmetic" placeholder="화장품을 검색해주세요"
+                <input @keydown="searchCosmetic($event, true)" v-model="query_cosmetic" placeholder="화장품을 검색해주세요"
                     class="form-control search-input pl-2" />
                 <button class="search-btn btn btn-primary">검색</button>
             </div>
@@ -259,21 +258,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="row justify-content-end">
-                    <form v-if="kindSelect == 'myCosmetic'" method="post" action="{% url 'register_user_cosmetic' %}" class="register-form mt-3 pb-3">
-                        {% csrf_token %}
-                        {% render_form serializer %}
-                        <input type="hidden" name="cosmetic_id" v-model="cosmeticID" />
-                        <input type="hidden" name="expiration_data" v-model="expirationData" />
-                        <input type="hidden" name="alarm_cycle" v-model="alarmCycle" />
-                        <input type="hidden" name="is_consent_alarm" v-model="isConsentAlarm" />
-                        <button @click="submitCosmetic" class="btn btn-primary p-2 pr-4 pl-4">등록하기</button>
-                    </form>
-                    <form v-else method="post" action="" class="register-form mt-3 pb-3">
-                        {% csrf_token %}
-                        <input type="hidden" name="cosmetic_id" v-model="cosmeticID" />
-                        <button @click="submitCosmetic" class="btn btn-primary p-2 pr-4 pl-4">등록하기</button>
-                    </form>
+                <div class="row justify-content-end register-form mt-3 pb-3">
+                    <button @click="submitCosmetic" class="btn btn-primary p-2 pr-4 pl-4">등록하기</button>
                 </div>
             </div>
         </div>
@@ -405,6 +391,25 @@
                 if (this.kindSelect == "myCosmetic") {
                     if (this.cosmeticID && this.expirationData && this.alarmCycle >= 0) {
                         console.log("폼 진행");
+
+                        var postData = {
+                            params: {
+                                cosmetic_id: this.cosmeticID,
+                                expiration_data: this.expirationData,
+                                alarm_cycle: this.alarmCycle,
+                                is_consent_alarm: this.isConsentAlarm
+                            }
+                        };
+
+                        console.log(postData);
+
+                        axios.post('api/user/cosmetic/', postData)
+                            .then(function (res) {
+                                console.log("GET SUCCESS", res);
+                            })
+                            .catch(function (err) {
+                                console.log("GET FAIL", err);
+                            });
                     }
                     else {
                         event.preventDefault()
@@ -414,6 +419,22 @@
                 else {
                     if (this.cosmeticID) {
                         console.log("폼 진행");
+
+                        var postData = {
+                            params: {
+                                cosmetic_id: this.cosmeticID,
+                            }
+                        };
+
+                        console.log(postData);
+
+                        axios.post('api/user/cosmetic/', postData)
+                            .then(function (res) {
+                                console.log("GET SUCCESS", res);
+                            })
+                            .catch(function (err) {
+                                console.log("GET FAIL", err);
+                            });
                     }
                     else {
                         event.preventDefault()
@@ -421,12 +442,25 @@
                     }
                 }
             },
-            searchCosmetic() {
-                var postData = {
-                    params: {
-                        query_cosmetic: this.query_cosmetic
-                    }
-                };
+            searchCosmetic(event, isKey) {
+                if (isKey && event.key != "enter") {
+                    var postData = {
+                        params: {
+                            query_cosmetic: this.query_cosmetic,
+                            is_keyuped: true,
+                            is_clicked: false
+                        }
+                    };
+                }
+                else {
+                    var postData = {
+                        params: {
+                            query_cosmetic: this.query_cosmetic,
+                            is_keyuped: false,
+                            is_clicked: true
+                        }
+                    };
+                }
 
                 console.log(postData);
 

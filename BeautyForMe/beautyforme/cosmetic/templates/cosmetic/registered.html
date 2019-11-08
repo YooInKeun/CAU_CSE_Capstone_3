@@ -10,8 +10,10 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>등록된 화장품 보는 페이지</h2>
+<div class="container" id="app">
+    <div class="row">
+        <h5>[[ username ]]님의 화장품</h5>
+    </div>
 
     <a href="{% url 'cosmetic:register' %}">
         <button type="button" class="btn btn-success">화장품 등록하러 가기</button>
@@ -20,11 +22,10 @@
 {% endblock content %}
 
 {% block footer %}
+{% include 'footer.html' %}
 {% endblock footer %}
 
 {% block extra-script %}
-<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -33,7 +34,7 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-
+            username: "최범수"
         },
         methods: {
 

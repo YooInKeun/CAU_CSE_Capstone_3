@@ -51,7 +51,9 @@ class CosmeticInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
-        if request.query_params['is_keyuped'] is True:
+        queryset = Cosmetic.objects.none()
+        serializer = CosmeticSerializer(queryset, many=True)
+        if request.query_params['is_keyuped'] == 'true':
             queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
             entries = request.query_params['query_cosmetic'].split(" ")
 
@@ -62,7 +64,7 @@ class CosmeticInfo(APIView):
             queryset = queryset[0:5]
             serializer = CosmeticSerializer(queryset, many=True)
 
-        elif request.query_params['is_clicked'] is True:
+        elif request.query_params['is_clicked'] == 'true':
             queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
             serializer = CosmeticSerializer(queryset, many=True)
         return Response(serializer.data)

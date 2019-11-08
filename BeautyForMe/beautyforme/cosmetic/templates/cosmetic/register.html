@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+<!-- {% load rest_framework %} -->
 {% load staticfiles %}
 
 {% block extra-style %}
@@ -177,7 +177,7 @@
                             class="kind-select" />
                     </div>
                 </div>
-                <div v-if="query_cosmetic" class="row mt-4">
+                <div v-if="cosmeticID" class="row mt-4">
                     <div class="img-wrapper">
                         <img :src="[[ imageLink ]]" alt="화장품을 검색해주세요" class="text-center">
                     </div>
@@ -260,9 +260,9 @@
                     </div>
                 </div>
                 <div class="row justify-content-end">
-                    <form v-if="kindSelect == 'myCosmetic'" method="post" action="{% url 'user:cosmetic' %}"
-                        class="register-form mt-3 pb-3">
+                    <form v-if="kindSelect == 'myCosmetic'" method="post" action="{% url 'register_user_cosmetic' %}" class="register-form mt-3 pb-3">
                         {% csrf_token %}
+                        {% render_form serializer %}
                         <input type="hidden" name="cosmetic_id" v-model="cosmeticID" />
                         <input type="hidden" name="expiration_data" v-model="expirationData" />
                         <input type="hidden" name="alarm_cycle" v-model="alarmCycle" />

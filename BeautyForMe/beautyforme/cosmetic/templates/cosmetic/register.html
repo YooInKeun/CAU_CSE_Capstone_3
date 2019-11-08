@@ -141,7 +141,8 @@
                 <button class="search-btn btn btn-primary">검색</button>
             </div>
             <div v-if="query_cosmetic" class="search-result-window">
-                <div v-for="i in 4" :key="searchResults[i].id" @click="selectCosmetic(searchResults[i])">
+                <div v-for="i in searchResultLength" :key=" searchResults[i].id"
+                    @click="selectCosmetic(searchResults[i])">
                     <div class="d-flex align-items-center">
                         <img :src="[[ searchResults[i].image_link ]]" alt="{% static 'img/main.jpeg' %}"
                             class="search-img">
@@ -361,6 +362,12 @@
             },
             alarmCycle() {
                 return parseInt(this.alarmPeriod);
+            },
+            searchResultLength() {
+                if (this.searchResults.length < 4)
+                    return this.searchResults.length;
+                else
+                    return 4;
             }
         },
         methods: {
@@ -486,7 +493,7 @@
                                 id: data.id,
                                 brand_name: data.product.brand.brand_name,
                                 small_category: data.product.category.small_category,
-                                product_name: data.product.data.product_name,
+                                product_name: data.product.product_name,
                                 type_name: data.type_name,
                                 image_link: imageLink,
                                 tag_names: tagNames

@@ -14,6 +14,30 @@
     <div class="row">
         <h5>[[ username ]]님의 화장품</h5>
     </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="row black-line"></div>
+            <div class="row">
+                <div class="col-6">
+                    <input type="checkbox">
+                    <button>화장품 조합</button>
+                    <button>삭제</button>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <button>내 화장품</button>
+                    <button>관심 화장품</button>
+                </div>
+            </div>
+            <div class="row gray-line"></div>
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-2">브랜드</div>
+                <div class="col-3">제품명</div>
+                <div class="col-2">카테고리</div>
+                <div class="col-3">태그</div>
+            </div>
+        </div>
+    </div>
 
     <a href="{% url 'cosmetic:register' %}">
         <button type="button" class="btn btn-success">화장품 등록하러 가기</button>

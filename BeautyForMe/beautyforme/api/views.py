@@ -9,6 +9,9 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.contrib.auth.models import User
 
+import operator
+from functools import reduce
+from django.db.models import Q
 
 class UserInfo(APIView):
     # permission_classes = [IsAdminUser]
@@ -48,12 +51,15 @@ class CosmeticInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
-        # try:
-        queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic']))
-        # queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.data['query_cosmetic']))
+        queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
+        entries = request.query_params['query_cosmetic'].split(" ")
+
+        if len(queryset) < 5:
+            queryset |= Cosmetic.objects.filter(
+                product__in=Product.objects.filter(reduce(operator.and_, (Q(product_name__contains=item) for item in entries[0:len(entries)-2]))),
+                type_name__contains=entries[len(entries)-1])
+        queryset = queryset[0:5]
         serializer = CosmeticSerializer(queryset, many=True)
-        # except:
-        #     Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
 
 

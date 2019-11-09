@@ -57,11 +57,11 @@ class CosmeticInfo(APIView):
             queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
             entries = request.query_params['query_cosmetic'].split(" ")
 
-            if len(queryset) < 5:
+            if len(queryset) < 4:
                 queryset |= Cosmetic.objects.filter(
                     product__in=Product.objects.filter(reduce(operator.and_, (Q(product_name__contains=item) for item in entries[0:len(entries)-2]))),
                     type_name__contains=entries[len(entries)-1])
-            queryset = queryset[0:5]
+            queryset = queryset[0:4]
             serializer = CosmeticSerializer(queryset, many=True)
 
         elif request.query_params['is_clicked'] == 'true':

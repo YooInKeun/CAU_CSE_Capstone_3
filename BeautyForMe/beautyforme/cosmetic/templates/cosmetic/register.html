@@ -136,9 +136,9 @@
     <div class="row main-row">
         <div class="col-8 mt-5 mb-5 pt-1">
             <div class="search-wrapper d-flex justify-content-center align-items-center">
-                <input @keydown="searchCosmetic($event, true)" v-model="query_cosmetic" placeholder="화장품을 검색해주세요"
+                <input @keyup="searchCosmetic($event, true)" v-model="query_cosmetic" placeholder="화장품을 검색해주세요"
                     class="form-control search-input pl-2" />
-                <button class="search-btn btn btn-primary">검색</button>
+                <button @click="searchCosmetic($event, false)" class="search-btn btn btn-primary">검색</button>
             </div>
             <div v-if="query_cosmetic" class="search-result-window">
                 <div v-for="searchResult in searchResults" :key="searchResult.id" @click="selectCosmetic(searchResult)">
@@ -274,27 +274,7 @@
             </div>
             <div class="row kind-row">
                 <div class="p-2">
-                    <div v-for="i in 4" :key="searchResults[i].id" @click="selectCosmetic(searchResults[i])">
-                        <div class="d-flex align-items-center">
-                            <img :src="[[ searchResults[i].image_link ]]" alt="{% static 'img/main.jpeg' %}"
-                                class="search-img">
-                            <div class="search-result-wrapper">
-                                <div class="search-result-info d-flex align-items-center mb-1">
-                                    <div class="search_result-title">브랜드</div>
-                                    <div>[[ searchResults[i].brand_name ]]</div>
-                                </div>
-                                <div class="search-result-info d-flex align-items-center mb-1">
-                                    <div class="search_result-title">제품명</div>
-                                    <div>[[ searchResults[i].product_name ]]</div>
-                                </div>
-                                <div class="search-result-info d-flex align-items-center">
-                                    <div class="search_result-title">색상/타입</div>
-                                    <div>[[ searchResults[i].type_name ]]</div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr />
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -361,12 +341,6 @@
             alarmCycle() {
                 return parseInt(this.alarmPeriod);
             },
-            searchResultLength() {
-                if (this.searchResults.length < 4)
-                    return this.searchResults.length;
-                else
-                    return 4;
-            }
         },
         methods: {
             selectCosmetic(searchResult) {
@@ -470,7 +444,7 @@
                 console.log(postData);
 
                 axios.get('/api/cosmetic/', postData)
-                    .then(function (res) {
+                    .then((res) => {
                         console.log("GET SUCCESS", res);
                         this.searchResults = [];
 
@@ -500,193 +474,193 @@
                             this.searchResults.push(result);
                         }
                     })
-                    .catch(function (err) {
+                    .catch((err) => {
                         console.log("GET FAIL", err);
+                        this.searchResults = [];
+                        var test = [
+                            {
+                                "id": 1658,
+                                "product": {
+                                    "id": 36234,
+                                    "brand": {
+                                        "id": 17717,
+                                        "brand_name": "가네보"
+                                    },
+                                    "category": {
+                                        "id": 21,
+                                        "big_category": {
+                                            "id": 13,
+                                            "big_category": "색조"
+                                        },
+                                        "small_category": "립스틱"
+                                    },
+                                    "tag_names": [
+                                        {
+                                            "id": 1,
+                                            "tag_name": "보습"
+                                        }
+                                    ],
+                                    "product_name": "센사이 더 립스틱",
+                                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg"
+                                },
+                                "type_name": " 06",
+                                "rgb_value": "None",
+                                "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg",
+                                "similar_cosmetics": ""
+                            },
+                            {
+                                "id": 3341,
+                                "product": {
+                                    "id": 36536,
+                                    "brand": {
+                                        "id": 15345,
+                                        "brand_name": "네이처리퍼블릭"
+                                    },
+                                    "category": {
+                                        "id": 21,
+                                        "big_category": {
+                                            "id": 13,
+                                            "big_category": "색조"
+                                        },
+                                        "small_category": "립스틱"
+                                    },
+                                    "tag_names": [
+                                        {
+                                            "id": 1,
+                                            "tag_name": "보습"
+                                        },
+                                        {
+                                            "id": 82,
+                                            "tag_name": "매트"
+                                        }
+                                    ],
+                                    "product_name": "크리미 립스틱",
+                                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg"
+                                },
+                                "type_name": " 코랄핑크",
+                                "rgb_value": "None",
+                                "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg",
+                                "similar_cosmetics": ""
+                            },
+                            {
+                                "id": 9536,
+                                "product": {
+                                    "id": 38131,
+                                    "brand": {
+                                        "id": 15779,
+                                        "brand_name": "로레알파리"
+                                    },
+                                    "category": {
+                                        "id": 21,
+                                        "big_category": {
+                                            "id": 13,
+                                            "big_category": "색조"
+                                        },
+                                        "small_category": "립스틱"
+                                    },
+                                    "tag_names": [
+                                        {
+                                            "id": 1,
+                                            "tag_name": "보습"
+                                        }
+                                    ],
+                                    "product_name": "루즈 카레스 립스틱",
+                                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg"
+                                },
+                                "type_name": " #06 Aphrodite scarlet",
+                                "rgb_value": "None",
+                                "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg",
+                                "similar_cosmetics": ""
+                            },
+                            {
+                                "id": 18820,
+                                "product": {
+                                    "id": 40443,
+                                    "brand": {
+                                        "id": 16196,
+                                        "brand_name": "블리블리(임블리)"
+                                    },
+                                    "category": {
+                                        "id": 21,
+                                        "big_category": {
+                                            "id": 13,
+                                            "big_category": "색조"
+                                        },
+                                        "small_category": "립스틱"
+                                    },
+                                    "tag_names": [
+                                        {
+                                            "id": 178,
+                                            "tag_name": "크레용타입"
+                                        }
+                                    ],
+                                    "product_name": "슬라이딩 버터 크레용 립스틱",
+                                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg"
+                                },
+                                "type_name": " 살구 버터",
+                                "rgb_value": "None",
+                                "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg",
+                                "similar_cosmetics": ""
+                            },
+                            {
+                                "id": 26306,
+                                "product": {
+                                    "id": 42209,
+                                    "brand": {
+                                        "id": 17999,
+                                        "brand_name": "아미옥"
+                                    },
+                                    "category": {
+                                        "id": 21,
+                                        "big_category": {
+                                            "id": 13,
+                                            "big_category": "색조"
+                                        },
+                                        "small_category": "립스틱"
+                                    },
+                                    "tag_names": [
+                                        {
+                                            "id": 82,
+                                            "tag_name": "매트"
+                                        }
+                                    ],
+                                    "product_name": "스타일마스터 립스틱",
+                                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png"
+                                },
+                                "type_name": " 02 스포티즘",
+                                "rgb_value": "None",
+                                "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png",
+                                "similar_cosmetics": ""
+                            },
+                        ];
+                        for (var i in test) {
+                            var data = test[i];
+                            var imageLink;
+
+                            if (data.image_link)
+                                imageLink = data.image_link;
+                            else
+                                imageLink = data.product.image_link;
+
+                            var tag_names = [];
+                            for (var j in data.product.tag_names)
+                                tag_names.push(data.product.tag_names[j].tag_name);
+
+                            var result = {
+                                id: data.id,
+                                brand_name: data.product.brand.brand_name,
+                                small_category: data.product.category.small_category,
+                                product_name: data.product.product_name,
+                                type_name: data.type_name,
+                                image_link: imageLink,
+                                tag_names: tag_names
+                            }
+                            console.log(result);
+                            if (result.product_name.includes(this.query_cosmetic))
+                                this.searchResults.push(result);
+                        }
                     });
             },
-        },
-        created() {
-            var test = [
-                {
-                    "id": 1658,
-                    "product": {
-                        "id": 36234,
-                        "brand": {
-                            "id": 17717,
-                            "brand_name": "가네보"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "센사이 더 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg"
-                    },
-                    "type_name": " 06",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg",
-                    "similar_cosmetics": ""
-                },
-                {
-                    "id": 3341,
-                    "product": {
-                        "id": 36536,
-                        "brand": {
-                            "id": 15345,
-                            "brand_name": "네이처리퍼블릭"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            },
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "크리미 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg"
-                    },
-                    "type_name": " 코랄핑크",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg",
-                    "similar_cosmetics": ""
-                },
-                {
-                    "id": 9536,
-                    "product": {
-                        "id": 38131,
-                        "brand": {
-                            "id": 15779,
-                            "brand_name": "로레알파리"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "루즈 카레스 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg"
-                    },
-                    "type_name": " #06 Aphrodite scarlet",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg",
-                    "similar_cosmetics": ""
-                },
-                {
-                    "id": 18820,
-                    "product": {
-                        "id": 40443,
-                        "brand": {
-                            "id": 16196,
-                            "brand_name": "블리블리(임블리)"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 178,
-                                "tag_name": "크레용타입"
-                            }
-                        ],
-                        "product_name": "슬라이딩 버터 크레용 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg"
-                    },
-                    "type_name": " 살구 버터",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg",
-                    "similar_cosmetics": ""
-                },
-                {
-                    "id": 26306,
-                    "product": {
-                        "id": 42209,
-                        "brand": {
-                            "id": 17999,
-                            "brand_name": "아미옥"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "스타일마스터 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png"
-                    },
-                    "type_name": " 02 스포티즘",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png",
-                    "similar_cosmetics": ""
-                },
-            ];
-            for (var i in test) {
-                var data = test[i];
-                var imageLink;
-
-                if (data.image_link)
-                    imageLink = data.image_link;
-                else
-                    imageLink = data.product.image_link;
-
-                var tag_names = [];
-                for (var j in data.product.tag_names)
-                    tag_names.push(data.product.tag_names[j].tag_name);
-
-                var result = {
-                    id: data.id,
-                    brand_name: data.product.brand.brand_name,
-                    small_category: data.product.category.small_category,
-                    product_name: data.product.product_name,
-                    type_name: data.type_name,
-                    image_link: imageLink,
-                    tag_names: tag_names
-                }
-                console.log(result);
-                this.searchResults.push(result);
-            }
         }
     })
 </script>

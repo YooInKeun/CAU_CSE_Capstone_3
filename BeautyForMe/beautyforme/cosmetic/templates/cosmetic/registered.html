@@ -3,6 +3,11 @@
 {% load staticfiles %}
 
 {% block extra-style %}
+<style>
+    .user-cosmetic {
+        width: 100%;
+    }
+</style>
 {% endblock extra-style %}
 
 {% block navbar%}
@@ -41,12 +46,16 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <div v-for="" class="row">
+            <div v-for="myCosmetic in myCosmetics" class="row">
                 <div class="col-2">
-                    <img src="[[]]" alt="">
+                    <img :src="[[myCosmetic.imageLink]]" alt="" class="user-cosmetic">
                 </div>
-                <div class="col-3">제품</div>
-                <div class="col-2">카테고리</div>
+                <div class="col-3">
+                    <div class="row">[[myCosmetic.brandName]]</div>
+                    <div class="row">[[myCosmetic.productName]]</div>
+                    <div class="row">[[myCosmetic.typeName]]</div>
+                </div>
+                <div class="col-2">[[myCosmetic.smallCategory]]</div>
                 <div class="col-2">태그</div>
                 <div class="col-3">관리상태</div>
             </div>
@@ -73,7 +82,7 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-            myCosmetic: [],
+            myCosmetics: [],
             username: "최범수"
         },
         methods: {
@@ -251,15 +260,15 @@
 
                 var result = {
                     id: data.id,
-                    brand_name: data.product.brand.brand_name,
-                    small_category: data.product.category.small_category,
-                    product_name: data.product.product_name,
-                    type_name: data.type_name,
-                    image_link: imageLink,
-                    tag_names: tag_names
+                    brandName: data.product.brand.brand_name,
+                    smallCategory: data.product.category.small_category,
+                    productName: data.product.product_name,
+                    typeName: data.type_name,
+                    imageLink: imageLink,
+                    tagNames: tag_names
                 }
                 console.log(result);
-                this.searchResults.push(result);
+                this.myCosmetics.push(result);
             }
         }
     })

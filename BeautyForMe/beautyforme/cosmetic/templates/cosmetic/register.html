@@ -70,15 +70,16 @@
     .search-result-window {
         position: absolute;
         top: 50px;
-        margin: 0 3%;
-        padding: 0 3%;
+        margin-left: 3%;
         background-color: white;
         border: 1px solid pink;
         z-index: 1000;
+        width: 94%;
     }
 
     .search-img {
-        width: 15%;
+        width: 100px;
+        padding: 5px;
     }
 
     .search_result-title {
@@ -403,7 +404,7 @@
 
                         console.log(postData);
 
-                        axios.post('/api/user/cosmetic/', postData)
+                        axios.post('/api/user/cosmetic/interested', postData)
                             .then(function (res) {
                                 console.log("GET SUCCESS", res);
                             })

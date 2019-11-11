@@ -403,7 +403,7 @@
 
                         console.log(postData);
 
-                        axios.post('/api/user/cosmetic/', postData)
+                        axios.post('/api/user/cosmetic/interested', postData)
                             .then(function (res) {
                                 console.log("GET SUCCESS", res);
                             })

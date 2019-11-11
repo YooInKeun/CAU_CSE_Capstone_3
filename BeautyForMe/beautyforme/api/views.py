@@ -58,7 +58,7 @@ class CosmeticInfo(APIView):
 
         if request.query_params['is_keyuped'] == "true":
             queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
-            queryset = queryset[0:4]
+            queryset = queryset[0:7]
         elif request.query_params['is_clicked'] == "true":
             queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
         #     속도가 너무 느림

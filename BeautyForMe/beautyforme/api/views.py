@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 import operator
 from functools import reduce
 from django.db.models import Q
+import difflib
 
 class UserInfo(APIView):
     # permission_classes = [IsAdminUser]
@@ -51,22 +52,25 @@ class CosmeticInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
-        queryset = Cosmetic.objects.none()
+        queryset = Cosmetic.objects.filter(rgb_value="Fuck You!")
         serializer = CosmeticSerializer(queryset, many=True)
-        if request.query_params['is_keyuped'] == 'true':
-            queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
-            entries = request.query_params['query_cosmetic'].split(" ")
 
-            if len(queryset) < 4:
-                queryset |= Cosmetic.objects.filter(
-                    product__in=Product.objects.filter(reduce(operator.and_, (Q(product_name__contains=item) for item in entries[0:len(entries)-2]))),
-                    type_name__contains=entries[len(entries)-1])
+        if request.query_params['is_keyuped'] == "true":
+            queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
             queryset = queryset[0:4]
-            serializer = CosmeticSerializer(queryset, many=True)
-
-        elif request.query_params['is_clicked'] == 'true':
+        elif request.query_params['is_clicked'] == "true":
             queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
-            serializer = CosmeticSerializer(queryset, many=True)
+        #     속도가 너무 느림
+        #     cosmetics = Cosmetic.objects.all()
+        #     selected_cosmetic_ids = []
+        #     for cosmetic in cosmetics.iterator():
+        #         if difflib.SequenceMatcher(None, cosmetic.product.product_name, request.query_params['query_cosmetic']).ratio() > 0.5:
+        #             selected_cosmetic_ids.append(cosmetic.id)
+                    
+        #     queryset = Cosmetic.objects.filter(pk__in=selected_cosmetic_ids)
+        
+        # if request.query_params['is_clicked'] == "true":
+        serializer = CosmeticSerializer(queryset, many=True)
         return Response(serializer.data)
 
 

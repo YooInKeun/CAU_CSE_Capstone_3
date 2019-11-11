@@ -44,7 +44,7 @@ class Product(models.Model):
 
 # 화장품
 class Cosmetic(models.Model):
-    product = models.ForeignKey(Product, related_name='cosmetics', on_delete=models.CASCADE, default="")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, default="")
     type_name = models.CharField(max_length=100, default="")
     rgb_value = models.CharField(max_length=100, default="")
     image_link = models.TextField(default="")

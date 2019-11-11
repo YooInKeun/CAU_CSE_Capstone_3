@@ -136,7 +136,7 @@
     <div class="row main-row">
         <div class="col-8 mt-5 mb-5 pt-1">
             <div class="search-wrapper d-flex justify-content-center align-items-center">
-                <input @keyup="searchCosmetic($event, true)" v-model="query_cosmetic" placeholder="화장품을 검색해주세요"
+                <input @keyup="searchCosmetic($event, true)" v-model="query_cosmetic" placeholder="화장품의 제품명을 검색해주세요"
                     class="form-control search-input pl-2" />
                 <button @click="searchCosmetic($event, false)" class="search-btn btn btn-primary">검색</button>
             </div>
@@ -177,7 +177,7 @@
                 </div>
                 <div v-if="cosmeticID" class="row mt-4">
                     <div class="img-wrapper">
-                        <img :src="[[ imageLink ]]" alt="화장품을 검색해주세요" class="text-center">
+                        <img :src="[[ imageLink ]]" alt="화장품의 제품명을 검색해주세요" class="text-center">
                     </div>
                 </div>
                 <div class=" row mt-4 justify-content-center">
@@ -340,11 +340,7 @@
             },
             alarmCycle() {
                 return parseInt(this.alarmPeriod);
-<<<<<<< HEAD
-            }
-=======
             },
->>>>>>> 03688794ac1eff26e50c23a047f7847bb33bc01c
         },
         methods: {
             selectCosmetic(searchResult) {
@@ -469,7 +465,7 @@
                                 id: data.id,
                                 brand_name: data.product.brand.brand_name,
                                 small_category: data.product.category.small_category,
-                                product_name: data.product.data.product_name,
+                                product_name: data.product.product_name,
                                 type_name: data.type_name,
                                 image_link: imageLink,
                                 tag_names: tagNames

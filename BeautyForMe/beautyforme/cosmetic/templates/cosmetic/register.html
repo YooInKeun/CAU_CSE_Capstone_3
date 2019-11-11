@@ -372,17 +372,15 @@
                         console.log("폼 진행");
 
                         var postData = {
-                            params: {
-                                cosmetic_id: this.cosmeticID,
-                                expiration_data: this.expirationData,
-                                alarm_cycle: this.alarmCycle,
-                                is_consent_alarm: this.isConsentAlarm
-                            }
+                            cosmetic_id: this.cosmeticID,
+                            expiration_data: this.expirationData,
+                            alarm_cycle: this.alarmCycle,
+                            is_consent_alarm: this.isConsentAlarm
                         };
 
                         console.log(postData);
 
-                        axios.post('api/user/cosmetic/', postData)
+                        axios.post('/api/user/cosmetic/', postData)
                             .then(function (res) {
                                 console.log("GET SUCCESS", res);
                             })
@@ -400,14 +398,12 @@
                         console.log("폼 진행");
 
                         var postData = {
-                            params: {
-                                cosmetic_id: this.cosmeticID,
-                            }
+                            cosmetic_id: this.cosmeticID,
                         };
 
                         console.log(postData);
 
-                        axios.post('api/user/cosmetic/', postData)
+                        axios.post('/api/user/cosmetic/', postData)
                             .then(function (res) {
                                 console.log("GET SUCCESS", res);
                             })

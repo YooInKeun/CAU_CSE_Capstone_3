@@ -3,8 +3,9 @@ from cosmetic.models import *
 from .serializer import *
 from django.core import serializers
 
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import *
 from rest_framework.views import APIView
 from rest_framework import status
 from django.contrib.auth.models import User
@@ -12,6 +13,7 @@ from django.contrib.auth.models import User
 import operator
 from functools import reduce
 from django.db.models import Q
+import difflib
 
 class UserInfo(APIView):
     # permission_classes = [IsAdminUser]
@@ -51,35 +53,68 @@ class CosmeticInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
-        if request.query_params['is_keyuped'] is True:
-            queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
-            entries = request.query_params['query_cosmetic'].split(" ")
+        queryset = Cosmetic.objects.filter(rgb_value="Fuck You!")
+        serializer = CosmeticSerializer(queryset, many=True)
 
-            if len(queryset) < 5:
-                queryset |= Cosmetic.objects.filter(
-                    product__in=Product.objects.filter(reduce(operator.and_, (Q(product_name__contains=item) for item in entries[0:len(entries)-2]))),
-                    type_name__contains=entries[len(entries)-1])
-            queryset = queryset[0:5]
-            serializer = CosmeticSerializer(queryset, many=True)
-
-        elif request.query_params['is_clicked'] is True:
+        if request.query_params['is_keyuped'] == "true":
             queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
-            serializer = CosmeticSerializer(queryset, many=True)
+            queryset = queryset[0:4]
+        elif request.query_params['is_clicked'] == "true":
+            queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
+        #     속도가 너무 느림
+        #     cosmetics = Cosmetic.objects.all()
+        #     selected_cosmetic_ids = []
+        #     for cosmetic in cosmetics.iterator():
+        #         if difflib.SequenceMatcher(None, cosmetic.product.product_name, request.query_params['query_cosmetic']).ratio() > 0.5:
+        #             selected_cosmetic_ids.append(cosmetic.id)
+                    
+        #     queryset = Cosmetic.objects.filter(pk__in=selected_cosmetic_ids)
+        
+        # if request.query_params['is_clicked'] == "true":
+        serializer = CosmeticSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
 class UserCosmeticInfo(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        request.data['user_id'] = request.user
-        serializer = UserCosmeticSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user_cosmetic = User_Cosmetic()
+            user_cosmetic.user = request.user
+            user_cosmetic.cosmetic = Cosmetic.objects.get(pk=request.data['cosmetic_id'])
+            user_cosmetic.expiration_date = request.data['expiration_data']
+            user_cosmetic.alarm_cycle = request.data['alarm_cycle']
+            user_cosmetic.is_consent_alarm = request.data['is_consent_alarm']
+            user_cosmetic.save()
+            queryset= User_Cosmetic.objects.filter(user=request.user)
+            serializer = UserCosmeticSerializer(queryset, many=True)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, format=None):
         queryset = User_Cosmetic.objects.filter(user=request.user)
         serializer = UserCosmeticSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class UserInterestedCosmeticInfo(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        try:
+            user_interested_cosmetic = User_Interested_Cosmetic()
+            user_interested_cosmetic.user = request.user
+            user_interested_cosmetic.cosmetic = Cosmetic.objects.get(pk=request.data['cosmetic_id'])
+            user_interested_cosmetic.save()
+            queryset= User_Interested_Cosmetic.objects.filter(user=request.user)
+            serializer = UserInterestedCosmeticSerializer(queryset, many=True)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, format=None):
+        queryset = User_Interested_Cosmetic.objects.filter(user=request.user)
+        serializer = UserInterestedCosmeticSerializer(queryset, many=True)
         return Response(serializer.data)

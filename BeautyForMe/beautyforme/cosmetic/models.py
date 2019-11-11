@@ -44,7 +44,7 @@ class Product(models.Model):
 
 # 화장품
 class Cosmetic(models.Model):
-    product = models.ForeignKey(Product, related_name='cosmetics', on_delete=models.CASCADE, default="")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, default="")
     type_name = models.CharField(max_length=100, default="")
     rgb_value = models.CharField(max_length=100, default="")
     image_link = models.TextField(default="")
@@ -62,11 +62,18 @@ class User_Cosmetic(models.Model):
     is_consent_alarm = models.BooleanField(default=True)
     selected_similar_cosmetics = JSONField(default="")
 
+    def __str__(self):
+        return '(' + str(self.user) + ') ' + str(self.cosmetic)
+
+
 # 유저 관심 화장품
 class User_Interested_Cosmetic(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     cosmetic = models.ForeignKey(Cosmetic, on_delete=models.CASCADE)
     selected_similar_cosmetics = JSONField(default="")
+
+    def __str__(self):
+        return '(' + str(self.user) + ') ' + str(self.cosmetic)
 
 # 화장품별 중요도
 class Cosmetic_Importance(models.Model):

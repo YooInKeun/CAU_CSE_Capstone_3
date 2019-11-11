@@ -57,3 +57,10 @@ class UserCosmeticSerializer(serializers.ModelSerializer):
     class Meta:
         model = User_Cosmetic
         fields = '__all__'
+
+class UserInterestedCosmeticSerializer(serializers.ModelSerializer):
+    cosmetic = CosmeticSerializer()
+
+    class Meta:
+        model = User_Interested_Cosmetic
+        fields = '__all__'

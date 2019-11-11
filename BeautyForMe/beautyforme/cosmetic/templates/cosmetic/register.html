@@ -82,9 +82,14 @@
         padding: 5px;
     }
 
-    .search_result-title {
+    .search-result-title {
         width: 100px;
         font-size: 13px;
+    }
+
+    .search-result-item {
+        font-size: 13px;
+        font-weight: bold;
     }
 
     .kind-tap {
@@ -125,6 +130,23 @@
         float: left;
         overflow-y: scroll;
     }
+
+    .user-cosmetic-img {
+        width: 80px;
+        padding: 5px;
+    }
+
+    .user-cosmetic-item {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .tag-btn {
+        font-size: 12px;
+        padding: 1px 6px;
+        margin: 2px;
+        font-weight: bold;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -147,16 +169,16 @@
                         <img :src="[[ searchResult.image_link ]]" alt="{% static 'img/main.jpeg' %}" class="search-img">
                         <div class="search-result-wrapper">
                             <div class="search-result-info d-flex align-items-center mb-1">
-                                <div class="search_result-title">브랜드</div>
-                                <div>[[ searchResult.brand_name ]]</div>
+                                <div class="search-result-title">브랜드</div>
+                                <div class="search-result-item">[[ searchResult.brand_name ]]</div>
                             </div>
                             <div class="search-result-info d-flex align-items-center mb-1">
-                                <div class="search_result-title">제품명</div>
-                                <div>[[ searchResult.product_name ]]</div>
+                                <div class="search-result-title">제품명</div>
+                                <div class="search-result-item">[[ searchResult.product_name ]]</div>
                             </div>
                             <div class="search-result-info d-flex align-items-center">
-                                <div class="search_result-title">색상/타입</div>
-                                <div>[[ searchResult.type_name ]]</div>
+                                <div class="search-result-title">색상/타입</div>
+                                <div class="search-result-item">[[ searchResult.type_name ]]</div>
                             </div>
                         </div>
                     </div>
@@ -274,8 +296,45 @@
                 <div class="col-4 rest-space"></div>
             </div>
             <div class="row kind-row">
-                <div class="p-2">
-
+                <div v-if="cosmeticListView">
+                    <div v-for="cosmetic in myCosmetics" :key="cosmetic.id" class="w-100 p-1">
+                        <div class="d-flex align-items-center">
+                            <img :src="[[ cosmetic.image_link ]]" alt="{% static 'img/main.jpeg' %}"
+                                class="user-cosmetic-img">
+                            <div class="search-result-wrapper">
+                                <div class="search-result-info d-flex flex-column justify-content-center mb-1">
+                                    <div class="user-cosmetic-item">[[ cosmetic.brand_name ]] [[
+                                        cosmetic.product_name ]] [[ cosmetic.type_name ]]</div>
+                                    <div>
+                                        <span v-for="tag in cosmetic.tag_names" class="justify-content-center">
+                                            <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+                <div v-else>
+                    <div v-for="cosmetic in interestedCosmetics" :key="cosmetic.id" class="w-100 p-1">
+                        <div class="d-flex align-items-center">
+                            <img :src="[[ cosmetic.image_link ]]" alt="{% static 'img/main.jpeg' %}"
+                                class="user-cosmetic-img">
+                            <div class="search-result-wrapper">
+                                <div class="search-result-info d-flex flex-column justify-content-center mb-1">
+                                    <div class="user-cosmetic-item">[[ cosmetic.brand_name ]] [[
+                                        cosmetic.product_name ]] [[ cosmetic.type_name ]]</div>
+                                    <div>
+                                        <span v-for="tag in cosmetic.tag_names" class="justify-content-center">
+                                            <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
                 </div>
             </div>
         </div>
@@ -311,7 +370,10 @@
                 alarmPeriod: "",
                 dateSelect: "expiration",
                 kindSelect: "myCosmetic",
-                searchResults: []
+                searchResults: [],
+                myCosmetics: [],
+                interestedCosmetics: [],
+                cosmeticListView: true
             }
         },
         computed: {
@@ -357,10 +419,12 @@
             showMyCosmetic() {
                 this.$el.querySelector(".my-cosmetic-tap").classList.add("selected-kind-tap");
                 this.$el.querySelector(".interested-cosmetic-tap").classList.remove("selected-kind-tap");
+                this.cosmeticListView = true;
             },
             showInterestedCosmetic() {
                 this.$el.querySelector(".my-cosmetic-tap").classList.remove("selected-kind-tap");
                 this.$el.querySelector(".interested-cosmetic-tap").classList.add("selected-kind-tap");
+                this.cosmeticListView = false;
             },
             changeDateSelect() {
                 this.expirationDate = ""
@@ -384,6 +448,31 @@
                         axios.post('/api/user/cosmetic/', postData)
                             .then(function (res) {
                                 console.log("GET SUCCESS", res);
+                                const data = res.data;
+
+                                var imageLink;
+
+                                if (data.image_link)
+                                    imageLink = data.image_link;
+                                else
+                                    imageLink = data.product.image_link;
+
+                                var tagNames = [];
+                                for (var tag in data.product.tag_names)
+                                    tagNames.push(tag.tag_name);
+
+                                for (var i in data) {
+                                    var cosmetic = {
+                                        id: data.id,
+                                        brand_name: data.product.brand.brand_name,
+                                        product_name: data.product.product_name,
+                                        type_name: data.type_name,
+                                        image_link: imageLink,
+                                        tag_names: tagNames
+                                    };
+
+                                    this.myCosmetics.push(cosmetic)
+                                }
                             })
                             .catch(function (err) {
                                 console.log("GET FAIL", err);
@@ -446,17 +535,17 @@
                         this.searchResults = [];
 
                         for (var i in res.data) {
-                            var data = res.data[i];
+                            const data = res.data[i];
                             var imageLink;
 
-                            if (data.image_link)
-                                imageLink = data.image_link;
-                            else
+                            if (data.product.image_link)
                                 imageLink = data.product.image_link;
+                            else
+                                imageLink = data.image_link;
 
                             var tagNames = [];
-                            for (var tag in data.product.tag_names)
-                                tagNames.push(tag.tag_name);
+                            for (var i in data.product.tag_names)
+                                tagNames.push(data.product.tag_names[i].tag_name);
 
                             var result = {
                                 id: data.id,
@@ -658,6 +747,74 @@
                         }
                     });
             },
+        },
+        created() {
+            axios.get('/api/user/cosmetic/')
+                .then((res) => {
+                    console.log("GET SUCCESS", res);
+                    const data = res.data;
+
+                    for (var i in data) {
+                        var imageLink;
+
+                        if (data[i].cosmetic.product.image_link)
+                            imageLink = data[i].cosmetic.product.image_link;
+                        else
+                            imageLink = data[i].cosmetic.image_link;
+
+                        var tagNames = [];
+                        for (var tag_index in data[i].cosmetic.product.tag_names)
+                            tagNames.push(data[i].cosmetic.product.tag_names[tag_index].tag_name);
+
+                        var cosmetic = {
+                            id: data[i].cosmetic.id,
+                            brand_name: data[i].cosmetic.product.brand.brand_name,
+                            product_name: data[i].cosmetic.product.product_name,
+                            type_name: data[i].cosmetic.type_name,
+                            image_link: imageLink,
+                            tag_names: tagNames
+                        };
+
+                        this.myCosmetics.push(cosmetic)
+                    }
+                })
+                .catch(function (err) {
+                    console.log("GET FAIL", err);
+                });
+
+            axios.get('/api/user/cosmetic/interested')
+                .then((res) => {
+                    console.log("GET SUCCESS", res);
+                    const data = res.data;
+
+                    for (var i in data) {
+                        var imageLink;
+
+                        if (data[i].cosmetic.product.image_link)
+                            imageLink = data[i].cosmetic.product.image_link;
+                        else
+                            imageLink = data[i].cosmetic.image_link;
+
+                        var tagNames = [];
+                        for (var tag_index in data[i].cosmetic.product.tag_names)
+                            tagNames.push(data[i].cosmetic.product.tag_names[tag_index].tag_name);
+
+                        var cosmetic = {
+                            id: data[i].cosmetic.id,
+                            brand_name: data[i].cosmetic.product.brand.brand_name,
+                            product_name: data[i].cosmetic.product.product_name,
+                            type_name: data[i].cosmetic.type_name,
+                            image_link: imageLink,
+                            tag_names: tagNames
+                        };
+
+                        this.interestedCosmetics.push(cosmetic)
+                        console.log(this.interestedCosmetics);
+                    }
+                })
+                .catch(function (err) {
+                    console.log("GET FAIL", err);
+                });
         }
     })
 </script>

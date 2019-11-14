@@ -53,6 +53,11 @@ class CosmeticInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
+        # queryset = Cosmetic.objects.exclude(rgb_value="None")
+        # print("Start!")
+        # for a in queryset:
+        #     if a.product.category.id == 21:
+        #         print(a.rgb_value)
         queryset = Cosmetic.objects.filter(rgb_value="Fuck You!")
         serializer = CosmeticSerializer(queryset, many=True)
 
@@ -76,7 +81,7 @@ class CosmeticInfo(APIView):
 
 
 class UserCosmeticInfo(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         try:
@@ -87,7 +92,8 @@ class UserCosmeticInfo(APIView):
             user_cosmetic.alarm_cycle = request.data['alarm_cycle']
             user_cosmetic.is_consent_alarm = request.data['is_consent_alarm']
             user_cosmetic.save()
-            queryset= User_Cosmetic.objects.filter(user=request.user)
+            # queryset= User_Cosmetic.objects.filter(user=request.user)
+            queryset= User_Cosmetic.objects.filter(pk=user_cosmetic.id)
             serializer = UserCosmeticSerializer(queryset, many=True)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -98,9 +104,19 @@ class UserCosmeticInfo(APIView):
         serializer = UserCosmeticSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    def delete(self, request, pk, format=None):
+        try:
+            user_cosmetic = User_Cosmetic.objects.get(pk=pk)
+            user_cosmetic.delete()
+            cosmetic_id = {}
+            cosmetic_id['cosmetic_id'] = pk
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(cosmetic_id)
+
 
 class UserInterestedCosmeticInfo(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         try:
@@ -118,3 +134,8 @@ class UserInterestedCosmeticInfo(APIView):
         queryset = User_Interested_Cosmetic.objects.filter(user=request.user)
         serializer = UserInterestedCosmeticSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    def delete(self, request, format=None):
+        user_interested_cosmetic = User_Interested_Cosmetic.objects.get(pk=request.data['cosmetic_id'])
+        user_interested_cosmetic.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

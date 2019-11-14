@@ -4,8 +4,8 @@ from rest_framework.authtoken import views as token_views
 from api import views
 
 urlpatterns = [
-    url(r'^user/cosmetic/interested$', views.UserInterestedCosmeticInfo.as_view()),
-    url(r'^user/cosmetic/interested(?P<pk>[\w:|-]+)/$', views.UserInterestedCosmeticInfo.as_view()),
+    url(r'^user/cosmetic/interested/$', views.UserInterestedCosmeticInfo.as_view()),
+    url(r'^user/cosmetic/interested/(?P<pk>[\w:|-]+)/$', views.UserInterestedCosmeticInfo.as_view()),
     url(r'^user/cosmetic/$', views.UserCosmeticInfo.as_view()),
     url(r'^user/cosmetic/(?P<pk>[\w:|-]+)/$', views.UserCosmeticInfo.as_view()),
     url(r'^user/$', views.UserInfo.as_view()),

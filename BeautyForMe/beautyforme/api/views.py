@@ -117,13 +117,13 @@ class UserCosmeticInfo(APIView):
         queryset = request.data
         for json_ids in queryset:
             dict_ids = json.loads(json_ids)
-            cosmetic_ids = dict_ids['cosmetic_id']
+            cosmetic_ids = dict_ids['user_cosmetic_id']
         try:
             for cosmetic_id in cosmetic_ids:
                 user_cosmetic = User_Cosmetic.objects.get(pk=cosmetic_id)
                 user_cosmetic.delete()
             cosmetic_id = {}
-            cosmetic_id['cosmetic_id'] = cosmetic_ids
+            cosmetic_id['user_cosmetic_id'] = cosmetic_ids
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_id)
@@ -138,7 +138,7 @@ class UserInterestedCosmeticInfo(APIView):
             user_interested_cosmetic.user = request.user
             user_interested_cosmetic.cosmetic = Cosmetic.objects.get(pk=request.data['cosmetic_id'])
             user_interested_cosmetic.save()
-            queryset= User_Interested_Cosmetic.objects.filter(user=request.user)
+            queryset= User_Interested_Cosmetic.objects.filter(pk=user_interested_cosmetic.id)
             serializer = UserInterestedCosmeticSerializer(queryset, many=True)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -150,6 +150,16 @@ class UserInterestedCosmeticInfo(APIView):
         return Response(serializer.data)
 
     def delete(self, request, format=None):
-        user_interested_cosmetic = User_Interested_Cosmetic.objects.get(pk=request.data['cosmetic_id'])
-        user_interested_cosmetic.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        queryset = request.data
+        for json_ids in queryset:
+            dict_ids = json.loads(json_ids)
+            cosmetic_ids = dict_ids['user_interested_cosmetic_id']
+        try:
+            for cosmetic_id in cosmetic_ids:
+                user_interested_cosmetic = User_Interested_Cosmetic.objects.get(pk=cosmetic_id)
+                user_interested_cosmetic.delete()
+            cosmetic_id = {}
+            cosmetic_id['user_interested_cosmetic_id'] = cosmetic_ids
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(cosmetic_id)

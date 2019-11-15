@@ -14,6 +14,7 @@ import operator
 from functools import reduce
 from django.db.models import Q
 import difflib
+import json
 
 class UserInfo(APIView):
     # permission_classes = [IsAdminUser]
@@ -53,6 +54,14 @@ class CosmeticInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
+        # queryset = Cosmetic.objects.filter(product__category=21)
+        # for a in queryset:
+        #     if a.similar_cosmetics is not "":
+        #         print('item명: ' + str(a) + str(a.rgb_value))
+        #         print('id: ' + str(a.id))
+        #         print('대체화장품: ' + str(a.similar_cosmetics))
+
+        # print(queryset)
         # queryset = Cosmetic.objects.exclude(rgb_value="None")
         # print("Start!")
         # for a in queryset:
@@ -104,12 +113,17 @@ class UserCosmeticInfo(APIView):
         serializer = UserCosmeticSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def delete(self, request, pk, format=None):
+    def delete(self, request, format=None):
+        queryset = request.data
+        for json_ids in queryset:
+            dict_ids = json.loads(json_ids)
+            cosmetic_ids = dict_ids['cosmetic_id']
         try:
-            user_cosmetic = User_Cosmetic.objects.get(pk=pk)
-            user_cosmetic.delete()
+            for cosmetic_id in cosmetic_ids:
+                user_cosmetic = User_Cosmetic.objects.get(pk=cosmetic_id)
+                user_cosmetic.delete()
             cosmetic_id = {}
-            cosmetic_id['cosmetic_id'] = pk
+            cosmetic_id['cosmetic_id'] = cosmetic_ids
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_id)

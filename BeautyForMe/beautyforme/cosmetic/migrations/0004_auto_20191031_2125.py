@@ -52,15 +52,15 @@ class Migration(migrations.Migration):
                 ('big_category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cosmetic.Big_Category')),
             ],
         ),
-        migrations.CreateModel(
-            name='User_Cosmetic',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('expiration_date', models.DateTimeField(default='', max_length=100)),
-                ('is_consent_alarm', models.BooleanField(default=True)),
-                ('selected_similar_cosmetics', jsonfield.fields.JSONField(default='')),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='User_Cosmetic',
+        #     fields=[
+        #         ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+        #         ('expiration_date', models.DateTimeField(default='', max_length=100)),
+        #         ('is_consent_alarm', models.BooleanField(default=True)),
+        #         ('selected_similar_cosmetics', jsonfield.fields.JSONField(default='')),
+        #     ],
+        # ),
         migrations.RenameField(
             model_name='cosmetic',
             old_name='big_category',
@@ -88,16 +88,16 @@ class Migration(migrations.Migration):
             model_name='cosmetic',
             name='tag_names',
         ),
-        migrations.AddField(
-            model_name='user_cosmetic',
-            name='cosmetic',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cosmetic.Cosmetic'),
-        ),
-        migrations.AddField(
-            model_name='user_cosmetic',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
-        ),
+        # migrations.AddField(
+        #     model_name='user_cosmetic',
+        #     name='cosmetic',
+        #     field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cosmetic.Cosmetic'),
+        # ),
+        # migrations.AddField(
+        #     model_name='user_cosmetic',
+        #     name='user',
+        #     field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+        # ),
         migrations.AddField(
             model_name='product',
             name='category',

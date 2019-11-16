@@ -163,3 +163,17 @@ class UserInterestedCosmeticInfo(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_id)
+
+# class UserCosmeticInfo(APIView):
+
+#     def post(self, request, format=None):
+#         try:
+#             cosmetic_importance = Cosmetic_Importance()
+#             cosmetic_importance.user = request.user
+#             user_interested_cosmetic.cosmetic = Cosmetic.objects.get(pk=request.data['cosmetic_id'])
+#             user_interested_cosmetic.save()
+#             queryset= User_Interested_Cosmetic.objects.filter(pk=user_interested_cosmetic.id)
+#             serializer = UserInterestedCosmeticSerializer(queryset, many=True)
+#         except:
+#             return Response(status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)

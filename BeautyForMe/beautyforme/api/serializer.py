@@ -64,3 +64,8 @@ class UserInterestedCosmeticSerializer(serializers.ModelSerializer):
     class Meta:
         model = User_Interested_Cosmetic
         fields = '__all__'
+
+class CosmeticImportanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cosmetic_Importance
+        fields = '__all__'

@@ -5,7 +5,7 @@
 {% block extra-style %}
 <style>
     .user-cosmetic {
-        width: 50%;
+        width: 40%;
     }
 
     .control-bar {
@@ -22,9 +22,10 @@
     }
 
     .cosmetic-control-btn {
-        width: 100px;
-        height: 35px;
-        font-size: 14px;
+        width: 120px;
+        height: 28px;
+        font-size: 13px;
+        padding: 3px;
     }
 
     .gray-line {
@@ -44,7 +45,7 @@
     }
 
     .col-title {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
     }
 
@@ -85,6 +86,99 @@
     .d-day {
         color: darkgreen;
     }
+
+    .select-row {
+        opacity: 0.7;
+        background-color: lightgray;
+    }
+
+    .alarm-select {
+        margin-top: 5px;
+        border: 1px solid pink;
+        border-radius: 8px;
+        width: 60px;
+        font-size: 10px;
+    }
+
+
+
+    /* The switch - the box around the slider */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 30px;
+        height: 17px;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 13px;
+        width: 13px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: lightpink;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px lightpink;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(13px);
+        -ms-transform: translateX(13px);
+        transform: translateX(13px);
+    }
+
+    label {
+        margin: 0px;
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 17px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    /* modal */
+    .modal {
+        position: fixed !important;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-dialog {
+        position: relative;
+        top: 30vh;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -94,60 +188,140 @@
 
 {% block content %}
 <div class="container" id="app">
+    <div v-if="showModal" @mouseover.once="hightingBtn" class="modal d-block position-relative" tabindex="-1"
+        role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>상세 검색</h3>
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true"
+                        @click="closeModal">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-4 mt-2 mb-2">
+                                브랜드
+                            </div>
+                            <div
+                                class="col-8  mt-2 mb-2 col-content d-inline-flex justify-content-start align-items-center">
+                                <span v-for="brand in brands">
+                                    <button class="btn btn-outline-primary tag-btn detail-brand"
+                                        @click="selectBrand($event, brand)">[[brand]]</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 mt-2 mb-2">
+                                카테고리
+                            </div>
+                            <div
+                                class="col-8  mt-2 mb-2 col-content d-inline-flex justify-content-start align-items-center">
+                                <span v-for="category in categories">
+                                    <button class="btn btn-outline-primary tag-btn detail-category"
+                                        @click="selectCategory($event, category)">[[category]]</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class=" modal-footer">
+                    <button @click="submitDetail()" class="btn" data-dismiss="alert" aria-hidden="true">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row page-title justify-content-center">
-        <h3 class="text-center m-0">[[ username ]]님의 화장품</h3>
+        <h3 class="text-center m-0">{{user.last_name}}님의 화장품</h3>
     </div>
     <div class="row sticky-top control-bar">
         <div class="col-12 p-0">
             <div class="row black-line"></div>
-            <div class="row mt-2 mb-2 pr-3 pl-3">
+            <div class="row mt-1 mb-1 pr-3 pl-3">
+                <div class="col-12 d-flex justify-content-between">
+                    <button class="cosmetic-control-btn btn btn-outline-primary"
+                        @click="location.href='{% url 'cosmetic:register' %}'">화장품 등록하기</button>
+                    <button class="cosmetic-control-btn btn btn-outline-primary detail-search-btn"
+                        @click="detailSearch">상세 검색</button>
+                </div>
+            </div>
+            <div class="row gray-line"></div>
+            <div class="row mt-1 mb-1 pr-3 pl-3">
                 <div class="col-6">
-                    <button class="cosmetic-control-btn btn btn-primary">모두 선택</button>
-                    <button class="cosmetic-control-btn btn btn-primary">화장품 조합</button>
-                    <button class="cosmetic-control-btn btn btn-primary">삭제</button>
+                    <button @click="selectAll" class="cosmetic-control-btn btn btn-outline-primary select-all-btn">모두
+                        선택</button>
+                    <button class="cosmetic-control-btn btn btn-outline-primary">삭제</button>
                 </div>
                 <div class="col-6 d-flex justify-content-end">
-                    <button class="cosmetic-control-btn btn btn-primary">내 화장품</button>
-                    <button class="cosmetic-control-btn btn btn-primary ml-1">관심 화장품</button>
+                    <button @click="changeToMy" class="my-cosmetic-btn cosmetic-control-btn btn btn-primary">내
+                        화장품</button>
+                    <button @click="changeToInterested"
+                        class="interested-cosmetic-btn cosmetic-control-btn btn btn-outline-primary ml-1">관심
+                        화장품</button>
                 </div>
             </div>
             <div class="row gray-line"></div>
             <div class="row mt-1 mb-1">
-                <div class="col-2 col-title"></div>
+                <div class="col-2 col-title text-center">
+                    <span v-if="showMyCosmetic">내 화장품</span>
+                    <span v-else>관심 화장품</span>
+                </div>
                 <div class="col-4 col-title">제품</div>
-                <div class="col-2 col-title text-center">카테고리</div>
+                <div class="col-1 col-title text-center">카테고리</div>
                 <div class="col-2 col-title text-center">태그</div>
                 <div class="col-2 col-title text-center">관리상태</div>
+                <div class="col-1 col-title text-center">알람</div>
             </div>
             <div class="row black-line"></div>
         </div>
     </div>
-    <div class="row">
+    <div v-show="showMyCosmetic" class="row">
         <div class="col-12 p-0">
-            <div v-for="myCosmetic in myCosmetics" :key="myCosmetic.id" @click="selectCosmetic(event)"
-                class="container p-0 mt-1 mb-1 cosmetic-container">
-                <div class="row">
+            <div v-for="(cosmetic, index) in displayMyCosmetics" :key="cosmetic.id"
+                class=" container p-0 mt-1 mb-1 cosmetic-container myCosmetic-row">
+                <div class="row" @click="selectCosmetic($event, 'my', index, cosmetic.id)">
                     <div class="col-2 col-content text-center">
-                        <img :src="[[myCosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
+                        <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
                     </div>
                     <div class="col-4 col-content d-flex flex-column justify-content-center">
-                        <div class="row content-brand">[[myCosmetic.brandName]]</div>
-                        <div class="row content-cosmetic">[[myCosmetic.productName]] [[myCosmetic.typeName]]</div>
+                        <div class="row content-brand">[[cosmetic.brandName]]</div>
+                        <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
+                        </div>
                     </div>
-                    <div class="col-2 col-content d-flex flex-column justify-content-center">
-                        <div class="row justify-content-center content-category">[[myCosmetic.smallCategory]]</div>
+                    <div class="col-1 col-content d-flex flex-column justify-content-center">
+                        <div class="row justify-content-center content-category">[[cosmetic.smallCategory]]
+                        </div>
                     </div>
                     <div class="col-2 col-content d-inline-flex justify-content-center align-items-center">
-                        <span v-for="tag in myCosmetic.tagNames" class="justify-content-center">
+                        <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
                             <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
                         </span>
                     </div>
                     <div class="col-2 d-flex flex-column justify-content-center">
-                        <div class="row justify-content-center content-expiration">[[myCosmetic.expirationData]]</div>
-                        <div v-if="myCosmetic.restDay > 0" class="row justify-content-center rest-day">
-                            <span class="d-day">D-[[myCosmetic.restDay]]일</span>
+                        <div class="row justify-content-center content-expiration">
+                            [[cosmetic.expirationDate]]</div>
+                        <div v-if="cosmetic.restDay > 0" class="row justify-content-center rest-day">
+                            <span class="d-day">D-[[cosmetic.restDay]]일</span>
                         </div>
-                        <div v-else class="row justify-content-center no-rest">[[myCosmetic.absRestDay]]일 지났습니다!</div>
+                        <div v-else class="row justify-content-center no-rest">[[cosmetic.absRestDay]]일
+                            지났습니다!</div>
+                    </div>
+                    <div class="col-1 col-content d-flex flex-column justify-content-center">
+                        <div class="row justify-content-center">
+                            <label class="switch d-flex align-items-center">
+                                <input type="checkbox" class="switch-alarm">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="row justify-content-center">
+                            <select v-model="cosmetic.alarmCycle" class="alarm-select">
+                                <option value="0">알람 없음</option>
+                                <option value="7">일주일 전</option>
+                                <option value="30">1달 전</option>
+                                <option value="60">2달 전</option>
+                                <option value="90">3달 전</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="gray-line"></div>
@@ -155,10 +329,39 @@
         </div>
     </div>
 
-
-    <a href="{% url 'cosmetic:register' %}">
-        <button type="button" class="btn btn-success">화장품 등록하러 가기</button>
-    </a>
+    <div v-show="showMyCosmetic == false" class="row">
+        <div class="col-12 p-0">
+            <div v-for="(cosmetic, index) in displayInterestedCosmetics" :key="cosmetic.id"
+                class="container p-0 mt-1 mb-1 cosmetic-container interestedCosmetic-row">
+                <div class="row" @click="selectCosmetic($event, 'interested', index, cosmetic.id)">
+                    <div class="col-2 col-content text-center">
+                        <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
+                    </div>
+                    <div class="col-4 col-content d-flex flex-column justify-content-center">
+                        <div class="row content-brand">[[cosmetic.brandName]]</div>
+                        <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
+                        </div>
+                    </div>
+                    <div class="col-1 col-content d-flex flex-column justify-content-center">
+                        <div class="row justify-content-center content-category">[[cosmetic.smallCategory]]
+                        </div>
+                    </div>
+                    <div class="col-2 col-content d-inline-flex justify-content-center align-items-center">
+                        <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
+                            <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
+                        </span>
+                    </div>
+                    <div class="col-2 d-flex flex-column justify-content-center">
+                        <div class="row justify-content-center content-expiration"></div>
+                    </div>
+                    <div class="col-1 col-content d-flex flex-column justify-content-center">
+                        <div class="row justify-content-center"></div>
+                    </div>
+                </div>
+                <div class="gray-line"></div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock content %}
 
@@ -175,689 +378,386 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
+            showMyCosmetic: true,
+            isSelectMyAll: false,
+            isSelectInterestedAll: false,
             myCosmetics: [],
-            username: "최범수"
+            interestedCosmetics: [],
+            displayMyCosmetics: [],
+            displayInterestedCosmetics: [],
+            selectedMyCosmetics: [],
+            selectedInterestedCosmetics: [],
+            selectedBrands: [],
+            tempBrands: [],
+            selectedCategories: [],
+            tempCategories: [],
+            showModal: false
+        },
+        computed: {
+            brands() {
+                var brandList = []
+                if (this.myCosmetics != undefined) {
+                    for (var i in this.myCosmetics) {
+                        brandName = this.myCosmetics[i].brandName;
+                        if (brandList.includes(brandName) == false) {
+                            brandList.push(brandName)
+                        }
+                    }
+                }
+
+                if (this.interestedCosmetics != undefined) {
+                    for (var i in this.interestedCosmetics) {
+                        brandName = this.interestedCosmetics[i].brandName;
+                        if (brandList.includes(brandName) == false) {
+                            brandList.push(brandName)
+                        }
+                    }
+                }
+
+                return brandList;
+            },
+            categories() {
+                var categoryList = []
+                if (this.myCosmetics != undefined) {
+                    for (var i in this.myCosmetics) {
+                        category = this.myCosmetics[i].smallCategory;
+                        if (categoryList.includes(category) == false) {
+                            categoryList.push(category)
+                        }
+                    }
+                }
+
+                if (this.interestedCosmetics != undefined) {
+                    for (var i in this.interestedCosmetics) {
+                        category = this.interestedCosmetics[i].smallCategory;
+                        if (categoryList.includes(category) == false) {
+                            categoryList.push(category)
+                        }
+                    }
+                }
+
+                return categoryList;
+            }
         },
         methods: {
-            selectCosmetic(event) {
-                event.target.classList.add("test");
-                console.log("test");
-                console.log(event.target);
+            btnOn(btnElement) {
+                btnElement.classList.remove("btn-outline-primary");
+                btnElement.classList.add("btn-primary");
+            },
+            btnOff(btnElement) {
+                btnElement.classList.remove("btn-primary");
+                btnElement.classList.add("btn-outline-primary");
+            },
+            changeToMy() {
+                this.showMyCosmetic = true;
+                this.btnOn(document.querySelector(".my-cosmetic-btn"));
+                this.btnOff(document.querySelector(".interested-cosmetic-btn"));
+                if (this.isSelectMyAll)
+                    this.btnOn(document.querySelector(".select-all-btn"));
+                else
+                    this.btnOff(document.querySelector(".select-all-btn"));
+                this.resetDetail();
+            },
+            changeToInterested() {
+                this.showMyCosmetic = false;
+                this.btnOff(document.querySelector(".my-cosmetic-btn"));
+                this.btnOn(document.querySelector(".interested-cosmetic-btn"));
+                if (this.isSelectInterestedAll)
+                    this.btnOn(document.querySelector(".select-all-btn"));
+                else
+                    this.btnOff(document.querySelector(".select-all-btn"));
+                this.resetDetail();
+            },
+            selectAll() {
+                if (this.showMyCosmetic) {
+                    var cosmeticRows = document.querySelectorAll(".myCosmetic-row");
+
+                    if (this.isSelectMyAll) {
+                        this.selectedMyCosmetics = [];
+                        for (var index = 0; index < cosmeticRows.length; index++) {
+                            cosmeticRows[index].classList.remove("select-row");
+                        }
+                        this.btnOff(document.querySelector(".select-all-btn"));
+                        this.isSelectMyAll = false;
+                    }
+                    else {
+                        this.selectedMyCosmetics = [];
+                        for (var index = 0; index < cosmeticRows.length; index++) {
+                            cosmeticRows[index].classList.add("select-row");
+                            this.selectedMyCosmetics.push({
+                                arrayIndex: index,
+                                cosmeticId: this.myCosmetics[index].id
+                            })
+                        }
+                        this.btnOn(document.querySelector(".select-all-btn"));
+                        this.isSelectMyAll = true;
+                    }
+                }
+                else {
+                    var cosmeticRows = document.querySelectorAll(".interestedCosmetic-row");
+
+                    if (this.isSelectInterestedAll) {
+                        this.selectedInterestedCosmetics = [];
+                        for (var index = 0; index < cosmeticRows.length; index++) {
+                            cosmeticRows[index].classList.remove("select-row");
+                        }
+                        this.btnOff(document.querySelector(".select-all-btn"));
+                        this.isSelectInterestedAll = false;
+                    }
+                    else {
+                        this.selectedInterestedCosmetics = [];
+                        for (var index = 0; index < cosmeticRows.length; index++) {
+                            cosmeticRows[index].classList.add("select-row");
+                            this.selectedInterestedCosmetics.push({
+                                arrayIndex: index,
+                                cosmeticId: this.interestedCosmetics[index].id
+                            })
+                        }
+                        this.btnOn(document.querySelector(".select-all-btn"));
+                        this.isSelectInterestedAll = true;
+                    }
+                }
+            },
+            selectCosmetic(event, kindCosmetic, arrayIndex, cosmeticId) {
+                console.log(cosmeticId);
+                if (event.target.classList.contains("alarm-select"))
+                    return;
+
+                if (kindCosmetic == "my") {
+                    var cosmeticRow = document.querySelectorAll(".myCosmetic-row")[arrayIndex];
+
+                    for (var index in this.selectedMyCosmetics) {
+                        if (this.selectedMyCosmetics[index].arrayIndex == arrayIndex) {
+                            cosmeticRow.classList.remove("select-row");
+                            this.selectedMyCosmetics.splice(index, 1);
+                            this.isSelectMyAll = false;
+                            this.btnOff(document.querySelector(".select-all-btn"));
+                            return;
+                        }
+                    }
+                    this.selectedMyCosmetics.push({
+                        arrayIndex: arrayIndex,
+                        cosmeticId: cosmeticId
+                    })
+                    cosmeticRow.classList.add("select-row");
+
+                    if (this.selectedMyCosmetics.length == this.myCosmetics.length) {
+                        this.isSelectMyAll = true;
+                        this.btnOn(document.querySelector(".select-all-btn"));
+                    }
+                }
+                else {
+                    var cosmeticRow = document.querySelectorAll(".interestedCosmetic-row")[arrayIndex];
+
+                    for (var index in this.selectedInterestedCosmetics) {
+                        if (this.selectedInterestedCosmetics[index].arrayIndex == arrayIndex) {
+                            cosmeticRow.classList.remove("select-row");
+                            this.selectedInterestedCosmetics.splice(index, 1);
+                            this.isSelectInterestedAll = false;
+                            this.btnOff(document.querySelector(".select-all-btn"));
+                            return;
+                        }
+                    }
+                    this.selectedInterestedCosmetics.push({
+                        arrayIndex: arrayIndex,
+                        cosmeticId: cosmeticId
+                    })
+                    cosmeticRow.classList.add("select-row");
+
+                    if (this.selectedInterestedCosmetics.length == this.interestedCosmetics.length) {
+                        this.isSelectInterestedAll = true;
+                        this.btnOn(document.querySelector(".select-all-btn"));
+                    }
+                }
+            },
+            resetSelect() {
+                this.selectedMyCosmetics = [];
+                this.selectedInterestedCosmetics = [];
+                this.removeSelectEffect(".myCosmetic-row");
+                this.removeSelectEffect(".interestedCosmetic-row");
+            },
+            removeSelectEffect(className) {
+                var cosmeticRows = document.querySelectorAll(className);
+                for (var index = 0; index < cosmeticRows.length; index++) {
+                    cosmeticRows[index].classList.remove("select-row");
+                }
+            },
+            detailSearch() {
+                this.showModal = true;
+                this.tempBrands = this.selectedBrands;
+                this.tempCategories = this.selectedCategories;
+            },
+            hightingBtn() {
+                const brands = document.querySelectorAll(".detail-brand");
+                const categories = document.querySelectorAll(".detail-category");
+
+                for (var i in brands) {
+                    if (this.selectedBrands.includes(brands[i].innerText)) {
+                        this.btnOn(brands[i]);
+                    }
+                }
+
+                for (var i in categories) {
+                    if (this.selectedCategories.includes(categories[i].innerText)) {
+                        this.btnOn(categories[i]);
+                    }
+                }
+            },
+            selectBrand(event, brand) {
+                if (this.tempBrands.includes(brand)) {
+                    this.tempBrands.splice(this.tempBrands.indexOf(brand), 1);
+                    this.btnOff(event.target);
+                } else {
+                    this.tempBrands.push(brand)
+                    this.btnOn(event.target);
+                }
+                console.log(this.tempBrands)
+            },
+            selectCategory(event, category) {
+                if (this.tempCategories.includes(category)) {
+                    this.tempCategories.splice(this.tempCategories.indexOf(category), 1);
+                    this.btnOff(event.target);
+                } else {
+                    this.tempCategories.push(category)
+                    this.btnOn(event.target);
+                }
+                console.log(this.tempCategories)
+            },
+            submitDetail() {
+                this.showModal = false;
+                this.selectedBrands = this.tempBrands;
+                this.selectedCategories = this.tempCategories;
+                console.log(this.selectedBrands);
+                console.log(this.selectedCategories);
+
+                if (this.tempBrands.length + this.tempCategories.length > 0)
+                    this.btnOn(document.querySelector(".detail-search-btn"));
+                else
+                    this.btnOff(document.querySelector(".detail-search-btn"));
+
+                this.filteringCosmetic();
+                this.resetSelect();
+            },
+            filteringCosmetic() {
+                if (this.showMyCosmetic) {
+                    this.displayMyCosmetics = this.filteringByBrands(this.myCosmetics);
+                }
+                else {
+                    this.displayInterestedCosmetics = this.filteringByBrands(this.interestedCosmetics);
+                }
+
+                if (this.showMyCosmetic) {
+                    this.displayMyCosmetics = this.filteringByCategories(this.displayMyCosmetics);
+                }
+                else {
+                    this.displayInterestedCosmetics = this.filteringByCategories(this.displayInterestedCosmetics);
+                }
+            },
+            filteringByBrands(cosmetics) {
+                var displayCosmetics = []
+                if (this.selectedBrands.length == 0) {
+                    displayCosmetics = cosmetics;
+                }
+                else {
+                    displayCosmetics = []
+                    for (var i in cosmetics) {
+                        if (this.selectedBrands.includes(cosmetics[i].brandName)) {
+                            displayCosmetics.push(cosmetics[i])
+                        }
+                    }
+                }
+                return displayCosmetics;
+            },
+            filteringByCategories(cosmetics) {
+                var displayCosmetics = []
+                if (this.selectedCategories.length == 0) {
+                    displayCosmetics = cosmetics;
+                }
+                else {
+                    displayCosmetics = []
+                    for (var i in cosmetics) {
+                        if (this.selectedCategories.includes(cosmetics[i].smallCategory)) {
+                            displayCosmetics.push(cosmetics[i])
+                        }
+                    }
+                }
+                return displayCosmetics;
+            },
+            resetDetail() {
+                this.selectedBrands = [];
+                this.selectedCategories = [];
+                this.btnOff(document.querySelector(".detail-search-btn"));
+
+                this.displayMyCosmetics = this.myCosmetics;
+                this.displayInterestedCosmetics = this.interestedCosmetics;
+            },
+            closeModal() {
+                this.showModal = false;
+            },
+            deleteCosmetic() {
+
             }
         },
         created() {
             var today = new Date();
 
-            var test = [
-                {
-                    "id": 1658,
-                    "product": {
-                        "id": 36234,
-                        "brand": {
-                            "id": 17717,
-                            "brand_name": "가네보"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "센사이 더 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg"
-                    },
-                    "type_name": " 06",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2019-11-10"
-                },
-                {
-                    "id": 3341,
-                    "product": {
-                        "id": 36536,
-                        "brand": {
-                            "id": 15345,
-                            "brand_name": "네이처리퍼블릭"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            },
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "크리미 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg"
-                    },
-                    "type_name": " 코랄핑크",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-02-11"
-                },
-                {
-                    "id": 9536,
-                    "product": {
-                        "id": 38131,
-                        "brand": {
-                            "id": 15779,
-                            "brand_name": "로레알파리"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "루즈 카레스 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg"
-                    },
-                    "type_name": " #06 Aphrodite scarlet",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2021-01-23"
-                },
-                {
-                    "id": 18820,
-                    "product": {
-                        "id": 40443,
-                        "brand": {
-                            "id": 16196,
-                            "brand_name": "블리블리(임블리)"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 178,
-                                "tag_name": "크레용타입"
-                            }
-                        ],
-                        "product_name": "슬라이딩 버터 크레용 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg"
-                    },
-                    "type_name": " 살구 버터",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-08-31"
-                },
-                {
-                    "id": 26306,
-                    "product": {
-                        "id": 42209,
-                        "brand": {
-                            "id": 17999,
-                            "brand_name": "아미옥"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "스타일마스터 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png"
-                    },
-                    "type_name": " 02 스포티즘",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-10-02"
-                },
-                {
-                    "id": 1658,
-                    "product": {
-                        "id": 36234,
-                        "brand": {
-                            "id": 17717,
-                            "brand_name": "가네보"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "센사이 더 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg"
-                    },
-                    "type_name": " 06",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2019-11-10"
-                },
-                {
-                    "id": 3341,
-                    "product": {
-                        "id": 36536,
-                        "brand": {
-                            "id": 15345,
-                            "brand_name": "네이처리퍼블릭"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            },
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "크리미 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg"
-                    },
-                    "type_name": " 코랄핑크",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-02-11"
-                },
-                {
-                    "id": 9536,
-                    "product": {
-                        "id": 38131,
-                        "brand": {
-                            "id": 15779,
-                            "brand_name": "로레알파리"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "루즈 카레스 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg"
-                    },
-                    "type_name": " #06 Aphrodite scarlet",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2021-01-23"
-                },
-                {
-                    "id": 18820,
-                    "product": {
-                        "id": 40443,
-                        "brand": {
-                            "id": 16196,
-                            "brand_name": "블리블리(임블리)"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 178,
-                                "tag_name": "크레용타입"
-                            }
-                        ],
-                        "product_name": "슬라이딩 버터 크레용 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg"
-                    },
-                    "type_name": " 살구 버터",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-08-31"
-                },
-                {
-                    "id": 26306,
-                    "product": {
-                        "id": 42209,
-                        "brand": {
-                            "id": 17999,
-                            "brand_name": "아미옥"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "스타일마스터 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png"
-                    },
-                    "type_name": " 02 스포티즘",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-10-02"
-                },
-                {
-                    "id": 1658,
-                    "product": {
-                        "id": 36234,
-                        "brand": {
-                            "id": 17717,
-                            "brand_name": "가네보"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "센사이 더 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg"
-                    },
-                    "type_name": " 06",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2019-11-10"
-                },
-                {
-                    "id": 3341,
-                    "product": {
-                        "id": 36536,
-                        "brand": {
-                            "id": 15345,
-                            "brand_name": "네이처리퍼블릭"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            },
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "크리미 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg"
-                    },
-                    "type_name": " 코랄핑크",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-02-11"
-                },
-                {
-                    "id": 9536,
-                    "product": {
-                        "id": 38131,
-                        "brand": {
-                            "id": 15779,
-                            "brand_name": "로레알파리"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "루즈 카레스 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg"
-                    },
-                    "type_name": " #06 Aphrodite scarlet",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2021-01-23"
-                },
-                {
-                    "id": 18820,
-                    "product": {
-                        "id": 40443,
-                        "brand": {
-                            "id": 16196,
-                            "brand_name": "블리블리(임블리)"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 178,
-                                "tag_name": "크레용타입"
-                            }
-                        ],
-                        "product_name": "슬라이딩 버터 크레용 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg"
-                    },
-                    "type_name": " 살구 버터",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-08-31"
-                },
-                {
-                    "id": 26306,
-                    "product": {
-                        "id": 42209,
-                        "brand": {
-                            "id": 17999,
-                            "brand_name": "아미옥"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "스타일마스터 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png"
-                    },
-                    "type_name": " 02 스포티즘",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-10-02"
-                },
-                {
-                    "id": 1658,
-                    "product": {
-                        "id": 36234,
-                        "brand": {
-                            "id": 17717,
-                            "brand_name": "가네보"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "센사이 더 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg"
-                    },
-                    "type_name": " 06",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160202/1454391896530.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2019-11-10"
-                },
-                {
-                    "id": 3341,
-                    "product": {
-                        "id": 36536,
-                        "brand": {
-                            "id": 15345,
-                            "brand_name": "네이처리퍼블릭"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            },
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "크리미 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg"
-                    },
-                    "type_name": " 코랄핑크",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20140609/1402371511484.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-02-11"
-                },
-                {
-                    "id": 9536,
-                    "product": {
-                        "id": 38131,
-                        "brand": {
-                            "id": 15779,
-                            "brand_name": "로레알파리"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 1,
-                                "tag_name": "보습"
-                            }
-                        ],
-                        "product_name": "루즈 카레스 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg"
-                    },
-                    "type_name": " #06 Aphrodite scarlet",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160111/1452476148682.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2021-01-23"
-                },
-                {
-                    "id": 18820,
-                    "product": {
-                        "id": 40443,
-                        "brand": {
-                            "id": 16196,
-                            "brand_name": "블리블리(임블리)"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 178,
-                                "tag_name": "크레용타입"
-                            }
-                        ],
-                        "product_name": "슬라이딩 버터 크레용 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg"
-                    },
-                    "type_name": " 살구 버터",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20160212/1455267309139.jpg",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-08-31"
-                },
-                {
-                    "id": 26306,
-                    "product": {
-                        "id": 42209,
-                        "brand": {
-                            "id": 17999,
-                            "brand_name": "아미옥"
-                        },
-                        "category": {
-                            "id": 21,
-                            "big_category": {
-                                "id": 13,
-                                "big_category": "색조"
-                            },
-                            "small_category": "립스틱"
-                        },
-                        "tag_names": [
-                            {
-                                "id": 82,
-                                "tag_name": "매트"
-                            }
-                        ],
-                        "product_name": "스타일마스터 립스틱",
-                        "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png"
-                    },
-                    "type_name": " 02 스포티즘",
-                    "rgb_value": "None",
-                    "image_link": "https://d9vmi5fxk1gsw.cloudfront.net/home/glowmee/upload/20181115/1542262806423.png",
-                    "similar_cosmetics": "",
-                    "expiration_data": "2020-10-02"
-                },
-            ];
-            for (var i in test) {
-                var data = test[i];
+            function cosmeticInsert(data) {
                 var imageLink;
 
-                if (data.image_link)
-                    imageLink = data.image_link;
+                if (data.cosmetic.product.image_link)
+                    imageLink = data.cosmetic.product.image_link;
                 else
-                    imageLink = data.product.image_link;
+                    imageLink = data.cosmetic.image_link;
 
                 var tagNames = [];
-                for (var j in data.product.tag_names)
-                    tagNames.push(data.product.tag_names[j].tag_name);
+                for (var tag_index in data.cosmetic.product.tag_names)
+                    tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
 
-                const expirationData = new Date(data.expiration_data);
-                const diffTime = (expirationData - today);
+                const expirationDate = new Date(data.expiration_date);
+                const diffTime = (expirationDate - today);
                 const restDay = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                var result = {
+                var cosmetic = {
                     id: data.id,
-                    brandName: data.product.brand.brand_name,
-                    smallCategory: data.product.category.small_category,
-                    productName: data.product.product_name,
-                    typeName: data.type_name,
+                    cosmeticId: data.cosmetic.id,
+                    brandName: data.cosmetic.product.brand.brand_name,
+                    productName: data.cosmetic.product.product_name,
+                    typeName: data.cosmetic.type_name,
                     imageLink: imageLink,
                     tagNames: tagNames,
-                    expirationData: data.expiration_data,
+                    smallCategory: data.cosmetic.product.category.small_category,
+                    expirationDate: data.expiration_date,
                     restDay: restDay,
-                    absRestDay: Math.abs(restDay)
-                }
-                console.log(result);
-                this.myCosmetics.push(result);
+                    absRestDay: Math.abs(restDay),
+                    alarmCycle: data.alarm_cycle,
+                    isConsentAlarm: data.is_consent_alarm,
+                };
+                return cosmetic;
             }
+
+            axios.get('/api/user/cosmetic/')
+                .then((res) => {
+                    console.log("GET SUCCESS", res);
+                    const data = res.data;
+
+                    for (var i in data)
+                        this.myCosmetics.push(cosmeticInsert(data[i]))
+                })
+                .catch(function (err) {
+                    console.log("GET FAIL", err);
+                });
+
+            axios.get('/api/user/cosmetic/interested')
+                .then((res) => {
+                    console.log("GET SUCCESS", res);
+                    const data = res.data;
+
+                    for (var i in data)
+                        this.interestedCosmetics.push(cosmeticInsert(data[i]))
+                })
+                .catch(function (err) {
+                    console.log("GET FAIL", err);
+                });
 
             function customSort(a, b) {
                 if (a.restDay == b.restDay) {
@@ -866,8 +766,10 @@
                 return a.restDay > b.restDay ? 1 : -1;
             }
             this.myCosmetics.sort(customSort);
+            this.displayMyCosmetics = this.myCosmetics;
+            this.displayInterestedCosmetics = this.interestedCosmetics;
             console.log(this.myCosmetics);
-        }
+        },
     })
 </script>
 {% endblock extra-script %}

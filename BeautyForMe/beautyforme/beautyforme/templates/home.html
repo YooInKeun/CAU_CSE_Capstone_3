@@ -7,6 +7,178 @@
     .carousel-inner {
         background-size: cover;
     }
+
+    .user-cosmetic {
+        width: 40%;
+    }
+
+    .control-bar {
+        background-color: white;
+        position: sticky;
+        top: 80px;
+    }
+
+    .page-title {
+        margin-bottom: 40px;
+        margin-top: 40px;
+        font-weight: bold;
+        font-size: 24px;
+    }
+
+    .cosmetic-control-btn {
+        width: 120px;
+        height: 28px;
+        font-size: 13px;
+        padding: 3px;
+    }
+
+    .gray-line {
+        margin: 0px;
+        padding: 0px;
+        height: 1px;
+        width: 100%;
+        background-color: lightgray;
+    }
+
+    .black-line {
+        margin: 0px;
+        padding: 0px;
+        height: 2px;
+        width: 100%;
+        background-color: lightpink;
+    }
+
+    .col-title {
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .col-content {
+        align-content: center;
+    }
+
+    .content-brand {
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .content-cosmetic {
+        font-size: 15px;
+    }
+
+    .content-expiration {
+        font-size: 15px;
+    }
+
+    .content-category {
+        font-size: 15px;
+    }
+
+    .tag-btn {
+        font-size: 13px;
+        padding: 4px 8px;
+        margin: 2px;
+        font-weight: bold;
+    }
+
+    .no-rest {
+        color: darkred;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .d-day {
+        color: darkgreen;
+    }
+
+    .select-row {
+        opacity: 0.7;
+        background-color: lightgray;
+    }
+
+    .alarm-select {
+        margin-top: 5px;
+        border: 1px solid pink;
+        border-radius: 8px;
+        width: 60px;
+        font-size: 10px;
+    }
+
+
+
+    /* The switch - the box around the slider */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 30px;
+        height: 17px;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 13px;
+        width: 13px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: lightpink;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px lightpink;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(13px);
+        -ms-transform: translateX(13px);
+        transform: translateX(13px);
+    }
+
+    label {
+        margin: 0px;
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 17px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    /* modal */
+    .modal {
+        position: fixed !important;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
 </style>
 {% endblock extra-style %}
 
@@ -16,6 +188,50 @@
 
 
 {% block content %}
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">유통기한 알림</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row control-bar">
+                    <div class="col-12 p-0">
+                        <div class="row mt-1 mb-1">
+                            <div class="col-4 col-title">제품</div>
+                            <div class="col-4 col-title">카테고리</div>
+                            <div class="col-4 col-title">유통기한</div>
+                        </div>
+                        <div class="row black-line"></div>
+                    </div>
+                </div>
+                {% for alarm_cosmetic in alarm_cosmetics %}
+                <div class="row">
+                    <div class="col-4 col-content d-flex flex-column justify-content-center">
+                        <div class="row content-cosmetic">{{alarm_cosmetic.cosmetic.product}}
+                        </div>
+                    </div>
+                    <div class="col-4 col-content d-flex flex-column justify-content-center">
+                        <div class="row justify-content-center content-category">{{alarm_cosmetic.cosmetic.product.category}}
+                        </div>
+                    </div>
+                    <div class="col-4 d-flex flex-column justify-content-center">
+                        <div class="row justify-content-center content-expiration">
+                            {{alarm_cosmetic.expiration_date}}</div>
+                    </div>
+                    <div class="gray-line"></div>
+                </div>
+            {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
     <ol class="carousel-indicators">
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -55,7 +271,10 @@
         <span class="sr-only">Next</span>
     </a>
 </div>
-
+<button id="modalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        유통기한 알림
+</button>
+<input id="is_alarm_time" value={{is_alarm_time}}>
 {% include 'card.html' %}
 
 {% endblock content %}
@@ -65,9 +284,17 @@
 {% endblock footer %}
 
 {% block extra-script %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-latest.js"></script> 
 <script>
-    $(function () {
-        $('[data-toggle=tooltip]').tooltip();
+    $(document).ready(function() {
+        var is_alarm_time = document.getElementById("is_alarm_time").value
+        $("#is_alarm_time").hide();
+        $("#modalButton").hide();
+        
+        if (is_alarm_time == "True"){
+            $("#modalButton").trigger('click');
+        }
     });
 </script>
 {% endblock extra-script %}

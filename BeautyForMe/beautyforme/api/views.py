@@ -115,9 +115,7 @@ class UserCosmeticInfo(APIView):
 
     def delete(self, request, format=None):
         queryset = request.data
-        for json_ids in queryset:
-            dict_ids = json.loads(json_ids)
-            cosmetic_ids = dict_ids['user_cosmetic_id']
+        cosmetic_ids = queryset['user_cosmetic_id']
         try:
             for cosmetic_id in cosmetic_ids:
                 user_cosmetic = User_Cosmetic.objects.get(pk=cosmetic_id)
@@ -151,9 +149,7 @@ class UserInterestedCosmeticInfo(APIView):
 
     def delete(self, request, format=None):
         queryset = request.data
-        for json_ids in queryset:
-            dict_ids = json.loads(json_ids)
-            cosmetic_ids = dict_ids['user_interested_cosmetic_id']
+        cosmetic_ids = queryset['user_interested_cosmetic_id']
         try:
             for cosmetic_id in cosmetic_ids:
                 user_interested_cosmetic = User_Interested_Cosmetic.objects.get(pk=cosmetic_id)

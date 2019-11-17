@@ -8,6 +8,11 @@
         width: 40%;
     }
 
+    .cosmetic-checkbox {
+        position: relative;
+        left: -15px;
+    }
+
     .control-bar {
         background-color: white;
         position: sticky;
@@ -53,9 +58,20 @@
         align-content: center;
     }
 
+    .content-row {
+        min-height: 50vh;
+    }
+
+    .empty-msg {
+        position: relative;
+        top: 23vh;
+        text-align: center;
+    }
+
     .content-brand {
         font-weight: bold;
-        font-size: 15px;
+        font-size: 14px;
+        color: rgb(253, 153, 170);
     }
 
     .content-cosmetic {
@@ -89,7 +105,8 @@
 
     .select-row {
         opacity: 0.7;
-        background-color: lightgray;
+        -webkit-filter: grayscale(100%);
+        filter: grayscale(100%);
     }
 
     .alarm-select {
@@ -99,6 +116,7 @@
         width: 60px;
         font-size: 10px;
     }
+
 
 
 
@@ -204,7 +222,7 @@
                                 브랜드
                             </div>
                             <div
-                                class="col-8  mt-2 mb-2 col-content d-inline-flex justify-content-start align-items-center">
+                                class="col-8 mt-2 mb-2 col-content d-inline-block-flex justify-content-start align-items-center">
                                 <span v-for="brand in brands">
                                     <button class="btn btn-outline-primary tag-btn detail-brand"
                                         @click="selectBrand($event, brand)">[[brand]]</button>
@@ -216,7 +234,7 @@
                                 카테고리
                             </div>
                             <div
-                                class="col-8  mt-2 mb-2 col-content d-inline-flex justify-content-start align-items-center">
+                                class="col-8  mt-2 mb-2 col-content d-inline-block-flex justify-content-start align-items-center">
                                 <span v-for="category in categories">
                                     <button class="btn btn-outline-primary tag-btn detail-category"
                                         @click="selectCategory($event, category)">[[category]]</button>
@@ -227,6 +245,21 @@
                 </div>
                 <div class=" modal-footer">
                     <button @click="submitDetail()" class="btn" data-dismiss="alert" aria-hidden="true">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-if="showDeleteModal" @mouseover.once="hightingBtn" class="modal d-block position-relative" tabindex="-1"
+        role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>정말 삭제하시겠습니까?</h3>
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true"
+                        @click="closeDeleteModal">×</button>
+                </div>
+                <div class=" modal-footer">
+                    <button @click="deleteCosmetic" class="btn" data-dismiss="alert" aria-hidden="true">삭제하기</button>
                 </div>
             </div>
         </div>
@@ -250,7 +283,7 @@
                 <div class="col-6">
                     <button @click="selectAll" class="cosmetic-control-btn btn btn-outline-primary select-all-btn">모두
                         선택</button>
-                    <button class="cosmetic-control-btn btn btn-outline-primary">삭제</button>
+                    <button @click="confirmDelete" class="cosmetic-control-btn btn btn-outline-primary">삭제</button>
                 </div>
                 <div class="col-6 d-flex justify-content-end">
                     <button @click="changeToMy" class="my-cosmetic-btn cosmetic-control-btn btn btn-primary">내
@@ -275,12 +308,16 @@
             <div class="row black-line"></div>
         </div>
     </div>
-    <div v-show="showMyCosmetic" class="row">
+    <div v-show="showMyCosmetic" class="row content-row">
         <div class="col-12 p-0">
+            <div v-if="displayMyCosmetics.length == 0" class="empty-msg">
+                표시할 화장품이 없습니다.
+            </div>
             <div v-for="(cosmetic, index) in displayMyCosmetics" :key="cosmetic.id"
                 class=" container p-0 mt-1 mb-1 cosmetic-container myCosmetic-row">
                 <div class="row" @click="selectCosmetic($event, 'my', index, cosmetic.id)">
                     <div class="col-2 col-content text-center">
+                        <input type="checkbox" class="cosmetic-checkbox active">
                         <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
                     </div>
                     <div class="col-4 col-content d-flex flex-column justify-content-center">
@@ -329,12 +366,16 @@
         </div>
     </div>
 
-    <div v-show="showMyCosmetic == false" class="row">
+    <div v-show="showMyCosmetic == false" class="row content-row">
         <div class="col-12 p-0">
+            <div v-if="displayInterestedCosmetics.length == 0" class="empty-msg">
+                표시할 화장품이 없습니다.
+            </div>
             <div v-for="(cosmetic, index) in displayInterestedCosmetics" :key="cosmetic.id"
                 class="container p-0 mt-1 mb-1 cosmetic-container interestedCosmetic-row">
                 <div class="row" @click="selectCosmetic($event, 'interested', index, cosmetic.id)">
                     <div class="col-2 col-content text-center">
+                        <input type="checkbox" class="cosmetic-checkbox active">
                         <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
                     </div>
                     <div class="col-4 col-content d-flex flex-column justify-content-center">
@@ -391,25 +432,29 @@
             tempBrands: [],
             selectedCategories: [],
             tempCategories: [],
-            showModal: false
+            showModal: false,
+            showDeleteModal: false,
         },
         computed: {
             brands() {
                 var brandList = []
-                if (this.myCosmetics != undefined) {
-                    for (var i in this.myCosmetics) {
-                        brandName = this.myCosmetics[i].brandName;
-                        if (brandList.includes(brandName) == false) {
-                            brandList.push(brandName)
+                if (this.showMyCosmetic) {
+                    if (this.myCosmetics != undefined) {
+                        for (var i in this.myCosmetics) {
+                            brandName = this.myCosmetics[i].brandName;
+                            if (brandList.includes(brandName) == false) {
+                                brandList.push(brandName)
+                            }
                         }
                     }
                 }
-
-                if (this.interestedCosmetics != undefined) {
-                    for (var i in this.interestedCosmetics) {
-                        brandName = this.interestedCosmetics[i].brandName;
-                        if (brandList.includes(brandName) == false) {
-                            brandList.push(brandName)
+                else {
+                    if (this.interestedCosmetics != undefined) {
+                        for (var i in this.interestedCosmetics) {
+                            brandName = this.interestedCosmetics[i].brandName;
+                            if (brandList.includes(brandName) == false) {
+                                brandList.push(brandName)
+                            }
                         }
                     }
                 }
@@ -437,6 +482,22 @@
                 }
 
                 return categoryList;
+            },
+            selectedMyIdList() {
+                var idList = []
+                for (var i in this.selectedMyCosmetics) {
+                    idList.push(this.selectedMyCosmetics[i].cosmeticId)
+                }
+
+                return idList;
+            },
+            selectedInterestedIdList() {
+                var idList = []
+                for (var i in this.selectedInterestedCosmetics) {
+                    idList.push(this.selectedInterestedCosmetics[i].cosmeticId)
+                }
+
+                return idList;
             }
         },
         methods: {
@@ -694,8 +755,66 @@
             closeModal() {
                 this.showModal = false;
             },
-            deleteCosmetic() {
+            confirmDelete() {
+                if (this.showMyCosmetic && this.selectedMyCosmetics.length == 0)
+                    return;
+                else if (this.showMyCosmetic == false && this.selectedInterestedCosmetics.length == 0)
+                    return;
 
+                this.showDeleteModal = true;
+            },
+            closeDeleteModal() {
+                this.showDeleteModal = false;
+            },
+            deleteCosmetic() {
+                this.closeDeleteModal();
+                if (this.showMyCosmetic) {
+                    axios.delete('/api/user/cosmetic/', {
+                        data: {
+                            user_cosmetic_id: this.selectedMyIdList
+                        }
+                    })
+                        .then((res) => {
+                            console.log("GET SUCCESS", res);
+                            const data = res.data;
+                            for (var i in this.selectedMyIdList) {
+                                for (var j in this.myCosmetics) {
+                                    if (this.selectedMyIdList[i] == this.myCosmetics[j].id) {
+                                        this.myCosmetics.splice(j, 1);
+                                        break;
+                                    }
+                                }
+                            }
+                            this.selectedMyCosmetics = [];
+                        })
+                        .catch(function (err) {
+                            console.log("GET FAIL", err);
+                        });
+
+                }
+                else {
+                    axios.delete('/api/user/cosmetic/interested/', {
+                        data: {
+                            user_interested_cosmetic_id: this.selectedInterestedIdList
+                        }
+                    })
+                        .then((res) => {
+                            console.log("GET SUCCESS", res);
+                            const data = res.data;
+                            for (var i in this.selectedInterestedIdList) {
+                                for (var j in this.interestedCosmetics) {
+                                    if (this.selectedInterestedIdList[i] == this.interestedCosmetics[j].id) {
+                                        this.interestedCosmetics.splice(j, 1);
+                                        break;
+                                    }
+                                }
+                            }
+                            this.selectedInterestedIdList = [];
+                        })
+                        .catch(function (err) {
+                            console.log("GET FAIL", err);
+                        });
+                }
             }
         },
         created() {

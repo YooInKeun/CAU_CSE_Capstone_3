@@ -115,6 +115,7 @@
         border: 1px solid pink;
         border-radius: 0px 0px 5px 5px;
         border-top: 0px;
+        overflow-y: scroll;
     }
 
     .main-row {
@@ -147,6 +148,56 @@
         margin: 2px;
         font-weight: bold;
     }
+
+    .gray-line {
+        margin: 0px;
+        padding: 0px;
+        height: 1px;
+        width: 100%;
+        background-color: lightgray;
+    }
+
+    .cosmetic-container {
+        margin: 0 3%;
+        width: 94%;
+        height: 80vh;
+        overflow-y: scroll;
+    }
+
+    /* transition */
+    .slide-enter-active {
+        -moz-transition-duration: 0.3s;
+        -webkit-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -moz-transition-timing-function: ease-in;
+        -webkit-transition-timing-function: ease-in;
+        -o-transition-timing-function: ease-in;
+        transition-timing-function: ease-in;
+    }
+
+    .slide-leave-active {
+        -moz-transition-duration: 0.3s;
+        -webkit-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        -webkit-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    }
+
+    .slide-enter-to,
+    .slide-leave {
+        max-height: 100px;
+        overflow: hidden;
+    }
+
+    .slide-enter,
+    .slide-leave-to {
+        overflow: hidden;
+        max-height: 0;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -159,35 +210,62 @@
     <div class="row main-row">
         <div class="col-8 mt-5 mb-5 pt-1">
             <div class="search-wrapper d-flex justify-content-center align-items-center">
-                <input @keyup="searchCosmetic($event, true)" v-model="query_cosmetic" placeholder="화장품의 제품명을 검색해주세요"
+                <input @keyup="searchCosmetic($event, true)" v-model="queryCosmetic" placeholder="화장품의 제품명을 검색해주세요"
                     class="form-control search-input pl-2" />
                 <button @click="searchCosmetic($event, false)" class="search-btn btn btn-primary">검색</button>
             </div>
-            <div v-if="searching" class="search-result-window">
-                <div v-for="searchResult in searchResults" :key="searchResult.id" @click="selectCosmetic(searchResult)">
-                    <div class="d-flex align-items-center">
-                        <img :src="[[ searchResult.image_link ]]" alt="{% static 'img/main.jpeg' %}" class="search-img">
-                        <div class="search-result-wrapper">
-                            <div class="search-result-info d-flex align-items-center mb-1">
-                                <div class="search-result-title">브랜드</div>
-                                <div class="search-result-item">[[ searchResult.brand_name ]]</div>
-                            </div>
-                            <div class="search-result-info d-flex align-items-center mb-1">
-                                <div class="search-result-title">제품명</div>
-                                <div class="search-result-item">[[ searchResult.product_name ]]</div>
-                            </div>
-                            <div class="search-result-info d-flex align-items-center">
-                                <div class="search-result-title">색상/타입</div>
-                                <div class="search-result-item">[[ searchResult.type_name ]]</div>
+            <transition name="slide">
+                <div v-if="searching" class="search-result-window">
+                    <div v-for="searchResult in searchResults" :key="searchResult.id"
+                        @click="selectCosmetic(searchResult)">
+                        <div class="d-flex align-items-center">
+                            <img :src="[[ searchResult.imageLink ]]" alt="{% static 'img/main.jpeg' %}"
+                                class="search-img">
+                            <div class="search-result-wrapper">
+                                <div class="search-result-info d-flex align-items-center mb-1">
+                                    <div class="search-result-title">브랜드</div>
+                                    <div class="search-result-item">[[ searchResult.brandName ]]</div>
+                                </div>
+                                <div class="search-result-info d-flex align-items-center mb-1">
+                                    <div class="search-result-title">제품명</div>
+                                    <div class="search-result-item">[[ searchResult.productName ]]</div>
+                                </div>
+                                <div class="search-result-info d-flex align-items-center">
+                                    <div class="search-result-title">색상/타입</div>
+                                    <div class="search-result-item">[[ searchResult.typeName ]]</div>
+                                </div>
                             </div>
                         </div>
+                        <hr />
                     </div>
-                    <hr />
                 </div>
-            </div>
-            <div v-if="fullSearch">
-                <div v-for="searchResult in searchResults" :key="searchResult.id">
-                    [[ searchResult.product_name ]]
+            </transition>
+            <div v-if="fullSearch" class="cosmetic-container">
+                <h5 class="mt-5 mb-3 text-center">[[ staticResults.length ]]개의 검색결과</h5>
+                <div class="gray-line"></div>
+                <div v-for="cosmetic in staticResults" :key="cosmetic.id" @click="selectCosmetic(cosmetic)"
+                    class=" container p-0 mt-1 mb-1">
+                    <div class="row">
+                        <div class="col-3 col-content text-center">
+                            <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center"
+                                width=100>
+                        </div>
+                        <div class="col-4 col-content d-flex flex-column justify-content-center">
+                            <div class="row search-result-item">[[cosmetic.brandName]]</div>
+                            <div class="row search-result-item">[[cosmetic.productName]] [[cosmetic.typeName]]
+                            </div>
+                        </div>
+                        <div class="col-3 col-content d-flex flex-column justify-content-center">
+                            <div class="row justify-content-center content-category">[[cosmetic.smallCategory]]
+                            </div>
+                        </div>
+                        <div class="col-2 col-content d-inline-flex justify-content-center align-items-center">
+                            <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
+                                <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="gray-line"></div>
                 </div>
             </div>
             <div v-else>
@@ -200,7 +278,7 @@
                         </div>
                         <div class="col-6 d-flex justify-content-center align-items-center">
                             <label class="mr-1">관심 화장품 등록</label>
-                            <input type="radio" id="interested_cosmetic" value="interestedCosmetic" v-model="kindSelect"
+                            <input type="radio" id="interestedCosmetic" value="interestedCosmetic" v-model="kindSelect"
                                 class="kind-select" />
                         </div>
                     </div>
@@ -305,18 +383,19 @@
                 </div>
                 <div class="col-4 rest-space"></div>
             </div>
+
             <div class="row kind-row">
                 <div v-if="cosmeticListView" class="w-100 p-1">
                     <div v-for="cosmetic in myCosmetics" :key="cosmetic.id">
                         <div class="d-flex align-items-center">
-                            <img :src="[[ cosmetic.image_link ]]" alt="{% static 'img/main.jpeg' %}"
+                            <img :src="[[ cosmetic.imageLink ]]" alt="{% static 'img/main.jpeg' %}"
                                 class="user-cosmetic-img">
                             <div class="search-result-wrapper">
                                 <div class="search-result-info d-flex flex-column justify-content-center mb-1">
-                                    <div class="user-cosmetic-item">[[ cosmetic.brand_name ]] [[
-                                        cosmetic.product_name ]] [[ cosmetic.type_name ]]</div>
+                                    <div class="user-cosmetic-item">[[ cosmetic.brandName ]] [[
+                                        cosmetic.productName ]] [[ cosmetic.typeName ]]</div>
                                     <div>
-                                        <span v-for="tag in cosmetic.tag_names" class="justify-content-center">
+                                        <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
                                             <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
                                         </span>
                                     </div>
@@ -329,14 +408,14 @@
                 <div v-else class="w-100 p-1">
                     <div v-for="cosmetic in interestedCosmetics" :key="cosmetic.id">
                         <div class="d-flex align-items-center">
-                            <img :src="[[ cosmetic.image_link ]]" alt="{% static 'img/main.jpeg' %}"
+                            <img :src="[[ cosmetic.imageLink ]]" alt="{% static 'img/main.jpeg' %}"
                                 class="user-cosmetic-img">
                             <div class="search-result-wrapper">
                                 <div class="search-result-info d-flex flex-column justify-content-center mb-1">
-                                    <div class="user-cosmetic-item">[[ cosmetic.brand_name ]] [[
-                                        cosmetic.product_name ]] [[ cosmetic.type_name ]]</div>
+                                    <div class="user-cosmetic-item">[[ cosmetic.brandName ]] [[
+                                        cosmetic.productName ]] [[ cosmetic.typeName ]]</div>
                                     <div>
-                                        <span v-for="tag in cosmetic.tag_names" class="justify-content-center">
+                                        <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
                                             <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
                                         </span>
                                     </div>
@@ -366,7 +445,7 @@
         el: '#app',
         data() {
             return {
-                query_cosmetic: "",
+                queryCosmetic: "",
                 searching: false,
                 fullSearch: false,
                 cosmeticID: "",
@@ -383,6 +462,7 @@
                 dateSelect: "expiration",
                 kindSelect: "myCosmetic",
                 searchResults: [],
+                staticResults: [],
                 myCosmetics: [],
                 interestedCosmetics: [],
                 cosmeticListView: true
@@ -421,14 +501,15 @@
             selectCosmetic(searchResult) {
                 console.log(searchResult)
                 this.cosmeticID = searchResult.id;
-                this.productName = searchResult.product_name;
-                this.brandName = searchResult.brand_name;
-                this.categoryName = searchResult.small_category;
-                this.tags = searchResult.tag_names;
-                this.imageLink = searchResult.image_link;
-                this.typeName = searchResult.type_name;
-                this.query_cosmetic = "";
+                this.productName = searchResult.productName;
+                this.brandName = searchResult.brandName;
+                this.categoryName = searchResult.smallCategory;
+                this.tags = searchResult.tagNames;
+                this.imageLink = searchResult.imageLink;
+                this.typeName = searchResult.typeName;
+                this.queryCosmetic = "";
                 this.searching = false;
+                this.fullSearch = false;
             },
             showMyCosmetic() {
                 this.$el.querySelector(".my-cosmetic-tap").classList.add("selected-kind-tap");
@@ -458,35 +539,43 @@
                         };
 
                         console.log(postData);
-
                         axios.post('/api/user/cosmetic/', postData)
-                            .then(function (res) {
+                            .then((res) => {
                                 console.log("GET SUCCESS", res);
-                                const data = res.data;
+                                const data = res.data[0];
 
                                 var imageLink;
 
-                                if (data.image_link)
-                                    imageLink = data.image_link;
+                                if (data.cosmetic.product.image_link)
+                                    imageLink = data.cosmetic.product.image_link;
                                 else
-                                    imageLink = data.product.image_link;
+                                    imageLink = data.cosmetic.image_link;
 
                                 var tagNames = [];
-                                for (var tag in data.product.tag_names)
-                                    tagNames.push(tag.tag_name);
+                                for (var i in data.cosmetic.product.tag_names) {
+                                    if (data.cosmetic.product.tag_names[i].tag_name != undefined) {
+                                        tagNames.push(data.cosmetic.product.tag_names[i].tag_name);
+                                    }
+                                }
 
-                                for (var i in data) {
-                                    var cosmetic = {
-                                        id: data.id,
-                                        brand_name: data.product.brand.brand_name,
-                                        product_name: data.product.product_name,
-                                        type_name: data.type_name,
-                                        image_link: imageLink,
-                                        tag_names: tagNames
-                                    };
+                                cosmetic = {
+                                    id: data.cosmetic.id,
+                                    brandName: data.cosmetic.product.brand.brand_name,
+                                    productName: data.cosmetic.product.product_name,
+                                    typeName: data.cosmetic.type_name,
+                                    imageLink: imageLink,
+                                    tagNames: tagNames
+                                };
 
+                                if (cosmetic != undefined) {
                                     this.myCosmetics.push(cosmetic)
                                 }
+
+                                this.expirationDate = "";
+                                this.useByDate = "";
+                                this.monthValue = "";
+                                this.alarmPeriod = "";
+                                alert("화장품이 등록되었습니다.")
                             })
                             .catch(function (err) {
                                 console.log("GET FAIL", err);
@@ -508,8 +597,43 @@
                         console.log(postData);
 
                         axios.post('/api/user/cosmetic/interested/', postData)
-                            .then(function (res) {
+                            .then((res) => {
                                 console.log("GET SUCCESS", res);
+
+                                const data = res.data[0];
+
+                                var imageLink;
+
+                                if (data.cosmetic.product.image_link)
+                                    imageLink = data.cosmetic.product.image_link;
+                                else
+                                    imageLink = data.cosmetic.image_link;
+
+                                var tagNames = [];
+                                for (var i in data.cosmetic.product.tag_names) {
+                                    if (data.cosmetic.product.tag_names[i].tag_name != undefined) {
+                                        tagNames.push(data.cosmetic.product.tag_names[i].tag_name);
+                                    }
+                                }
+
+                                cosmetic = {
+                                    id: data.cosmetic.id,
+                                    brandName: data.cosmetic.product.brand.brand_name,
+                                    productName: data.cosmetic.product.product_name,
+                                    typeName: data.cosmetic.type_name,
+                                    imageLink: imageLink,
+                                    tagNames: tagNames
+                                };
+
+                                if (cosmetic != undefined) {
+                                    this.interestedCosmetics.push(cosmetic)
+                                }
+
+                                this.expirationDate = "";
+                                this.useByDate = "";
+                                this.monthValue = "";
+                                this.alarmPeriod = "";
+                                alert("화장품이 등록되었습니다.")
                             })
                             .catch(function (err) {
                                 console.log("GET FAIL", err);
@@ -522,21 +646,24 @@
                 }
             },
             searchCosmetic(event, isKey) {
-                if (this.query_cosmetic == "")
-                    return;
-
-                this.searching = true;
-
-                if (event.key == "Enter" || event.keyCode == 27)
+                if (this.queryCosmetic == "" || event.keyCode == 27) {
                     this.searching = false;
+                    return;
+                }
 
-                if (this.fullSearch == false && event.key == "Enter")
+                if (event.key == "Enter" || isKey == false) {
+                    this.searching = false
                     this.fullSearch = true;
+                    this.staticResults = [];
+                }
+                else {
+                    this.searching = true;
+                }
 
-                if (isKey && event.key != "Enter") {
+                if (this.searching) {
                     var postData = {
                         params: {
-                            query_cosmetic: this.query_cosmetic,
+                            query_cosmetic: this.queryCosmetic,
                             is_keyuped: true,
                             is_clicked: false
                         }
@@ -545,17 +672,19 @@
                 else {
                     var postData = {
                         params: {
-                            query_cosmetic: this.query_cosmetic,
+                            query_cosmetic: this.queryCosmetic,
                             is_keyuped: false,
                             is_clicked: true
                         }
                     };
                 }
-
+                console.log(this.searching)
                 axios.get('/api/cosmetic/', postData)
                     .then((res) => {
                         console.log("GET SUCCESS", res);
                         this.searchResults = [];
+                        if (this.searching == false)
+                            this.staticResults = [];
 
                         for (var i in res.data) {
                             const data = res.data[i];
@@ -572,15 +701,18 @@
 
                             var result = {
                                 id: data.id,
-                                brand_name: data.product.brand.brand_name,
-                                small_category: data.product.category.small_category,
-                                product_name: data.product.product_name,
-                                type_name: data.type_name,
-                                image_link: imageLink,
-                                tag_names: tagNames
+                                brandName: data.product.brand.brand_name,
+                                smallCategory: data.product.category.small_category,
+                                productName: data.product.product_name,
+                                typeName: data.type_name,
+                                imageLink: imageLink,
+                                tagNames: tagNames
                             }
 
-                            this.searchResults.push(result);
+                            if (this.searching)
+                                this.searchResults.push(result);
+                            else
+                                this.staticResults.push(result);
                         }
                     })
                     .catch((err) => {
@@ -598,16 +730,16 @@
                     imageLink = data.cosmetic.image_link;
 
                 var tagNames = [];
-                for (var tag_index in data.cosmetic.product.tag_names)
-                    tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+                for (var index in data.cosmetic.product.tag_names)
+                    tagNames.push(data.cosmetic.product.tag_names[index].tag_name);
 
                 var cosmetic = {
                     id: data.cosmetic.id,
-                    brand_name: data.cosmetic.product.brand.brand_name,
-                    product_name: data.cosmetic.product.product_name,
-                    type_name: data.cosmetic.type_name,
-                    image_link: imageLink,
-                    tag_names: tagNames
+                    brandName: data.cosmetic.product.brand.brand_name,
+                    productName: data.cosmetic.product.product_name,
+                    typeName: data.cosmetic.type_name,
+                    imageLink: imageLink,
+                    tagNames: tagNames
                 };
                 return cosmetic;
             }

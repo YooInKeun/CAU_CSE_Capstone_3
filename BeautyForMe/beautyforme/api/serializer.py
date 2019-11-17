@@ -64,3 +64,18 @@ class UserInterestedCosmeticSerializer(serializers.ModelSerializer):
     class Meta:
         model = User_Interested_Cosmetic
         fields = '__all__'
+
+class CosmeticImportanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cosmetic_Importance
+        fields = '__all__'
+
+class BigCateroySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Big_Category
+        fields = '__all__'
+
+class SmallCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Small_Category
+        fields = '__all__'

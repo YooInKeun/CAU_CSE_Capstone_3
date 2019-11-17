@@ -70,11 +70,18 @@ class CosmeticInfo(APIView):
         queryset = Cosmetic.objects.filter(rgb_value="Fuck You!")
         serializer = CosmeticSerializer(queryset, many=True)
 
-        if request.query_params['is_keyuped'] == "true":
-            queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
-            queryset = queryset[0:7]
-        elif request.query_params['is_clicked'] == "true":
-            queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
+        try:
+            if request.query_params['is_keyuped'] == "true":
+                queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
+                queryset = queryset[0:7]
+            elif request.query_params['is_clicked'] == "true":
+                queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
+        except:
+            try:
+                small_category_id = request.query_params['small_category_id']
+                queryset = Cosmetic.objects.filter(product__category__pk=small_category_id).order_by('id')
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         #     속도가 너무 느림
         #     cosmetics = Cosmetic.objects.all()
         #     selected_cosmetic_ids = []
@@ -159,3 +166,36 @@ class UserInterestedCosmeticInfo(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_id)
+
+class BigCategoryInfo(APIView):
+    # permission_classes = [IsAdminUser]
+
+    def get(self, request, format=None):
+        queryset = Big_Category.objects.all()
+        serializer = BigCategorySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+class SmallCategoryInfo(APIView):
+    # permission_classes = [IsAdminUser]
+
+    def get(self, request, format=None):
+        # big_category_id = request.data['big_category_id']
+        big_category_id = request.query_params['big_category_id']
+        queryset = Small_Category.objects.filter(big_category__pk=big_category_id)
+        serializer = SmallCategorySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+# class UserCosmeticInfo(APIView):
+
+#     def post(self, request, format=None):
+#         try:
+#             cosmetic_importance = Cosmetic_Importance()
+#             cosmetic_importance.user = request.user
+#             user_interested_cosmetic.cosmetic = Cosmetic.objects.get(pk=request.data['cosmetic_id'])
+#             user_interested_cosmetic.save()
+#             queryset= User_Interested_Cosmetic.objects.filter(pk=user_interested_cosmetic.id)
+#             serializer = UserInterestedCosmeticSerializer(queryset, many=True)
+#         except:
+#             return Response(status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+

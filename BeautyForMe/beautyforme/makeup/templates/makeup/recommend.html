@@ -16,25 +16,35 @@
         justify-content: center;
         align-items: center;
         margin: 0px;
-        border-bottom: 2px solid gray;
-        border-left: 2px solid gray;
+        border-bottom: 2px solid black;
+        border-left: 2px solid black;
+        border-right: 2px solid black;
     }
 
     .small-category-tab {
         font-size: 14px;
-        height: 65px;
+        height: 55px;
+        width: 85%;
         display: flex;
         justify-content: center;
         align-items: center;
         margin: 0px;
-        border-bottom: 2px solid pink;
+        border-bottom: 2px solid rgb(255, 158, 174);
         border-left: 2px solid pink;
+        border-right: 2px solid pink;
     }
 
     .big-category-tab:hover {
         font-size: 15px;
         font-weight: bold;
-        background-color: gray;
+        background-color: #333333;
+        color: white;
+    }
+
+    .seleted-big-category {
+        font-size: 15px;
+        font-weight: bold;
+        background-color: #333333;
         color: white;
     }
 
@@ -44,27 +54,46 @@
         background-color: pink;
     }
 
-    .small-category-tab {
-        border-right: 2px solid pink;
+    .seleted-small-category {
+        font-size: 15px;
+        font-weight: bold;
+        background-color: pink;
     }
 
-    .big-category-wrapper>.big-category-tab:first-child,
+    .big-category-wrapper {
+        height: 80vh;
+    }
+
+    .big-category-wrapper>.big-category-tab:first-child {
+        border-top: 2px solid black;
+    }
+
+    .small-category-wrapper {
+        height: 80vh;
+        overflow-y: scroll;
+        -ms-overflow-style: none;
+    }
+
+    .small-category-wrapper::-webkit-scrollbar {
+        display: none;
+    }
+
     .small-category-wrapper>.small-category-tab:first-child {
-        border-top: 2px solid pink;
-    }
-
-    .triangle-wrapper {
-        height: 65px;
+        border-top: 2px solid rgb(255, 158, 174);
+        font-size: 20px;
     }
 
     .triangle {
         position: relative;
-        top: 22.5px;
+        top: 17.5px;
         height: 15px;
         width: 0;
         border-top: 10px solid transparent;
         border-bottom: 10px solid transparent;
         border-left: 15px solid pink;
+    }
+
+    .hide {
         display: none;
     }
 </style>
@@ -79,30 +108,40 @@
     <div class="row">
         <div class="col-2 p-0">
             <div class="row m-0">
-                <div class="col-2"></div>
+                <div class="col-1 p-0"></div>
                 <div class="col-3 p-0 big-category-wrapper">
-                    <div class="row big-category-tab text-center">내<br />화장품</div>
-                    <div class="row big-category-tab text-center">관심<br />화장품</div>
-                    <div v-for="bigCategory in bigCategories" :key="bigCategory.id" v-html="bigCategory.name"
-                        class="row big-category-tab text-center">
+                    <div @click="selectMyCosmetic($event)"
+                        class="row big-category-tab text-center seleted-big-category">
+                        내<br />화장품</div>
+                    <div @click="selectInterestedCosmetic($event)" class="row big-category-tab text-center">관심<br />화장품
+                    </div>
+                    <div v-for="(bigCategory, index) in bigCategories" :key="bigCategory.id" v-html="bigCategory.name"
+                        @click="selectBigCategory($event, bigCategory)" class="row big-category-tab text-center">
                     </div>
                 </div>
-                <div class="col-6 p-0 small-category-wrapper">
-                    <div v-for="smallCategory in smallCategories" :key="smallCategory.id" v-html="smallCategory.name"
-                        class="row small-category-tab text-center">
-                    </div>
-                </div>
-                <div class="col-1 p-0 small-category-wrapper">
-                    <div v-for="smallCategory in smallCategories" :key="smallCategory.id"
-                        class="row triangle-wrapper m-0 p-0">
+                <div class="col-8 p-0 small-category-wrapper">
+                    <div class="row m-0 p-0">
+                        <div @mouseover="mouseoverSmallCategory(0)" @mouseout="mouseoutSmallCategory(0)"
+                            @click="selectAllCategory()" class="small-category-tab text-center seleted-small-category">
+                            전체
+                        </div>
                         <div class="triangle"></div>
+                    </div>
+                    <div v-for="(smallCategory, index) in smallCategories" :key="smallCategory.id" class="row m-0 p-0">
+                        <div v-html="smallCategory.name" @mouseover="mouseoverSmallCategory(index+1)"
+                            @mouseout="mouseoutSmallCategory(index + 1)"
+                            @click="selectSmallCategory(index + 1, smallCategory)"
+                            class="small-category-tab text-center">
+                        </div>
+                        <div class="triangle hide"></div>
                     </div>
                 </div>
             </div>
-
         </div>
         <div class="col-5">
-
+            <div v-for="displayCosmetic in displayCosmetics">
+                [[ displayCosmetic.productName ]]
+            </div>
         </div>
         <div class="col-5">
             <div class="row">
@@ -128,63 +167,285 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-            bigCategories: [{
-                id: 1,
-                name: '기초'
+            bigCategories: [],
+            smallCategories: [],
+            displayCosmetics: [],
+            myCosmetics: [],
+            interestedCosmetics: [],
+            isInUser: true,
+            isMyCosmetic: true,
+            selectedBigId: 0,
+            selectedSmallId: 0,
+            selectedSmallIndex: 0,
+        },
+        computed: {
+            myCategories() {
+                var categoryList = []
+                for (var i in this.myCosmetics) {
+                    category = {
+                        id: this.myCosmetics[i].smallCategoryId,
+                        name: this.myCosmetics[i].smallCategory
+                    }
+                    var isContain = false;
+                    for (var i in categoryList) {
+                        if (categoryList[i].id == category.id)
+                            isContain = true;
+                    }
+                    if (isContain == false)
+                        categoryList.push(category);
+                }
+                return categoryList;
             },
-            {
-                id: 2,
-                name: '베이스'
-            },
-            {
-                id: 3,
-                name: '색조'
-            }],
-            smallCategories: [{
-                id: 1,
-                name: '립스틱'
-            },
-            {
-                id: 2,
-                name: '립밤'
-            },
-            {
-                id: 3,
-                name: '립틴트'
-            },
-            {
-                id: 4,
-                name: '마스카라'
-            },
-            {
-                id: 5,
-                name: '하이라이터'
-            },
-            {
-                id: 6,
-                name: '픽서/영양제'
-            },
-            {
-                id: 7,
-                name: '아이브로우<br/>파우더'
-            }]
+            interestedCatrgoires() {
+                var categoryList = []
+                for (var i in this.interestedCosmetics) {
+                    category = {
+                        id: this.interestedCosmetics[i].smallCategoryId,
+                        name: this.interestedCosmetics[i].smallCategory
+                    }
+                    var isContain = false;
+                    for (var i in categoryList) {
+                        if (categoryList[i].id == category.id)
+                            isContain = true;
+                    }
+                    if (isContain == false)
+                        categoryList.push(category);
+                }
+                return categoryList;
+            }
         },
         methods: {
+            mouseoverSmallCategory(index) {
+                const targetTriangle = this.$el.querySelectorAll(".triangle")[index];
+                targetTriangle.classList.remove("hide");
+            },
+            mouseoutSmallCategory(index) {
+                if (index != this.selectedSmallIndex) {
+                    const targetTriangle = this.$el.querySelectorAll(".triangle")[index];
+                    targetTriangle.classList.add("hide");
+                }
+            },
+            removeBigEffect() {
+                const bigCategoryRows = this.$el.querySelectorAll(".big-category-tab");
+                for (var i in bigCategoryRows) {
+                    if (bigCategoryRows[i].classList != undefined) {
+                        bigCategoryRows[i].classList.remove("seleted-big-category");
+                    }
+                }
+            },
+            removeSmallEffect() {
+                const smallCategoryRows = this.$el.querySelectorAll(".small-category-tab");
+                const targetTriangle = this.$el.querySelectorAll(".triangle");
+                for (var i in smallCategoryRows) {
+                    if (smallCategoryRows[i].classList != undefined) {
+                        smallCategoryRows[i].classList.remove("seleted-small-category");
+                        targetTriangle[i].classList.add("hide");
+                    }
+                }
+            },
+            addSmallEffect(index) {
+                const smallCategoryRow = this.$el.querySelectorAll(".small-category-tab")[index];
+                const targetTriangle = this.$el.querySelectorAll(".triangle")[index];
+                smallCategoryRow.classList.add("seleted-small-category");
+                targetTriangle.classList.remove("hide");
 
+                this.selectedSmallIndex = index;
+            },
+            selectMyCosmetic(event) {
+                this.isInUser = true;
+                this.isMyCosmetic = true;
+                this.removeBigEffect();
+                event.target.classList.add("seleted-big-category");
+                this.smallCategories = this.myCategories;
+                this.selectAllCategory();
+            },
+            selectInterestedCosmetic(event) {
+                this.isInUser = true;
+                this.isMyCosmetic = false;
+                this.removeBigEffect();
+                event.target.classList.add("seleted-big-category");
+                this.smallCategories = this.interestedCatrgoires;
+                this.selectAllCategory();
+            },
+            selectBigCategory(event, bigCategory) {
+                this.isInUser = false;
+                this.removeBigEffect();
+                event.target.classList.add("seleted-big-category");
+                this.selectedBigId = bigCategory.id;
+                this.selectedSmallId = 0;
+                this.addSmallEffect(0);
+                this.selectAllCategory();
+
+                var postData = {
+                    params: {
+                        big_category_id: bigCategory.id,
+                    }
+                };
+                axios.get('/api/cosmetic/smallcategory/', postData)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+                        const data = res.data;
+
+                        this.smallCategories = []
+                        for (var i in data) {
+                            const name = data[i].small_category.replace("-", "<br/>");
+                            var result = {
+                                id: data[i].id,
+                                name: name
+                            }
+                            this.smallCategories.push(result)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log("GET FAIL", err);
+                    });
+            },
+            selectAllCategory() {
+                this.removeSmallEffect();
+                this.addSmallEffect(0);
+
+                if (this.isInUser) {
+                    if (this.isMyCosmetic) {
+                        this.displayCosmetics = this.myCosmetics;
+                        console.log(this.displayCosmetics)
+                    }
+                    else {
+                        this.displayCosmetics = this.interestedCosmetics;
+                        console.log("interested")
+                    }
+                }
+                else {
+                    console.log("all");
+                }
+            },
+            selectSmallCategory(index, smallCategory) {
+                this.removeSmallEffect();
+                this.addSmallEffect(index);
+                this.selectedSmallId = smallCategory.id;
+
+                if (this.isInUser) {
+                    if (this.isMyCosmetic) {
+                        this.displayCosmetics = this.filteringByCategories(this.myCosmetics);
+                    }
+                    else {
+                        this.displayCosmetics = this.filteringByCategories(this.interestedCosmetics);
+                    }
+                }
+                else {
+                    var postData = {
+                        params: {
+                            small_category_id: smallCategory.id,
+                        }
+                    };
+
+                    axios.get('/api/cosmetic/', postData)
+                        .then((res) => {
+                            console.log("GET SUCCESS", res);
+                            const data = res.data;
+
+                        })
+                        .catch(function (err) {
+                            console.log("GET FAIL", err);
+                        });
+                }
+            },
+            filteringByCategories(cosmetics) {
+                var displayCosmetics = []
+                for (var i in cosmetics) {
+                    if (this.selectedSmallId == cosmetics[i].smallCategoryId) {
+                        displayCosmetics.push(cosmetics[i])
+                    }
+                }
+                return displayCosmetics;
+            },
         },
         created() {
+            function cosmeticInsert(data) {
+                var imageLink;
+
+                if (data.cosmetic.product.image_link)
+                    imageLink = data.cosmetic.product.image_link;
+                else
+                    imageLink = data.cosmetic.image_link;
+
+                var tagNames = [];
+                for (var tag_index in data.cosmetic.product.tag_names)
+                    tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+
+                var cosmetic = {
+                    id: data.id,
+                    cosmeticId: data.cosmetic.id,
+                    brandName: data.cosmetic.product.brand.brand_name,
+                    productName: data.cosmetic.product.product_name,
+                    typeName: data.cosmetic.type_name,
+                    imageLink: imageLink,
+                    tagNames: tagNames,
+                    smallCategory: data.cosmetic.product.category.small_category,
+                    smallCategoryId: data.cosmetic.product.category.id,
+                    rgbValue: data.cosmetic.rgb_value,
+                    similarCosmetics: data.cosmetic.similar_cosmetics,
+                };
+                return cosmetic;
+            }
+
             axios.get('/api/cosmetic/bigcategory/')
                 .then((res) => {
                     console.log("GET SUCCESS", res);
                     const data = res.data;
 
-                    for (var i in data)
-                        this.myCosmetics.push(cosmeticInsert(data[i]))
+                    this.bigCategories = []
+                    for (var i in data) {
+                        var result = {
+                            id: data[i].id,
+                            name: data[i].big_category
+                        }
+                        this.bigCategories.push(result)
+                    }
                 })
                 .catch(function (err) {
                     console.log("GET FAIL", err);
                 });
-        }
+
+            axios.get('/api/user/cosmetic/')
+                .then((res) => {
+                    console.log("GET SUCCESS", res);
+                    const data = res.data;
+
+                    this.smallCategories = [];
+                    for (var i in data) {
+                        const cosmetic = cosmeticInsert(data[i]);
+                        this.myCosmetics.push(cosmetic)
+                        this.displayCosmetics.push(cosmetic)
+
+                        const category = {
+                            id: cosmetic.smallCategoryId,
+                            name: cosmetic.smallCategory
+                        }
+                        var isContain = false;
+                        for (var i in this.smallCategories) {
+                            if (this.smallCategories[i].id == category.id)
+                                isContain = true;
+                        }
+                        if (isContain == false)
+                            this.smallCategories.push(category);
+                    }
+                })
+                .catch(function (err) {
+                    console.log("GET FAIL", err);
+                });
+
+            axios.get('/api/user/cosmetic/interested/')
+                .then((res) => {
+                    console.log("GET SUCCESS", res);
+                    const data = res.data;
+
+                    for (var i in data)
+                        this.interestedCosmetics.push(cosmeticInsert(data[i]))
+                })
+                .catch(function (err) {
+                    console.log("GET FAIL", err);
+                });
+        },
     })
 </script>
 {% endblock extra-script %}

@@ -866,7 +866,7 @@
                     console.log("GET FAIL", err);
                 });
 
-            axios.get('/api/user/cosmetic/interested')
+            axios.get('/api/user/cosmetic/interested/')
                 .then((res) => {
                     console.log("GET SUCCESS", res);
                     const data = res.data;

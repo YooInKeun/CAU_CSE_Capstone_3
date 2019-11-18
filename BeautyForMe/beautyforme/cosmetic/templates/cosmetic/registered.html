@@ -105,8 +105,10 @@
 
     .select-row {
         opacity: 0.7;
-        -webkit-filter: grayscale(100%);
-        filter: grayscale(100%);
+        -webkit-box-shadow: 0 10px 10px -10px black;
+        -moz-box-shadow: 0 10px 10px -10px black;
+        box-shadow: 0 5px 5px -5px black;
+        border-left: 1px solid gray;
     }
 
     .alarm-select {
@@ -116,8 +118,6 @@
         width: 60px;
         font-size: 10px;
     }
-
-
 
 
     /* The switch - the box around the slider */
@@ -197,6 +197,14 @@
         position: relative;
         top: 30vh;
     }
+
+    .modal-header {
+        border-bottom: 0px !important;
+    }
+
+    .modal-footer {
+        border-top: 0px !important;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -258,7 +266,7 @@
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true"
                         @click="closeDeleteModal">×</button>
                 </div>
-                <div class=" modal-footer">
+                <div class="modal-footer">
                     <button @click="deleteCosmetic" class="btn" data-dismiss="alert" aria-hidden="true">삭제하기</button>
                 </div>
             </div>
@@ -317,7 +325,6 @@
                 class=" container p-0 mt-1 mb-1 cosmetic-container myCosmetic-row">
                 <div class="row" @click="selectCosmetic($event, 'my', index, cosmetic.id)">
                     <div class="col-2 col-content text-center">
-                        <input type="checkbox" class="cosmetic-checkbox active">
                         <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
                     </div>
                     <div class="col-4 col-content d-flex flex-column justify-content-center">
@@ -352,7 +359,8 @@
                             </label>
                         </div>
                         <div class="row justify-content-center">
-                            <select v-model="cosmetic.alarmCycle" @select="" class="alarm-select">
+                            <select v-model="cosmetic.alarmCycle" @change="selectAlarmCycle($event, cosmetic)"
+                                class="alarm-select text-center" style="text-align-last:center;">
                                 <option value="0">알람 없음</option>
                                 <option value="7">일주일 전</option>
                                 <option value="30">1달 전</option>
@@ -376,7 +384,6 @@
                 class="container p-0 mt-1 mb-1 cosmetic-container interestedCosmetic-row">
                 <div class="row" @click="selectCosmetic($event, 'interested', index, cosmetic.id)">
                     <div class="col-2 col-content text-center">
-                        <input type="checkbox" class="cosmetic-checkbox active">
                         <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
                     </div>
                     <div class="col-4 col-content d-flex flex-column justify-content-center">
@@ -850,6 +857,33 @@
                         console.log("GET FAIL", err);
                     });
             },
+            selectAlarmCycle(event, cosmetic) {
+                const alarmCycle = event.target.value;
+                cosmetic.alarmCycle = alarmCycle;
+
+                if (alarmCycle == 0) {
+                    cosmetic.isConsentAlarm = false;
+                    this.allowSwitching = true;
+                }
+                if (alarmCycle > 0 && cosmetic.isConsentAlarm == false) {
+                    cosmetic.isConsentAlarm = true;
+                    this.allowSwitching = true;
+                }
+
+                var params = {
+                    user_cosmetic_id: cosmetic.id,
+                    is_consent_alarm: cosmetic.isConsentAlarm,
+                    alarm_cycle: cosmetic.alarmCycle,
+                };
+                axios.put('/api/user/cosmetic/', params)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+                        const data = res.data;
+                    })
+                    .catch(function (err) {
+                        console.log("GET FAIL", err);
+                    });
+            },
         },
         created() {
             var today = new Date();
@@ -931,6 +965,10 @@
                     if (this.displayMyCosmetics[i].isConsentAlarm && alarmSwitches[i].value == 'off') {
                         switches[i].click();
                         alarmSwitches[i].value = 'on';
+                    }
+                    else if (this.displayMyCosmetics[i].isConsentAlarm == false && alarmSwitches[i].value == 'on') {
+                        switches[i].click();
+                        alarmSwitches[i].value = 'off';
                     }
                 }
 

@@ -18,6 +18,9 @@ class Profile(models.Model):
     image = models.ImageField(blank=True)
     following = JSONField(default="")
 
+    def __str__(self):
+        return '[' + str(self.user) + '] ' + 'Profile'
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

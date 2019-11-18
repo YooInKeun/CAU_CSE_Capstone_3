@@ -27,12 +27,16 @@ body {
 }
 
 .navbar{
-    height: 80px;
+    height: 60px;
 }
 
 .navbar-service{
     font-size: 21px;
     color: black;
+}
+
+.nav-link {
+    font-size : 16px;
 }
 
 .username{

@@ -16,7 +16,7 @@
     .control-bar {
         background-color: white;
         position: sticky;
-        top: 80px;
+        top: 60px;
     }
 
     .page-title {
@@ -346,7 +346,7 @@
                     <div class="col-1 col-content d-flex flex-column justify-content-center">
                         <div class="row justify-content-center">
                             <label class="switch d-flex align-items-center">
-                                <input type="checkbox" class="switch-alarm">
+                                <input type="checkbox" @click="alarmToggle($event, cosmetic)" class="switch-alarm">
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -434,6 +434,7 @@
             tempCategories: [],
             showModal: false,
             showDeleteModal: false,
+            allowSwitching: true,
         },
         computed: {
             brands() {
@@ -518,6 +519,7 @@
                 else
                     this.btnOff(document.querySelector(".select-all-btn"));
                 this.resetDetail();
+                this.allowSwitching = true;
             },
             changeToInterested() {
                 this.showMyCosmetic = false;
@@ -528,6 +530,7 @@
                 else
                     this.btnOff(document.querySelector(".select-all-btn"));
                 this.resetDetail();
+                this.allowSwitching = true;
             },
             selectAll() {
                 if (this.showMyCosmetic) {
@@ -688,8 +691,6 @@
                 this.showModal = false;
                 this.selectedBrands = this.tempBrands;
                 this.selectedCategories = this.tempCategories;
-                console.log(this.selectedBrands);
-                console.log(this.selectedCategories);
 
                 if (this.tempBrands.length + this.tempCategories.length > 0)
                     this.btnOn(document.querySelector(".detail-search-btn"));
@@ -786,11 +787,11 @@
                                 }
                             }
                             this.selectedMyCosmetics = [];
+                            this.allowSwitching = true;
                         })
                         .catch(function (err) {
                             console.log("GET FAIL", err);
                         });
-
                 }
                 else {
                     axios.delete('/api/user/cosmetic/interested/', {
@@ -815,7 +816,20 @@
                             console.log("GET FAIL", err);
                         });
                 }
-            }
+            },
+            alarmToggle(event, cosmetic) {
+                if (this.allowSwitching) return;
+
+                if (cosmetic.isConsentAlarm) {
+                    cosmetic.isConsentAlarm = false;
+                }
+                else {
+                    cosmetic.isConsentAlarm = true;
+                }
+
+                console.log(cosmetic.isConsentAlarm)
+                console.log("alarm axios 호출");
+            },
         },
         created() {
             var today = new Date();
@@ -889,6 +903,19 @@
             this.displayInterestedCosmetics = this.interestedCosmetics;
             console.log(this.myCosmetics);
         },
+        updated() {
+            console.log("updated", this.allowSwitching);
+            if (this.allowSwitching) {
+                const alarmSwitches = this.$el.querySelectorAll(".switch");
+                for (var i in this.displayMyCosmetics) {
+                    if (this.displayMyCosmetics[i].isConsentAlarm) {
+                        alarmSwitches[i].click();
+                    }
+                }
+
+                this.allowSwitching = false;
+            }
+        }
     })
 </script>
 {% endblock extra-script %}

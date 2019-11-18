@@ -175,7 +175,7 @@
     }
 
     .cosmetic-section {
-        height: 80vh;
+        height: 78vh;
         overflow-y: scroll;
         overflow-x: hidden;
     }
@@ -291,6 +291,10 @@
                             <button @click="deleteBasket"
                                 class="ml-1 cosmetic-control-btn btn btn-outline-primary">삭제</button>
                         </div>
+                        <div class="col-6 d-inline-flex justify-content-end">
+                            <button @click="submitBasket" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">결과
+                                보기</button>
+                        </div>
                     </div>
                     <div class="row gray-line"></div>
                     <div class="row ml-0 mr-0 mt-1 mb-1">
@@ -352,8 +356,7 @@
         const smallCategory = data.cosmetic.product.category.small_category.replace("-", "<br/>");
 
         var cosmetic = {
-            id: data.id,
-            cosmeticId: data.cosmetic.id,
+            id: data.cosmetic.id,
             brandName: data.cosmetic.product.brand.brand_name,
             productName: data.cosmetic.product.product_name,
             typeName: data.cosmetic.type_name,
@@ -426,6 +429,15 @@
                         categoryList.push(category);
                 }
                 return categoryList;
+            },
+            basketCosmeticIds() {
+                var idList = [];
+
+                for (var i in this.basketCosmetics) {
+                    idList.push(this.basketCosmetics[i].id);
+                }
+
+                return idList;
             }
         },
         methods: {
@@ -575,8 +587,33 @@
 
                             this.displayCosmetics = [];
 
-                            for (var i in data)
-                                this.displayCosmetics.push(cosmeticInsert(data[i]))
+                            for (var i in data) {
+                                if (data[i].product.image_link)
+                                    imageLink = data[i].product.image_link;
+                                else
+                                    imageLink = data[i].image_link;
+
+                                var tagNames = [];
+                                for (var tag_index in data[i].product.tag_names)
+                                    tagNames.push(data[i].product.tag_names[tag_index].tag_name);
+                                const smallCategory = data[i].product.category.small_category.replace("-", "<br/>");
+
+                                var cosmetic = {
+                                    id: data[i].id,
+                                    brandName: data[i].product.brand.brand_name,
+                                    productName: data[i].product.product_name,
+                                    typeName: data[i].type_name,
+                                    imageLink: imageLink,
+                                    tagNames: tagNames,
+                                    smallCategory: smallCategory,
+                                    smallCategoryId: data[i].product.category.id,
+                                    rgbValue: data[i].rgb_value,
+                                    similarCosmetics: data[i].similar_cosmetics,
+                                    selectedCosmetics: [],
+                                }
+                                this.displayCosmetics.push(cosmetic);
+                            }
+                            return cosmetic;
                         })
                         .catch(function (err) {
                             console.log("GET FAIL", err);
@@ -746,6 +783,9 @@
 
                 this.isSelectBasketAll = true;
                 this.selectBasketAll()
+            },
+            submitBasket() {
+                console.log(this.basketCosmeticIds)
             }
         },
         updated() {

@@ -228,7 +228,8 @@
             </div>
             <a class="dropdown-item" href="{% url 'cosmetic:register' %}">확인하러 가기</a>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                <input id="check" name="check" type='checkbox'>오늘 하루 이 창을 열지 않음
+                <button type="button" class="btn btn-secondary" onclick="popupModalClose()" data-dismiss="modal">닫기</button>
             </div>
         </div>
     </div>
@@ -286,16 +287,47 @@
 
 {% block extra-script %}
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://code.jquery.com/jquery-latest.js"></script> 
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script>
-    $(document).ready(function() {
-        var is_alarm_time = document.getElementById("is_alarm_time").value
-        $("#is_alarm_time").hide();
-        $("#modalButton").hide();
-        
-        if (is_alarm_time == "True"){
-            $("#modalButton").trigger('click');
-        }
-    });
+$(document).ready(function() {
+    var is_alarm_time = document.getElementById("is_alarm_time").value
+    $("#is_alarm_time").hide();
+    $("#modalButton").hide();
+    var result = getCookie('popup');
+
+    if (is_alarm_time == "True" && result != "end"){
+        $("#modalButton").trigger('click');
+    }
+});
+
+function getCookie(name) {
+   var cookieName = name + "=";
+   var x = 0;
+   while ( x <= document.cookie.length ) { 
+      var y = (x+cookieName.length); 
+      if ( document.cookie.substring( x, y ) == cookieName) { 
+         if ((lastChrCookie=document.cookie.indexOf(";", y)) == -1) 
+            lastChrCookie = document.cookie.length;
+         return decodeURI(document.cookie.substring(y, lastChrCookie));
+      }
+      x = document.cookie.indexOf(" ", x ) + 1; 
+      if ( x == 0 )
+         break; 
+      } 
+   return "";
+}
+
+function setCookie(cname, value, expire) {
+   var todayValue = new Date();
+   todayValue.setDate(todayValue.getDate() + expire);
+   document.cookie = cname + "=" + encodeURI(value) + "; expires=" + todayValue.toGMTString() + "; path=/;";
+}
+
+function popupModalClose() {
+    if($("input:checkbox[name=check]").is(":checked") == true){
+        setCookie("popup", "end" , 1);
+    }
+};
 </script>
 {% endblock extra-script %}

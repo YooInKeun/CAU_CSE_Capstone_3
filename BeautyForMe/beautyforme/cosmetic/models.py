@@ -78,6 +78,11 @@ class User_Interested_Cosmetic(models.Model):
 
 # 화장품별 중요도
 class Cosmetic_Importance(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.ForeignKey(Small_Category, on_delete=models.CASCADE)
-    importance = JSONField(default="")
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    importance = JSONField(default={"스킨":10, "로션":10, "에센스":10, "크림":10, "미스트":10, "메이크업픽서":10, "페이스오일":10, "토너/필링패드":10,
+                                    
+                                    "메이크업베이스:":10, "톤업크림":10, "베이스프라이머":10, "포인트프라이머":10, "파운데이션":10, "비비크림":10, 
+                                    "씨씨크림":10, "쿠션타입":10, "컨실러":10, "팩트":10, "파우더":10, "트윈케익":10,
+                                    
+                                    "립스틱":10, "립글로스/락커":10, "립틴트":10, "립밤":10, "립라이너":10, "아이라이너":10, "마스카라":10, "픽서/영양제":10,
+                                    "아이섀도우":10, "아이브로우":10, "하이라이터":10, "쉐딩":10, "블러셔":10})

@@ -485,11 +485,11 @@
                     var year, month;
                     const [splitedYear, splitedMonth, splitedDay] = this.useByDate.split('-').map(item => parseInt(item));
 
-                    month = parseInt((parseInt(this.monthValue) + splitedMonth) % 12);
+                    month = parseInt((parseInt(this.monthValue) + splitedMonth - 1) % 12) + 1;
                     year = parseInt((parseInt(this.monthValue) + splitedMonth) / 12) + splitedYear;
 
                     const resultDate = `${year}-${month}-${splitedDay}`;
-
+                    console.log(resultDate);
                     return resultDate;
                 }
             },

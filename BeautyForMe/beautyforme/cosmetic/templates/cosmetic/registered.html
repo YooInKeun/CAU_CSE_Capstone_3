@@ -465,20 +465,23 @@
             },
             categories() {
                 var categoryList = []
-                if (this.myCosmetics != undefined) {
-                    for (var i in this.myCosmetics) {
-                        category = this.myCosmetics[i].smallCategory;
-                        if (categoryList.includes(category) == false) {
-                            categoryList.push(category)
+                if (this.showMyCosmetic) {
+                    if (this.myCosmetics != undefined) {
+                        for (var i in this.myCosmetics) {
+                            category = this.myCosmetics[i].smallCategory;
+                            if (categoryList.includes(category) == false) {
+                                categoryList.push(category)
+                            }
                         }
                     }
                 }
-
-                if (this.interestedCosmetics != undefined) {
-                    for (var i in this.interestedCosmetics) {
-                        category = this.interestedCosmetics[i].smallCategory;
-                        if (categoryList.includes(category) == false) {
-                            categoryList.push(category)
+                else {
+                    if (this.interestedCosmetics != undefined) {
+                        for (var i in this.interestedCosmetics) {
+                            category = this.interestedCosmetics[i].smallCategory;
+                            if (categoryList.includes(category) == false) {
+                                categoryList.push(category)
+                            }
                         }
                     }
                 }

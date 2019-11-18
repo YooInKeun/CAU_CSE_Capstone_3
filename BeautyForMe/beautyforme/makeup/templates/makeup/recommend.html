@@ -16,9 +16,9 @@
         justify-content: center;
         align-items: center;
         margin: 0px;
-        border-bottom: 1px solid black;
-        border-left: 1px solid black;
-        border-right: 1px solid black;
+        border-bottom: 1px solid rgb(158, 165, 158);
+        border-left: 1px solid rgb(158, 165, 158);
+        border-right: 1px solid rgb(158, 165, 158);
     }
 
     .small-category-tab {
@@ -29,43 +29,40 @@
         justify-content: center;
         align-items: center;
         margin: 0px;
+        background-color: rgb(255, 248, 249);
         border-bottom: 1px solid rgb(255, 158, 174);
-        border-left: 1px solid pink;
-        border-right: 1px solid pink;
+        /* border-left: 1px solid pink;
+        border-right: 1px solid pink; */
     }
 
     .big-category-tab:hover {
         font-size: 15px;
         font-weight: bold;
-        background-color: #333333;
+        background-color: rgb(0, 34, 0);
         color: white;
     }
 
     .seleted-big-category {
         font-size: 15px;
         font-weight: bold;
-        background-color: #333333;
+        background-color: rgb(0, 34, 0);
         color: white;
     }
 
     .small-category-tab:hover {
         font-size: 15px;
         font-weight: bold;
-        background-color: pink;
+        background-color: rgb(255, 218, 224);
     }
 
     .seleted-small-category {
         font-size: 15px;
         font-weight: bold;
-        background-color: pink;
+        background-color: rgb(255, 218, 224);
     }
 
     .big-category-wrapper {
         height: 80vh;
-    }
-
-    .big-category-wrapper>.big-category-tab:first-child {
-        border-top: 1px solid black;
     }
 
     .small-category-wrapper {
@@ -78,10 +75,6 @@
         display: none;
     }
 
-    .small-category-wrapper>.small-category-tab:first-child {
-        font-size: 20px;
-    }
-
     .triangle {
         position: relative;
         top: 17.5px;
@@ -89,7 +82,7 @@
         width: 0;
         border-top: 10px solid transparent;
         border-bottom: 10px solid transparent;
-        border-left: 15px solid pink;
+        border-left: 15px solid rgb(255, 218, 224);
     }
 
     .hide {
@@ -191,11 +184,14 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid" id="app">
+<div class="container-fuild" id="app" style="padding: 0 80px;">
+    <div class="row d-flex align-items-center" style="height:120px;">
+        <h4>화장품을 선택하고 영상을 추천받아 보세요!</h4>
+    </div>
+    <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
     <div class="row">
         <div class="col-2 p-0">
             <div class="row m-0">
-                <div class="col-1 p-0"></div>
                 <div class="col-3 p-0 big-category-wrapper">
                     <div @click="selectMyCosmetic($event)"
                         class="row big-category-tab text-center seleted-big-category">
@@ -226,9 +222,6 @@
             </div>
         </div>
         <div class="col-5 p-0 cosmetic-section scrollbar-lady-lips thin square">
-            <div class="container row recommend-wrapper">
-                <h4 class="p-0 m-2 recommend-title">조합할 화장품들을 선택해주세요!</h4>
-            </div>
             <div class="container sticky-top row control-bar m-0 p-0">
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>
@@ -275,9 +268,6 @@
             </div>
         </div>
         <div class="col-5 p-0 pl-3 cosmetic-section scrollbar-lady-lips thin square">
-            <div class="container row recommend-wrapper">
-                <h4 class="p-0 m-2 recommend-title">아래 선택된 화장품들로 영상을 추천해드립니다!</h4>
-            </div>
             <div class="container sticky-top row control-bar m-0 p-0">
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>

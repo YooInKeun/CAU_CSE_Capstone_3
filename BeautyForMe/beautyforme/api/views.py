@@ -125,10 +125,7 @@ class UserCosmeticInfo(APIView):
     def put(self, request, format=None):
         try:
             user_cosmetic = User_Cosmetic.objects.get(pk=request.data['user_cosmetic_id'])
-            if request.data['is_consent_alarm'] == "true":
-                user_cosmetic.is_consent_alarm = True
-            elif request.data['is_consent_alarm'] == "false":
-                user_cosmetic.is_consent_alarm = False
+            user_cosmetic.is_consent_alarm = request.data['is_consent_alarm']
             user_cosmetic.alarm_cycle = request.data['alarm_cycle']
             user_cosmetic.save()
             queryset= User_Cosmetic.objects.filter(pk=user_cosmetic.id)

@@ -24,7 +24,7 @@ class HomeView(TemplateView):
                     user_cosmetic = User_Cosmetic.objects.filter(user=self.request.user, pk=alarm_candidate.id)
                     user_cosmetic.expiration_date= datetime.datetime.strptime(str(alarm_candidate.expiration_date), '%Y-%m-%d').date()
                     queryset |= user_cosmetic
-            context['alarm_cosmetics'] = queryset
+            context['alarm_cosmetics'] = queryset.order_by('expiration_date')
             if queryset.exists() is False:
                 context['is_alarm_time'] = False
         except:

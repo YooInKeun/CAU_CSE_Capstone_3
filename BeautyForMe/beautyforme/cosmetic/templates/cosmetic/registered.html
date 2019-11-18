@@ -346,12 +346,13 @@
                     <div class="col-1 col-content d-flex flex-column justify-content-center">
                         <div class="row justify-content-center">
                             <label class="switch d-flex align-items-center">
-                                <input type="checkbox" @click="alarmToggle($event, cosmetic)" class="switch-alarm">
+                                <input type="checkbox" @click="alarmToggle($event, cosmetic)" class="switch-alarm"
+                                    value="off">
                                 <span class="slider round"></span>
                             </label>
                         </div>
                         <div class="row justify-content-center">
-                            <select v-model="cosmetic.alarmCycle" class="alarm-select">
+                            <select v-model="cosmetic.alarmCycle" @select="" class="alarm-select">
                                 <option value="0">알람 없음</option>
                                 <option value="7">일주일 전</option>
                                 <option value="30">1달 전</option>
@@ -703,6 +704,7 @@
             filteringCosmetic() {
                 if (this.showMyCosmetic) {
                     this.displayMyCosmetics = this.filteringByBrands(this.myCosmetics);
+                    this.allowSwitching = true;
                 }
                 else {
                     this.displayInterestedCosmetics = this.filteringByBrands(this.interestedCosmetics);
@@ -710,6 +712,7 @@
 
                 if (this.showMyCosmetic) {
                     this.displayMyCosmetics = this.filteringByCategories(this.displayMyCosmetics);
+                    this.allowSwitching = true;
                 }
                 else {
                     this.displayInterestedCosmetics = this.filteringByCategories(this.displayInterestedCosmetics);
@@ -819,16 +822,30 @@
             },
             alarmToggle(event, cosmetic) {
                 if (this.allowSwitching) return;
-
-                if (cosmetic.isConsentAlarm) {
-                    cosmetic.isConsentAlarm = false;
-                }
-                else {
-                    cosmetic.isConsentAlarm = true;
+                if (cosmetic.alarmCycle == 0) {
+                    event.preventDefault();
+                    return;
                 }
 
-                console.log(cosmetic.isConsentAlarm)
+                cosmetic.isConsentAlarm = !cosmetic.isConsentAlarm;
+
+                console.log(cosmetic.id);
+                console.log(cosmetic.isConsentAlarm);
+                console.log(cosmetic.alarmCycle);
                 console.log("alarm axios 호출");
+                var params = {
+                    user_cosmetic_id: cosmetic.id,
+                    is_consent_alarm: cosmetic.isConsentAlarm,
+                    alarm_cycle: cosmetic.alarmCycle,
+                };
+                axios.put('/api/user/cosmetic/', params)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+                        const data = res.data;
+                    })
+                    .catch(function (err) {
+                        console.log("GET FAIL", err);
+                    });
             },
         },
         created() {
@@ -904,12 +921,13 @@
             console.log(this.myCosmetics);
         },
         updated() {
-            console.log("updated", this.allowSwitching);
             if (this.allowSwitching) {
-                const alarmSwitches = this.$el.querySelectorAll(".switch");
+                const switches = this.$el.querySelectorAll(".switch");
+                const alarmSwitches = this.$el.querySelectorAll(".switch-alarm");
                 for (var i in this.displayMyCosmetics) {
-                    if (this.displayMyCosmetics[i].isConsentAlarm) {
-                        alarmSwitches[i].click();
+                    if (this.displayMyCosmetics[i].isConsentAlarm && alarmSwitches[i].value == 'off') {
+                        switches[i].click();
+                        alarmSwitches[i].value = 'on';
                     }
                 }
 

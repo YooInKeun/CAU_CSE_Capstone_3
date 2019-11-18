@@ -54,6 +54,8 @@ class CosmeticInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
+        # queryset = Cosmetic.objects.filter(product__category__small_category="픽서/영양제")
+        # print(queryset)
         # queryset = Cosmetic.objects.filter(product__category=21)
         # for a in queryset:
         #     if a.similar_cosmetics is not "":
@@ -119,6 +121,21 @@ class UserCosmeticInfo(APIView):
         queryset = User_Cosmetic.objects.filter(user=request.user)
         serializer = UserCosmeticSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    def put(self, request, format=None):
+        try:
+            user_cosmetic = User_Cosmetic.objects.get(pk=request.data['user_cosmetic_id'])
+            if request.data['is_consent_alarm'] == "true":
+                user_cosmetic.is_consent_alarm = True
+            elif request.data['is_consent_alarm'] == "false":
+                user_cosmetic.is_consent_alarm = False
+            user_cosmetic.alarm_cycle = request.data['alarm_cycle']
+            user_cosmetic.save()
+            queryset= User_Cosmetic.objects.filter(pk=user_cosmetic.id)
+            serializer = UserCosmeticSerializer(queryset, many=True)
+            return Response(serializer.data)
+        except:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, format=None):
         queryset = request.data

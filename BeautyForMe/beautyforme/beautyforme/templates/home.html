@@ -220,13 +220,13 @@
                     </div>
                     <div class="col-4 d-flex flex-column justify-content-center">
                         <div class="row justify-content-center content-expiration">
-                            {{alarm_cosmetic.expiration_date}}</div>
+                            {{alarm_cosmetic.expiration_date|date:'Y-m-d'}}</div>
                     </div>
                     <div class="gray-line"></div>
                 </div>
             {% endfor %}
             </div>
-            <a class="dropdown-item" href="{% url 'cosmetic:register' %}">확인하러 가기</a>
+            <a class="dropdown-item" href="{% url 'cosmetic:registered' %}">확인하러 가기</a>
             <div class="modal-footer">
                 <input id="check" name="check" type='checkbox'>오늘 하루 이 창을 열지 않음
                 <button type="button" class="btn btn-secondary" onclick="popupModalClose()" data-dismiss="modal">닫기</button>

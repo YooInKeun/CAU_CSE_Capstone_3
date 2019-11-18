@@ -21,7 +21,9 @@ class HomeView(TemplateView):
             for alarm_candidate in alarm_candidates:
                 expiration_date = datetime.datetime.strptime(str(alarm_candidate.expiration_date), '%Y-%m-%d')
                 if (expiration_date-timezone.now()).days + 1 < alarm_candidate.alarm_cycle:
-                    queryset |= User_Cosmetic.objects.filter(user=self.request.user, pk=alarm_candidate.id)
+                    user_cosmetic = User_Cosmetic.objects.filter(user=self.request.user, pk=alarm_candidate.id)
+                    user_cosmetic.expiration_date= datetime.datetime.strptime(str(alarm_candidate.expiration_date), '%Y-%m-%d').date()
+                    queryset |= user_cosmetic
             context['alarm_cosmetics'] = queryset
             if queryset.exists() is False:
                 context['is_alarm_time'] = False

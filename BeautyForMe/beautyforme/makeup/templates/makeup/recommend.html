@@ -359,7 +359,7 @@
                 <div class="gray-line"></div>
                 <transition name="slide">
                     <div v-if="cosmetic.showSimilar" class="smaller-row">
-                        <div v-for="similarCosmetic in myCosmetics" class="row m-0">
+                        <div v-for="(similarCosmetic, similarIndex) in similarCosmetics" class="row m-0">
                             <div class="col-2 col-content d-flex justify-content-center align-items-center">
                                 <img :src="[[similarCosmetic.imageLink]]" alt=""
                                     class="user-cosmetic justify-content-center">
@@ -377,7 +377,7 @@
                             </div>
                             <div class="col-1 col-content d-inline-flex justify-content-center align-items-center">
                                 <button class="btn btn-primary tag-btn similar-btn"
-                                    @click="showSilmilarCosmetic(cosmetic)">담기</button>
+                                    @click="directInsert(similarCosmetic, false, index, similarIndex)">담기</button>
                             </div>
                             <div class="gray-line"></div>
                         </div>
@@ -453,7 +453,8 @@
             selectedCosmetics: [],
             isSelectAll: false,
             selectedBasketCosmetics: [],
-            isBasketSelectAll: false
+            isBasketSelectAll: false,
+            similarCosmetics: [],
         },
         computed: {
             myCategories() {
@@ -770,7 +771,7 @@
                 this.isSelectAll = true;
                 this.selectAll();
             },
-            directInsert(cosmetic) {
+            directInsert(cosmetic, dblclick = true, index = 0, similarIndex = 0) {
                 var notIn = true;
                 for (var i in this.basketCosmetics) {
                     if (cosmetic.id == this.basketCosmetics[i].id) {
@@ -778,12 +779,24 @@
                         break;
                     }
                 }
-                if (notIn)
-                    this.basketCosmetics.push(cosmetic);
+                if (notIn) {
+                    if (dblclick) {
+                        this.basketCosmetics.push(cosmetic);
+                    }
+                    else {
+                        this.similarCosmetics.splice(similarIndex, 1);
+                        console.log(this.similarCosmetics);
+                        this.basketCosmetics.splice(index + 1, 0, cosmetic);
+                    }
+                }
             },
             selectBasketCosmetic(event, arrayIndex, cosmeticId) {
                 if (event.target.classList.contains("similar-btn"))
                     return;
+
+                for (var i in this.basketCosmetics) {
+                    this.basketCosmetics[i].showSimilar = false;
+                }
 
                 var cosmeticRow = document.querySelectorAll(".basket-row")[arrayIndex];
 
@@ -808,6 +821,10 @@
                 }
             },
             selectBasketAll() {
+                for (var i in this.basketCosmetics) {
+                    this.basketCosmetics[i].showSimilar = false;
+                }
+
                 var cosmeticRows = document.querySelectorAll(".basket-row");
 
                 if (this.isSelectBasketAll) {
@@ -832,6 +849,9 @@
                 }
             },
             deleteBasket() {
+                for (var i in this.basketCosmetics) {
+                    this.basketCosmetics[i].showSimilar = false;
+                }
                 for (var i in this.selectedBasketCosmetics) {
                     for (var j in this.basketCosmetics) {
                         if (this.selectedBasketCosmetics[i].cosmeticId == this.basketCosmetics[j].id) {
@@ -854,6 +874,12 @@
                         this.basketCosmetics[i].showSimilar = false;
                 }
                 cosmetic.showSimilar = !cosmetic.showSimilar;
+
+                console.log("axios 연결");
+                this.similarCosmetics = [];
+                for (var i in this.myCosmetics) {
+                    this.similarCosmetics.push(this.myCosmetics[i]);
+                }
             }
         },
         updated() {
@@ -889,8 +915,8 @@
                     this.smallCategories = [];
                     for (var i in data) {
                         const cosmetic = cosmeticInsert(data[i]);
-                        this.myCosmetics.push(cosmetic)
-                        this.displayCosmetics.push(cosmetic)
+                        this.myCosmetics.push(cosmetic);
+                        this.displayCosmetics.push(cosmetic);
 
                         const category = {
                             id: cosmetic.smallCategoryId,

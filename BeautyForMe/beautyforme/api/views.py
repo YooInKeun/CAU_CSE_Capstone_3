@@ -162,16 +162,29 @@ class UserInterestedCosmeticInfo(APIView):
     # permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        try:
-            # if User_Interested_Cosmetic.objects.get(cosmetic=request.data)
-            user_interested_cosmetic = User_Interested_Cosmetic()
-            user_interested_cosmetic.user = request.user
-            user_interested_cosmetic.cosmetic = Cosmetic.objects.get(pk=request.data['cosmetic_id'])
-            user_interested_cosmetic.save()
-            queryset= User_Interested_Cosmetic.objects.filter(pk=user_interested_cosmetic.id)
-            serializer = UserInterestedCosmeticSerializer(queryset, many=True)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        queryset = User_Interested_Cosmetic.objects.filter(cosmetic=9999999999999)
+        if isinstance(request.data['cosmetic_id'], list):
+            try:
+                cosmetic_ids = request.data['cosmetic_id']
+                for cosmetic_id in cosmetic_ids:
+                    user_interested_cosmetic = User_Interested_Cosmetic()
+                    user_interested_cosmetic.user = request.user
+                    user_interested_cosmetic.cosmetic = Cosmetic.objects.get(pk=cosmetic_id)
+                    user_interested_cosmetic.save()
+                    queryset |= User_Interested_Cosmetic.objects.filter(pk=user_interested_cosmetic.id)
+                serializer = UserInterestedCosmeticSerializer(queryset, many=True)
+            except:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                user_interested_cosmetic = User_Interested_Cosmetic()
+                user_interested_cosmetic.user = request.user
+                user_interested_cosmetic.cosmetic = Cosmetic.objects.get(pk=request.data['cosmetic_id'])
+                user_interested_cosmetic.save()
+                queryset= User_Interested_Cosmetic.objects.filter(pk=user_interested_cosmetic.id)
+                serializer = UserInterestedCosmeticSerializer(queryset, many=True)
+            except:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, format=None):

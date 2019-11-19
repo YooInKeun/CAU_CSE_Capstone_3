@@ -1,6 +1,8 @@
 from django.db import models
 from jsonfield import JSONField
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 import datetime
 import json
 
@@ -91,6 +93,13 @@ class Cosmetic_Importance(models.Model):
                                             
                             "립스틱":10, "립글로스/락커":10, "립틴트":10, "립밤":10, "립라이너":10,
                             "아이라이너":10, "마스카라":10, "픽서/영양제":10, "아이섀도우":10, "아이브로우":10,
-                            "하이라이터":10, "쉐딩":10, "블러셔":10},
-                                            
-                            ensure_ascii=False))
+                            "하이라이터":10, "쉐딩":10, "블러셔":10}, ensure_ascii=False))
+
+@receiver(post_save, sender=User)
+def create_user_cosmetic_importance(sender, instance, created, **kwargs):
+    if created:
+        Cosmetic_Importance.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_cosmetic_importance(sender, instance, **kwargs):
+    instance.cosmetic_importance.save()

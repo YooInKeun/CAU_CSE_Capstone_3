@@ -8,16 +8,6 @@
         background-size: cover;
     }
 
-    .user-cosmetic {
-        width: 40%;
-    }
-
-    .control-bar {
-        background-color: white;
-        position: sticky;
-        top: 80px;
-    }
-
     .page-title {
         margin-bottom: 40px;
         margin-top: 40px;
@@ -49,7 +39,7 @@
     }
 
     .col-title {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: bold;
     }
 
@@ -57,93 +47,31 @@
         align-content: center;
     }
 
-    .content-brand {
-        font-weight: bold;
-        font-size: 15px;
-    }
-
     .content-cosmetic {
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .content-expiration {
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .content-category {
+        font-size: 14px;
+    }
+
+    .link-to-cosmetic {
+        font-size: 15px;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    .dont-show-desc {
         font-size: 15px;
     }
 
-    .tag-btn {
-        font-size: 13px;
-        padding: 4px 8px;
-        margin: 2px;
-        font-weight: bold;
-    }
-
-    .no-rest {
-        color: darkred;
+    .close-btn {
         font-size: 14px;
-        font-weight: bold;
-    }
-
-    .d-day {
-        color: darkgreen;
-    }
-
-    .select-row {
-        opacity: 0.7;
-        background-color: lightgray;
-    }
-
-    .alarm-select {
-        margin-top: 5px;
-        border: 1px solid pink;
-        border-radius: 8px;
-        width: 60px;
-        font-size: 10px;
-    }
-
-
-
-    /* The switch - the box around the slider */
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 30px;
-        height: 17px;
-    }
-
-    /* Hide default HTML checkbox */
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    /* The slider */
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        -webkit-transition: .4s;
-        transition: .4s;
-    }
-
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 13px;
-        width: 13px;
-        left: 2px;
-        bottom: 2px;
-        background-color: white;
-        -webkit-transition: .4s;
-        transition: .4s;
+        padding: 3px 5px;
     }
 
     input:checked+.slider {
@@ -179,6 +107,10 @@
         background-color: rgba(0, 0, 0, 0.5);
     }
 
+    .modal-content {
+        position: relative;
+        top: 25vh;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -194,28 +126,25 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">유통기한 알림</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="row control-bar">
-                    <div class="col-12 p-0">
-                        <div class="row mt-1 mb-1">
-                            <div class="col-4 col-title">제품</div>
-                            <div class="col-4 col-title">카테고리</div>
-                            <div class="col-4 col-title">유통기한</div>
-                        </div>
-                        <div class="row black-line"></div>
-                    </div>
+                <div class="row m-0 control-bar">
+                    <div class="col-5 col-title p-0">제품</div>
+                    <div class="col-3 col-title text-center">카테고리</div>
+                    <div class="col-4 col-title text-center">유통기한</div>
+                    <div class="row black-line"></div>
                 </div>
                 {% for alarm_cosmetic in alarm_cosmetics %}
-                <div class="row">
-                    <div class="col-4 col-content d-flex flex-column justify-content-center">
-                        <div class="row content-cosmetic">{{alarm_cosmetic.cosmetic.product}}
+                <div class="row m-0">
+                    <div class="col-5 col-content d-flex flex-column justify-content-center">
+                        <div class="row content-cosmetic">{{alarm_cosmetic.cosmetic.product.product_name}}
                         </div>
                     </div>
-                    <div class="col-4 col-content d-flex flex-column justify-content-center">
-                        <div class="row justify-content-center content-category">{{alarm_cosmetic.cosmetic.product.category}}
+                    <div class="col-3 col-content d-flex flex-column justify-content-center">
+                        <div class="row justify-content-center content-category">
+                            {{alarm_cosmetic.cosmetic.product.category.small_category}}
                         </div>
                     </div>
                     <div class="col-4 d-flex flex-column justify-content-center">
@@ -224,12 +153,18 @@
                     </div>
                     <div class="gray-line"></div>
                 </div>
-            {% endfor %}
+                {% endfor %}
             </div>
-            <a class="dropdown-item" href="{% url 'cosmetic:registered' %}">확인하러 가기</a>
-            <div class="modal-footer">
-                <input id="check" name="check" type='checkbox'>오늘 하루 이 창을 열지 않음
-                <button type="button" class="btn btn-secondary" onclick="popupModalClose()" data-dismiss="modal">닫기</button>
+            <a class="text-center link-to-cosmetic" href="{% url 'cosmetic:registered' %}">확인하러 가기</a>
+            <div class="modal-footer d-flex justify-content-between">
+                <div class="col-6 text-start p-0 m-0">
+                    <input id="check" name="check" type='checkbox' class="dont-show">
+                    <span class="dont-show-desc">오늘 하루 이 창을 열지 않음</span>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="button" class="btn btn-outline-primary close-btn" onclick="popupModalClose()"
+                        data-dismiss="modal">닫기</button>
+                </div>
             </div>
         </div>
     </div>
@@ -274,7 +209,7 @@
     </a>
 </div>
 <button id="modalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-        유통기한 알림
+    유통기한 알림
 </button>
 <input id="is_alarm_time" value={{is_alarm_time}}>
 {% include 'card.html' %}
@@ -290,44 +225,44 @@
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script>
-$(document).ready(function() {
-    var is_alarm_time = document.getElementById("is_alarm_time").value
-    $("#is_alarm_time").hide();
-    $("#modalButton").hide();
-    var result = getCookie('popup');
+    $(document).ready(function () {
+        var is_alarm_time = document.getElementById("is_alarm_time").value
+        $("#is_alarm_time").hide();
+        $("#modalButton").hide();
+        var result = getCookie('popup');
 
-    if (is_alarm_time == "True" && result != "end"){
-        $("#modalButton").trigger('click');
+        if (is_alarm_time == "True" && result != "end") {
+            $("#modalButton").trigger('click');
+        }
+    });
+
+    function getCookie(name) {
+        var cookieName = name + "=";
+        var x = 0;
+        while (x <= document.cookie.length) {
+            var y = (x + cookieName.length);
+            if (document.cookie.substring(x, y) == cookieName) {
+                if ((lastChrCookie = document.cookie.indexOf(";", y)) == -1)
+                    lastChrCookie = document.cookie.length;
+                return decodeURI(document.cookie.substring(y, lastChrCookie));
+            }
+            x = document.cookie.indexOf(" ", x) + 1;
+            if (x == 0)
+                break;
+        }
+        return "";
     }
-});
 
-function getCookie(name) {
-   var cookieName = name + "=";
-   var x = 0;
-   while ( x <= document.cookie.length ) { 
-      var y = (x+cookieName.length); 
-      if ( document.cookie.substring( x, y ) == cookieName) { 
-         if ((lastChrCookie=document.cookie.indexOf(";", y)) == -1) 
-            lastChrCookie = document.cookie.length;
-         return decodeURI(document.cookie.substring(y, lastChrCookie));
-      }
-      x = document.cookie.indexOf(" ", x ) + 1; 
-      if ( x == 0 )
-         break; 
-      } 
-   return "";
-}
-
-function setCookie(cname, value, expire) {
-   var todayValue = new Date();
-   todayValue.setDate(todayValue.getDate() + expire);
-   document.cookie = cname + "=" + encodeURI(value) + "; expires=" + todayValue.toGMTString() + "; path=/;";
-}
-
-function popupModalClose() {
-    if($("input:checkbox[name=check]").is(":checked") == true){
-        setCookie("popup", "end" , 1);
+    function setCookie(cname, value, expire) {
+        var todayValue = new Date();
+        todayValue.setDate(todayValue.getDate() + expire);
+        document.cookie = cname + "=" + encodeURI(value) + "; expires=" + todayValue.toGMTString() + "; path=/;";
     }
-};
+
+    function popupModalClose() {
+        if ($("input:checkbox[name=check]").is(":checked") == true) {
+            setCookie("popup", "end", 1);
+        }
+    };
 </script>
 {% endblock extra-script %}

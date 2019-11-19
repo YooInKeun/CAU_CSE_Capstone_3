@@ -71,18 +71,24 @@ class CosmeticInfo(APIView):
         #         print(a.rgb_value)
         queryset = Cosmetic.objects.filter(rgb_value="Fuck You!")
         serializer = CosmeticSerializer(queryset, many=True)
+        size = 0
 
         try:
             if request.query_params['is_keyuped'] == "true":
                 queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
                 queryset = queryset[0:7]
+                serializer = CosmeticSerializer(queryset, many=True)
+                return Response(serializer.data)
             elif request.query_params['is_clicked'] == "true":
-                queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')
+                page_num = request.query_params['page_num']
+                queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')[30*(page_num-1):30*page_num]
+                size = len(Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])))
         except:
             try:
                 small_category_id = request.query_params['small_category_id']
                 page_num = request.query_params['page_num']
                 queryset = Cosmetic.objects.filter(product__category__pk=small_category_id).order_by('id')[20*(page_num-1):20*page_num]
+                size = len(Cosmetic.objects.filter(product__category__pk=small_category_id))
             except:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         #     속도가 너무 느림
@@ -96,7 +102,10 @@ class CosmeticInfo(APIView):
         
         # if request.query_params['is_clicked'] == "true":
         serializer = CosmeticSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response({
+            'cosmetics': serializer.data,
+            'cosmetic_size': size
+        })
 
 
 class UserCosmeticInfo(APIView):
@@ -154,6 +163,7 @@ class UserInterestedCosmeticInfo(APIView):
 
     def post(self, request, format=None):
         try:
+            # if User_Interested_Cosmetic.objects.get(cosmetic=request.data)
             user_interested_cosmetic = User_Interested_Cosmetic()
             user_interested_cosmetic.user = request.user
             user_interested_cosmetic.cosmetic = Cosmetic.objects.get(pk=request.data['cosmetic_id'])

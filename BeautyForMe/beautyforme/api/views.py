@@ -163,6 +163,9 @@ class UserInterestedCosmeticInfo(APIView):
 
     def post(self, request, format=None):
         queryset = User_Interested_Cosmetic.objects.filter(cosmetic=9999999999999)
+        if len(User_Interested_Cosmetic.objects.filter(user=request.user, cosmetic=request.data['cosmetic_id'])) is not 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         if isinstance(request.data['cosmetic_id'], list):
             try:
                 cosmetic_ids = request.data['cosmetic_id']

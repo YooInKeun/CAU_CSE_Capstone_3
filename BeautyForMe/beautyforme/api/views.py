@@ -81,7 +81,8 @@ class CosmeticInfo(APIView):
         except:
             try:
                 small_category_id = request.query_params['small_category_id']
-                queryset = Cosmetic.objects.filter(product__category__pk=small_category_id).order_by('id')
+                page_num = request.query_params['page_num']
+                queryset = Cosmetic.objects.filter(product__category__pk=small_category_id).order_by('id')[20*(page_num-1):20*page_num]
             except:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         #     속도가 너무 느림

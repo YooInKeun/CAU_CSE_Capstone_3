@@ -38,14 +38,14 @@
     .big-category-tab:hover {
         font-size: 15px;
         font-weight: bold;
-        background-color: rgb(0, 34, 0);
+        background-color: gray;
         color: white;
     }
 
     .seleted-big-category {
         font-size: 15px;
         font-weight: bold;
-        background-color: rgb(0, 34, 0);
+        background-color: gray;
         color: white;
     }
 
@@ -137,6 +137,10 @@
         padding: 2px 6px;
         margin: 1px;
         font-weight: bold;
+    }
+
+    .cosmetic-row:hover {
+        filter: grayscale(100%);
     }
 
     .select-row {
@@ -260,7 +264,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-5 p-0 cosmetic-section scrollbar-lady-lips thin square">
+        <div class="col-5 p-0 cosmetic-section scrollbar-lady-lips thin square mt-1">
             <div class="container sticky-top row control-bar m-0 p-0">
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>
@@ -305,7 +309,7 @@
                 <div class="gray-line"></div>
             </div>
         </div>
-        <div class="col-5 p-0 pl-3 cosmetic-section scrollbar-lady-lips thin square">
+        <div class="col-5 p-0 pl-3 cosmetic-section scrollbar-lady-lips thin square mt-1">
             <div class="container sticky-top row control-bar m-0 p-0">
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>
@@ -359,7 +363,7 @@
                 <div class="gray-line"></div>
                 <transition name="slide">
                     <div v-if="cosmetic.showSimilar" class="smaller-row">
-                        <div v-for="(similarCosmetic, similarIndex) in similarCosmetics" class="row m-0">
+                        <div v-for="(similarCosmetic, similarIndex) in similarCosmetics" class="row m-0 cosmetic-row">
                             <div class="col-2 col-content d-flex justify-content-center align-items-center">
                                 <img :src="[[similarCosmetic.imageLink]]" alt=""
                                     class="user-cosmetic justify-content-center">
@@ -745,7 +749,7 @@
             displayCosmeticClick(event, arrayIndex, cosmetic) {
                 this.clicks++
                 if (this.clicks === 1) {
-                    const self = this
+                    const self = this;
                     this.timer = setTimeout(function () {
                         self.selectCosmetic(event, arrayIndex, cosmetic.id)
                         self.clicks = 0

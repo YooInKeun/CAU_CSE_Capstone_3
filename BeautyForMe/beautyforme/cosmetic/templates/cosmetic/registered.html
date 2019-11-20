@@ -20,8 +20,7 @@
     }
 
     .page-title {
-        margin-bottom: 40px;
-        margin-top: 40px;
+        margin: 50px 0px;
         font-weight: bold;
         font-size: 24px;
     }
@@ -202,8 +201,74 @@
         border-bottom: 0px !important;
     }
 
+    .modal-header h3 {
+        font-size: 20px;
+        margin: 0px;
+    }
+
     .modal-footer {
         border-top: 0px !important;
+    }
+
+    .modal-footer button {
+        font-size: 15px;
+    }
+
+    /* message-slider */
+    .message-slider {
+        height: 35px;
+        width: 28vw;
+        position: fixed;
+        top: 62px;
+        left: 36vw;
+        background-color: white;
+        border: 1px solid white;
+        border-radius: 5px;
+        z-index: 10000;
+    }
+
+    .message-body {
+        height: 100%;
+        width: 100%;
+        padding: 1px;
+        border: 1px solid pink;
+        border-radius: 5px;
+        font-size: 15px;
+    }
+
+    /* transition */
+    .slide-enter-active {
+        -moz-transition-duration: 0.3s;
+        -webkit-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -moz-transition-timing-function: ease-in;
+        -webkit-transition-timing-function: ease-in;
+        -o-transition-timing-function: ease-in;
+        transition-timing-function: ease-in;
+    }
+
+    .slide-leave-active {
+        -moz-transition-duration: 0.3s;
+        -webkit-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        -webkit-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    }
+
+    .slide-enter-to,
+    .slide-leave {
+        max-height: 100px;
+        overflow: hidden;
+    }
+
+    .slide-enter,
+    .slide-leave-to {
+        overflow: hidden;
+        max-height: 0;
     }
 </style>
 {% endblock extra-style %}
@@ -214,6 +279,11 @@
 
 {% block content %}
 <div class="container" id="app">
+    <transition name="slide">
+        <div v-show="showMessage" class="message-slider">
+            <div v-html="message" class="message-body d-flex align-items-center justify-content-center"></div>
+        </div>
+    </transition>
     <div v-if="showModal" @mouseover.once="hightingBtn" class="modal d-block position-relative" tabindex="-1"
         role="dialog" aria-hidden="true">
         <div class="modal-dialog">
@@ -252,7 +322,8 @@
                     </div>
                 </div>
                 <div class=" modal-footer">
-                    <button @click="submitDetail()" class="btn" data-dismiss="alert" aria-hidden="true">확인</button>
+                    <button @click="submitDetail()" class="btn btn-outline-dark" data-dismiss="alert"
+                        aria-hidden="true">확인</button>
                 </div>
             </div>
         </div>
@@ -267,7 +338,8 @@
                         @click="closeDeleteModal">×</button>
                 </div>
                 <div class="modal-footer">
-                    <button @click="deleteCosmetic" class="btn" data-dismiss="alert" aria-hidden="true">삭제하기</button>
+                    <button @click="deleteCosmetic" class="btn btn-outline-dark" data-dismiss="alert"
+                        aria-hidden="true">삭제하기</button>
                 </div>
             </div>
         </div>
@@ -302,16 +374,20 @@
                 </div>
             </div>
             <div class="row gray-line"></div>
-            <div class="row mt-1 mb-1">
-                <div class="col-2 col-title text-center">
-                    <span v-if="showMyCosmetic">내 화장품</span>
-                    <span v-else>관심 화장품</span>
-                </div>
+            <div v-if="showMyCosmetic" class="row mt-1 mb-1">
+                <div class="col-2 col-title text-center">내 화장품</div>
                 <div class="col-4 col-title">제품</div>
                 <div class="col-1 col-title text-center">카테고리</div>
                 <div class="col-2 col-title text-center">태그</div>
                 <div class="col-2 col-title text-center">관리상태</div>
                 <div class="col-1 col-title text-center">알람</div>
+            </div>
+            <div v-else class="row mt-1 mb-1">
+                <div class="col-2 col-title text-center">관심 화장품</div>
+                <div class="col-6 col-title">제품</div>
+                <div class="col-1 col-title text-center">카테고리</div>
+                <div class="col-1 col-title text-center"></div>
+                <div class="col-2 col-title text-center">태그</div>
             </div>
             <div class="row black-line"></div>
         </div>
@@ -386,7 +462,7 @@
                     <div class="col-2 col-content text-center">
                         <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
                     </div>
-                    <div class="col-4 col-content d-flex flex-column justify-content-center">
+                    <div class="col-6 col-content d-flex flex-column justify-content-center">
                         <div class="row content-brand">[[cosmetic.brandName]]</div>
                         <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
                         </div>
@@ -395,6 +471,7 @@
                         <div class="row justify-content-center content-category">[[cosmetic.smallCategory]]
                         </div>
                     </div>
+                    <div class="col-1 col-title text-center"></div>
                     <div class="col-2 col-content d-inline-flex justify-content-center align-items-center">
                         <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
                             <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
@@ -443,6 +520,10 @@
             showModal: false,
             showDeleteModal: false,
             allowSwitching: true,
+            showMessage: false,
+            message: "",
+            time: 0,
+            delay: 1000,
         },
         computed: {
             brands() {
@@ -513,6 +594,14 @@
             }
         },
         methods: {
+            messageToggle(message) {
+                this.showMessage = true;
+                this.message = message;
+                const self = this;
+                this.timer = setTimeout(function () {
+                    self.showMessage = false;
+                }, this.delay);
+            },
             btnOn(btnElement) {
                 btnElement.classList.remove("btn-outline-primary");
                 btnElement.classList.add("btn-primary");
@@ -842,7 +931,6 @@
                 console.log(cosmetic.id);
                 console.log(cosmetic.isConsentAlarm);
                 console.log(cosmetic.alarmCycle);
-                console.log("alarm axios 호출");
                 var params = {
                     user_cosmetic_id: cosmetic.id,
                     is_consent_alarm: cosmetic.isConsentAlarm,
@@ -850,8 +938,12 @@
                 };
                 axios.put('/api/user/cosmetic/', params)
                     .then((res) => {
-                        console.log("GET SUCCESS", res);
-                        const data = res.data;
+                        var message = "";
+                        if (cosmetic.isConsentAlarm)
+                            message = "알람이 켜졌습니다.";
+                        else
+                            message = "알람이 꺼졌습니다.";
+                        this.messageToggle(message);
                     })
                     .catch(function (err) {
                         console.log("GET FAIL", err);
@@ -859,15 +951,18 @@
             },
             selectAlarmCycle(event, cosmetic) {
                 const alarmCycle = event.target.value;
+                var message = "";
                 cosmetic.alarmCycle = alarmCycle;
 
                 if (alarmCycle == 0) {
                     cosmetic.isConsentAlarm = false;
                     this.allowSwitching = true;
+                    message = "알람이 꺼졌습니다."
                 }
-                if (alarmCycle > 0 && cosmetic.isConsentAlarm == false) {
+                if (alarmCycle > 0) {
                     cosmetic.isConsentAlarm = true;
                     this.allowSwitching = true;
+                    message = "알람이 설정 되었습니다."
                 }
 
                 var params = {
@@ -879,6 +974,7 @@
                     .then((res) => {
                         console.log("GET SUCCESS", res);
                         const data = res.data;
+                        this.messageToggle(message);
                     })
                     .catch(function (err) {
                         console.log("GET FAIL", err);

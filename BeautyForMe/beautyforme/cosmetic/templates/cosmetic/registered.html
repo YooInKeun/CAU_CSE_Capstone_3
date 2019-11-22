@@ -926,11 +926,14 @@
                     return;
                 }
 
+                if(event.target.value == "off") {
+                    event.target.value = "on";
+                }
+                else {
+                    event.target.value = "off";
+                }
                 cosmetic.isConsentAlarm = !cosmetic.isConsentAlarm;
 
-                console.log(cosmetic.id);
-                console.log(cosmetic.isConsentAlarm);
-                console.log(cosmetic.alarmCycle);
                 var params = {
                     user_cosmetic_id: cosmetic.id,
                     is_consent_alarm: cosmetic.isConsentAlarm,
@@ -950,19 +953,25 @@
                     });
             },
             selectAlarmCycle(event, cosmetic) {
-                const alarmCycle = event.target.value;
+                const alarmCycle = parseInt(event.target.value);
                 var message = "";
                 cosmetic.alarmCycle = alarmCycle;
 
-                if (alarmCycle == 0) {
+                if(cosmetic.isConsentAlarm == false && alarmCycle > 0) {
+                    cosmetic.isConsentAlarm = true;
+                    this.allowSwitching = true;
+                    message = "알람이 켜졌습니다."
+                }
+                else if(cosmetic.isConsentAlarm == false && alarmCycle == 0) {
+                    message = "알람이 기간이 변경되었습니다."
+                }
+                else if(cosmetic.isConsentAlarm && alarmCycle > 0) {
+                    message = "알람이 기간이 변경되었습니다."
+                }
+                else if(cosmetic.isConsentAlarm && alarmCycle == 0) {
                     cosmetic.isConsentAlarm = false;
                     this.allowSwitching = true;
                     message = "알람이 꺼졌습니다."
-                }
-                if (alarmCycle > 0) {
-                    cosmetic.isConsentAlarm = true;
-                    this.allowSwitching = true;
-                    message = "알람이 설정 되었습니다."
                 }
 
                 var params = {

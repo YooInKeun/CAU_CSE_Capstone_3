@@ -12,4 +12,5 @@ urlpatterns = [
     path('signup/', views.CreateUserView.as_view(), name='signup'),
     path('signup/done/', views.RegisteredView.as_view(), name='create_user_done'),
     path('profile/', views.UserProfileView.as_view(), name='profile'),
+    path('profile/importance/', views.UserImportanceView.as_view(), name='importance'),
 ]

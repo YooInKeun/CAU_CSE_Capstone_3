@@ -37,4 +37,6 @@ class ConfirmIsValidUserView(LoginView):
 
 class UserProfileView(TemplateView):
     template_name = 'profile.html'
-    
+
+class UserImportanceView(TemplateView):
+    template_name = 'profile_cosmetic.html'

@@ -7,7 +7,7 @@ class Youtuber(models.Model):
     name = models.CharField(max_length=1000, default="")
 
     def __str__(self):
-        return '[' + str(self.brand) + '] ' + self.product_name
+        return self.name
 
 # 화장품
 class Video(models.Model):

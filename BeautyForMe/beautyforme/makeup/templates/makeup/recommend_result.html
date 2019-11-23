@@ -9,6 +9,25 @@
         padding: 0px;
     }
 
+    /* scroll-bar */
+    .scrollbar-lady-lips::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-color: #F5F5F5;
+    }
+
+    .scrollbar-lady-lips::-webkit-scrollbar {
+        width: 5px;
+        background-color: #F5F5F5;
+    }
+
+    .scrollbar-lady-lips::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-image: -webkit-gradient(linear, left bottom, left top, from(#ff9a9e), color-stop(99%, #fecfef),
+                to(#fecfef));
+        background-image: -webkit-linear-gradient(bottom, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+        background-image: linear-gradient(to top, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    }
+
     /*cosmetic part*/
     .user-cosmetic {
         width: 100%;
@@ -94,13 +113,32 @@
     }
 
     .cosmetic-section {
-        height: 73vh;
+        height: 75vh;
         overflow-y: scroll;
         overflow-x: hidden;
+        margin-bottom: 8px;
     }
 
     .recommend-title {
         font-size: 18px;
+    }
+
+    .video-row {
+        position: relative;
+    }
+
+    .video-row:hover {
+        filter: grayscale(100%);
+    }
+
+    .video-detail-btn {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        width: 70px;
+        height: 24px;
+        font-size: 11px;
+        padding: 3px;
     }
 
     /* transition */
@@ -137,6 +175,15 @@
         overflow: hidden;
         max-height: 0;
     }
+
+    /* thumbnail */
+    .thumbnail {
+        width: 100%;
+    }
+
+    .thumbnail img {
+        clip-path: polygon(0 12.5%, 100% 12.5%, 100% 87.5%, 0% 87.5%);
+    }
 </style>
 {% endblock extra-style %}
 
@@ -146,165 +193,91 @@
 
 {% block content %}
 <div class="container-fuild" id="app" style="padding: 0 80px;">
-    <div class="row d-flex align-items-center" style="height:120px;">
-        <h4 class="m-0">화장품을 선택하고 영상을 추천받아 보세요!</h4>
+    <div class="row d-flex align-items-center" style="height:80px;">
+        <h5 class="m-0">화장품 조합 결과</h5>
     </div>
     <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
     <div class="row">
-        <div class="col-2 p-0">
-            <div class="row m-0">
-                <div class="col-3 p-0 big-category-wrapper">
-                    <div @click="selectMyCosmetic($event)"
-                        class="row big-category-tab text-center seleted-big-category">
-                        내<br />화장품</div>
-                    <div @click="selectInterestedCosmetic($event)" class="row big-category-tab text-center">관심<br />화장품
-                    </div>
-                    <div v-for="(bigCategory, index) in bigCategories" :key="bigCategory.id" v-html="bigCategory.name"
-                        @click="selectBigCategory($event, bigCategory)" class="row big-category-tab text-center">
-                    </div>
-                </div>
-                <div class="col-8 p-0 small-category-wrapper">
-                    <div v-show="isInUser" class="row m-0 p-0">
-                        <div @mouseover="mouseoverSmallCategory(0)" @mouseout="mouseoutSmallCategory(0)"
-                            @click="selectAllCategory()" class="small-category-tab text-center seleted-small-category">
-                            전체
-                        </div>
-                        <div class="triangle"></div>
-                    </div>
-                    <div v-for="(smallCategory, index) in smallCategories" :key="smallCategory.id" class="row m-0 p-0">
-                        <div v-html="smallCategory.name" @mouseover="mouseoverSmallCategory(index+1)"
-                            @mouseout="mouseoutSmallCategory(index + 1)"
-                            @click="selectSmallCategory(index + 1, smallCategory)"
-                            class="small-category-tab text-center">
-                        </div>
-                        <div class="triangle hide"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-5 p-0 cosmetic-section scrollbar-lady-lips thin square mt-1">
+        <div class="col-4 p-0 cosmetic-section scrollbar-lady-lips thin square mt-1">
             <div class="container sticky-top row control-bar m-0 p-0">
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>
-
                     <div class="row gray-line"></div>
                     <div class="row mt-1 mb-1 pr-3 pl-3">
                         <div class="col-6 d-inline-flex">
                             <button @click="selectAll"
                                 class="cosmetic-control-btn btn btn-outline-primary select-all-btn">모두
                                 선택</button>
-                            <button @click="insertToBasket"
-                                class="ml-1 cosmetic-control-btn btn btn-outline-primary">담기</button>
+                            <button @click="" class="ml-1 cosmetic-control-btn btn btn-outline-primary">관심 등록</button>
                         </div>
                     </div>
                     <div class="row gray-line"></div>
                     <div class="row ml-0 mr-0 mt-1 mb-1">
-                        <div class="col-2 col-title text-center">
-                        </div>
-                        <div class="col-7 col-title p-0">제품</div>
-                        <div class="col-3 col-title p-0 text-center">태그</div>
+                        <div class="col-12 col-title  text-center">제품</div>
                     </div>
                     <div class="row black-line"></div>
                 </div>
             </div>
-            <div v-for="(cosmetic, index) in displayCosmetics" :key="cosmetic.id"
+            <div v-for="(cosmetic, index) in cosmetics" :key="cosmetic.id"
                 class="container p-0 mt-1 mb-1 cosmetic-container cosmetic-row">
-                <div class="row m-0" @click="displayCosmeticClick($event, index, cosmetic)">
-                    <div class="col-2 col-content d-flex justify-content-center align-items-center">
+                <div class="row m-0" @click="selectCosmetic($event, index, cosmetic.id)">
+                    <div class="col-3 col-content d-flex justify-content-center align-items-center">
                         <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
                     </div>
-                    <div class="col-7 col-content d-flex flex-column justify-content-center">
+                    <div class="col-9 col-content d-flex flex-column justify-content-center">
                         <div class="row content-brand">[[cosmetic.brandName]]</div>
                         <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
                         </div>
-                    </div>
-                    <div class="col-3 col-content d-inline-flex justify-content-center align-items-center">
-                        <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
-                            <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
-                        </span>
                     </div>
                 </div>
                 <div class="gray-line"></div>
             </div>
         </div>
-        <div class="col-5 p-0 pl-3 cosmetic-section scrollbar-lady-lips thin square mt-1">
+        <div class="col-8 p-0 pl-3 cosmetic-section scrollbar-lady-lips thin square mt-1">
             <div class="container sticky-top row control-bar m-0 p-0">
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>
-
                     <div class="row gray-line"></div>
                     <div class="row mt-1 mb-1 pr-3 pl-3">
                         <div class="col-6 d-inline-flex">
-                            <button @click="selectBasketAll"
-                                class="cosmetic-control-btn btn btn-outline-primary select-basket-all-btn">모두
+                            <button @click="selectVideoAll"
+                                class="cosmetic-control-btn btn btn-outline-primary select-video-all-btn">모두
                                 선택</button>
-                            <button @click="deleteBasket"
-                                class="ml-1 cosmetic-control-btn btn btn-outline-primary">삭제</button>
+                            <button @click="" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩하기</button>
                         </div>
                         <div class="col-6 d-inline-flex justify-content-end">
-                            <button @click="submitBasket" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">결과
-                                보기</button>
                         </div>
                     </div>
                     <div class="row gray-line"></div>
                     <div class="row ml-0 mr-0 mt-1 mb-1">
-                        <div class="col-2 col-title text-center">
-                        </div>
-                        <div class="col-6 col-title p-0">제품</div>
-                        <div class="col-3 col-title p-0 text-center">태그</div>
-                        <div class="col-1 col-title p-0 text-center">유사</div>
+                        <div class="col-7 col-title pl-3">추천 영상</div>
+                        <div class="col-5 col-title pl-3">포함 제품</div>
                     </div>
                     <div class="row black-line"></div>
                 </div>
             </div>
-            <div v-for="(cosmetic, index) in basketCosmetics" :key="cosmetic.id"
-                class="container p-0 mt-1 mb-1 cosmetic-container basket-row">
-                <div class="row m-0" @click="selectBasketCosmetic($event, index, cosmetic.id)">
-                    <div class="col-2 col-content d-flex justify-content-center align-items-center">
-                        <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
+            <div v-for="(video, index) in videos" :key="video.id"
+                class="container p-0 mt-1 mb-1 cosmetic-container video-row">
+                <div class="row m-0" @click="selectVideo($event, index, video.id)">
+                    <div class="thumbnail col-3 col-content d-flex justify-content-center align-items-center">
+                        <img :src="[[video.thumbnail]]" alt="" class="user-cosmetic justify-content-center">
                     </div>
-                    <div class="col-6 col-content d-flex flex-column justify-content-center">
-                        <div class="row content-brand">[[cosmetic.brandName]]</div>
-                        <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
+                    <div class="col-4 col-content d-flex flex-column justify-content-center">
+                        <div class="row content-brand">[[video.youtuber]]</div>
+                        <div class="row content-cosmetic">[[video.title]]</div>
+                        <div class="row content-cosmetic">[[video.upload_date]] / Views. [[video.hits]]</div>
+                    </div>
+                    <div class="col-5 col-content d-flex flex-column justify-content-center pl-4">
+                        <div v-for="cosmetic in video.cosmetics" class="row content-cosmetic">
+                            <span class="content-brand mr-1">[[ cosmetic.brandName ]]</span> [[ cosmetic.productName ]]
+                            [[ cosmetic.typeName ]]
                         </div>
-                    </div>
-                    <div class="col-3 col-content d-inline-flex justify-content-center align-items-center">
-                        <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
-                            <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
-                        </span>
-                    </div>
-                    <div class="col-1 col-content d-inline-flex justify-content-center align-items-center">
-                        <button class="btn btn-primary tag-btn similar-btn"
-                            @click="showSilmilarCosmetic(cosmetic)">보기</button>
                     </div>
                 </div>
+                <div class="btn btn-outline-primary cosmetic-control-btn video-detail-btn">
+                    자세히 보기
+                </div>
                 <div class="gray-line"></div>
-                <transition name="slide">
-                    <div v-if="cosmetic.showSimilar" class="smaller-row">
-                        <div v-for="(similarCosmetic, similarIndex) in similarCosmetics" class="row m-0 cosmetic-row">
-                            <div class="col-2 col-content d-flex justify-content-center align-items-center">
-                                <img :src="[[similarCosmetic.imageLink]]" alt=""
-                                    class="user-cosmetic justify-content-center">
-                            </div>
-                            <div class="col-6 col-content d-flex flex-column justify-content-center">
-                                <div class="row content-brand">[[similarCosmetic.brandName]]</div>
-                                <div class="row content-cosmetic">[[similarCosmetic.productName]]
-                                    [[similarCosmetic.typeName]]
-                                </div>
-                            </div>
-                            <div class="col-3 col-content d-inline-flex justify-content-center align-items-center">
-                                <span v-for="tag in similarCosmetic.tagNames" class="justify-content-center">
-                                    <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
-                                </span>
-                            </div>
-                            <div class="col-1 col-content d-inline-flex justify-content-center align-items-center">
-                                <button class="btn btn-primary tag-btn similar-btn"
-                                    @click="directInsert(similarCosmetic, false, index, similarIndex)">담기</button>
-                            </div>
-                            <div class="gray-line"></div>
-                        </div>
-                    </div>
-                </transition>
             </div>
         </div>
     </div>
@@ -357,71 +330,12 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-            delay: 250,
-            clicks: 0,
-            timer: null,
-            bigCategories: [],
-            smallCategories: [],
-            displayCosmetics: [],
-            basketCosmetics: [],
-            myCosmetics: [],
-            interestedCosmetics: [],
-            isInUser: true,
-            isMyCosmetic: true,
-            selectedBigId: 0,
-            selectedSmallId: 0,
-            selectedSmallIndex: 0,
-            allowEffectOne: false,
+            cosmetics: [],
+            videos: [],
             selectedCosmetics: [],
+            selectedVideos: [],
             isSelectAll: false,
-            selectedBasketCosmetics: [],
-            isBasketSelectAll: false,
-            similarCosmetics: [],
-        },
-        computed: {
-            myCategories() {
-                var categoryList = []
-                for (var i in this.myCosmetics) {
-                    category = {
-                        id: this.myCosmetics[i].smallCategoryId,
-                        name: this.myCosmetics[i].smallCategory
-                    }
-                    var isContain = false;
-                    for (var i in categoryList) {
-                        if (categoryList[i].id == category.id)
-                            isContain = true;
-                    }
-                    if (isContain == false)
-                        categoryList.push(category);
-                }
-                return categoryList;
-            },
-            interestedCatrgoires() {
-                var categoryList = []
-                for (var i in this.interestedCosmetics) {
-                    category = {
-                        id: this.interestedCosmetics[i].smallCategoryId,
-                        name: this.interestedCosmetics[i].smallCategory
-                    }
-                    var isContain = false;
-                    for (var i in categoryList) {
-                        if (categoryList[i].id == category.id)
-                            isContain = true;
-                    }
-                    if (isContain == false)
-                        categoryList.push(category);
-                }
-                return categoryList;
-            },
-            basketCosmeticIds() {
-                var idList = [];
-
-                for (var i in this.basketCosmetics) {
-                    idList.push(this.basketCosmetics[i].id);
-                }
-
-                return idList;
-            }
+            isSelectVideosAll: false,
         },
         methods: {
             btnOn(btnElement) {
@@ -431,189 +345,6 @@
             btnOff(btnElement) {
                 btnElement.classList.remove("btn-primary");
                 btnElement.classList.add("btn-outline-primary");
-            },
-            mouseoverSmallCategory(index) {
-                const targetTriangle = this.$el.querySelectorAll(".triangle")[index];
-                targetTriangle.classList.remove("hide");
-            },
-            mouseoutSmallCategory(index) {
-                if (index != this.selectedSmallIndex) {
-                    const targetTriangle = this.$el.querySelectorAll(".triangle")[index];
-                    targetTriangle.classList.add("hide");
-                }
-            },
-            removeBigEffect() {
-                const bigCategoryRows = this.$el.querySelectorAll(".big-category-tab");
-                for (var i in bigCategoryRows) {
-                    if (bigCategoryRows[i].classList != undefined) {
-                        bigCategoryRows[i].classList.remove("seleted-big-category");
-                    }
-                }
-            },
-            removeSmallEffect() {
-                const smallCategoryRows = this.$el.querySelectorAll(".small-category-tab");
-                const targetTriangle = this.$el.querySelectorAll(".triangle");
-                for (var i in smallCategoryRows) {
-                    if (smallCategoryRows[i].classList != undefined) {
-                        smallCategoryRows[i].classList.remove("seleted-small-category");
-                        targetTriangle[i].classList.add("hide");
-                    }
-                }
-            },
-            addSmallEffect(index) {
-                const smallCategoryRow = this.$el.querySelectorAll(".small-category-tab")[index];
-                const targetTriangle = this.$el.querySelectorAll(".triangle")[index];
-                smallCategoryRow.classList.add("seleted-small-category");
-                targetTriangle.classList.remove("hide");
-
-                this.selectedSmallIndex = index;
-            },
-            selectMyCosmetic(event) {
-                this.isInUser = true;
-                this.isMyCosmetic = true;
-                this.removeBigEffect();
-                event.target.classList.add("seleted-big-category");
-                this.smallCategories = this.myCategories;
-                this.selectAllCategory();
-
-                this.isSelectAll = true;
-                this.selectAll();
-            },
-            selectInterestedCosmetic(event) {
-                this.isInUser = true;
-                this.isMyCosmetic = false;
-                this.removeBigEffect();
-                event.target.classList.add("seleted-big-category");
-                this.smallCategories = this.interestedCatrgoires;
-                this.selectAllCategory();
-
-                this.isSelectAll = true;
-                this.selectAll();
-            },
-            selectBigCategory(event, bigCategory) {
-                var postData = {
-                    params: {
-                        big_category_id: bigCategory.id,
-                    }
-                };
-                axios.get('/api/cosmetic/smallcategory/', postData)
-                    .then((res) => {
-                        console.log("GET SUCCESS", res);
-                        const data = res.data;
-
-                        this.smallCategories = []
-                        for (var i in data) {
-                            const name = data[i].small_category.replace("-", "<br/>");
-                            var result = {
-                                id: data[i].id,
-                                name: name
-                            }
-                            this.smallCategories.push(result)
-                        }
-
-                        this.isInUser = false;
-                        this.removeBigEffect();
-                        event.target.classList.add("seleted-big-category");
-                        this.selectedBigId = bigCategory.id;
-                        this.selectedSmallId = 0;
-                        this.addSmallEffect(1);
-                        this.selectSmallCategory(1, this.smallCategories[0]);
-                        this.allowEffectOne = true;
-                    })
-                    .catch(function (err) {
-                        console.log("GET FAIL", err);
-                    });
-
-                this.isSelectAll = true;
-                this.selectAll();
-            },
-            selectAllCategory() {
-                this.removeSmallEffect();
-                this.addSmallEffect(0);
-
-                this.isSelectAll = true;
-                this.selectAll();
-
-                if (this.isInUser) {
-                    if (this.isMyCosmetic) {
-                        this.displayCosmetics = this.myCosmetics;
-                    }
-                    else {
-                        this.displayCosmetics = this.interestedCosmetics;
-                    }
-                }
-            },
-            selectSmallCategory(index, smallCategory) {
-                this.removeSmallEffect();
-                this.addSmallEffect(index);
-                this.selectedSmallId = smallCategory.id;
-
-                if (this.isInUser) {
-                    if (this.isMyCosmetic) {
-                        this.displayCosmetics = this.filteringByCategories(this.myCosmetics);
-                    }
-                    else {
-                        this.displayCosmetics = this.filteringByCategories(this.interestedCosmetics);
-                    }
-                }
-                else {
-                    var postData = {
-                        params: {
-                            small_category_id: smallCategory.id,
-                        }
-                    };
-
-                    axios.get('/api/cosmetic/', postData)
-                        .then((res) => {
-                            console.log("GET SUCCESS", res);
-                            const data = res.data;
-
-                            this.displayCosmetics = [];
-
-                            for (var i in data) {
-                                if (data[i].product.image_link)
-                                    imageLink = data[i].product.image_link;
-                                else
-                                    imageLink = data[i].image_link;
-
-                                var tagNames = [];
-                                for (var tag_index in data[i].product.tag_names)
-                                    tagNames.push(data[i].product.tag_names[tag_index].tag_name);
-                                const smallCategory = data[i].product.category.small_category.replace("-", "<br/>");
-
-                                var cosmetic = {
-                                    id: data[i].id,
-                                    brandName: data[i].product.brand.brand_name,
-                                    productName: data[i].product.product_name,
-                                    typeName: data[i].type_name,
-                                    imageLink: imageLink,
-                                    tagNames: tagNames,
-                                    smallCategory: smallCategory,
-                                    smallCategoryId: data[i].product.category.id,
-                                    rgbValue: data[i].rgb_value,
-                                    similarCosmetics: data[i].similar_cosmetics,
-                                    selectedCosmetics: [],
-                                }
-                                this.displayCosmetics.push(cosmetic);
-                            }
-                            return cosmetic;
-                        })
-                        .catch(function (err) {
-                            console.log("GET FAIL", err);
-                        });
-                }
-
-                this.isSelectAll = true;
-                this.selectAll();
-            },
-            filteringByCategories(cosmetics) {
-                var displayCosmetics = []
-                for (var i in cosmetics) {
-                    if (this.selectedSmallId == cosmetics[i].smallCategoryId) {
-                        displayCosmetics.push(cosmetics[i])
-                    }
-                }
-                return displayCosmetics;
             },
             selectCosmetic(event, arrayIndex, cosmeticId) {
                 console.log(cosmeticId);
@@ -635,7 +366,7 @@
                 })
                 cosmeticRow.classList.add("select-row");
 
-                if (this.selectedCosmetics.length == this.displayCosmetics.length) {
+                if (this.selectedCosmetics.length == this.cosmetics.length) {
                     this.isSelectAll = true;
                     this.btnOn(document.querySelector(".select-all-btn"));
                 }
@@ -657,213 +388,248 @@
                         cosmeticRows[index].classList.add("select-row");
                         this.selectedCosmetics.push({
                             arrayIndex: index,
-                            cosmeticId: this.displayCosmetics[index].id
+                            cosmeticId: this.cosmetics[index].id
                         })
                     }
                     this.btnOn(document.querySelector(".select-all-btn"));
                     this.isSelectAll = true;
                 }
             },
-            displayCosmeticClick(event, arrayIndex, cosmetic) {
-                this.clicks++
-                if (this.clicks === 1) {
-                    const self = this;
-                    this.timer = setTimeout(function () {
-                        self.selectCosmetic(event, arrayIndex, cosmetic.id)
-                        self.clicks = 0
-                    }, this.delay);
-                } else {
-                    clearTimeout(this.timer);
-                    this.directInsert(cosmetic);
-                    this.clicks = 0;
-                }
-            },
-            insertToBasket() {
-                for (var i in this.selectedCosmetics) {
-                    var notIn = true;
-                    for (var j in this.basketCosmetics) {
-                        if (this.selectedCosmetics[i].cosmeticId == this.basketCosmetics[j].id) {
-                            notIn = false;
-                            break;
-                        }
-                    }
-                    if (notIn)
-                        this.basketCosmetics.push(this.displayCosmetics[this.selectedCosmetics[i].arrayIndex]);
-                }
-                this.isSelectAll = true;
-                this.selectAll();
-            },
-            directInsert(cosmetic, dblclick = true, index = 0, similarIndex = 0) {
-                var notIn = true;
-                for (var i in this.basketCosmetics) {
-                    if (cosmetic.id == this.basketCosmetics[i].id) {
-                        notIn = false;
-                        break;
-                    }
-                }
-                if (notIn) {
-                    if (dblclick) {
-                        this.basketCosmetics.push(cosmetic);
-                    }
-                    else {
-                        this.similarCosmetics.splice(similarIndex, 1);
-                        console.log(this.similarCosmetics);
-                        this.basketCosmetics.splice(index + 1, 0, cosmetic);
-                    }
-                }
-            },
-            selectBasketCosmetic(event, arrayIndex, cosmeticId) {
-                if (event.target.classList.contains("similar-btn"))
-                    return;
+            selectVideo(event, arrayIndex, videoId) {
+                console.log(videoId);
 
-                for (var i in this.basketCosmetics) {
-                    this.basketCosmetics[i].showSimilar = false;
-                }
+                var videoRow = document.querySelectorAll(".video-row")[arrayIndex];
 
-                var cosmeticRow = document.querySelectorAll(".basket-row")[arrayIndex];
-
-                for (var index in this.selectedBasketCosmetics) {
-                    if (this.selectedBasketCosmetics[index].arrayIndex == arrayIndex) {
-                        cosmeticRow.classList.remove("select-row");
-                        this.selectedBasketCosmetics.splice(index, 1);
-                        this.isSelectBasketAll = false;
-                        this.btnOff(document.querySelector(".select-basket-all-btn"));
+                for (var index in this.selectedVideos) {
+                    if (this.selectedVideos[index].arrayIndex == arrayIndex) {
+                        videoRow.classList.remove("select-row");
+                        this.selectedVideos.splice(index, 1);
+                        this.isSelectVideoAll = false;
+                        this.btnOff(document.querySelector(".select-video-all-btn"));
                         return;
                     }
                 }
-                this.selectedBasketCosmetics.push({
+                this.selectedVideos.push({
                     arrayIndex: arrayIndex,
-                    cosmeticId: cosmeticId
+                    videoId: videoId
                 })
-                cosmeticRow.classList.add("select-row");
+                videoRow.classList.add("select-row");
 
-                if (this.selectedBasketCosmetics.length == this.basketCosmetics.length) {
-                    this.isSelectBasketAll = true;
-                    this.btnOn(document.querySelector(".select-basket-all-btn"));
+                if (this.selectedVideos.length == this.videos.length) {
+                    this.isSelectVideoAll = true;
+                    this.btnOn(document.querySelector(".select-video-all-btn"));
                 }
             },
-            selectBasketAll() {
-                for (var i in this.basketCosmetics) {
-                    this.basketCosmetics[i].showSimilar = false;
-                }
+            selectVideoAll() {
+                var videoRows = document.querySelectorAll(".video-row");
 
-                var cosmeticRows = document.querySelectorAll(".basket-row");
-
-                if (this.isSelectBasketAll) {
-                    this.selectedBasketCosmetics = [];
-                    for (var index = 0; index < cosmeticRows.length; index++) {
-                        cosmeticRows[index].classList.remove("select-row");
+                if (this.isSelectVideoAll) {
+                    this.selectedVideos = [];
+                    for (var index = 0; index < videoRows.length; index++) {
+                        videoRows[index].classList.remove("select-row");
                     }
-                    this.btnOff(document.querySelector(".select-basket-all-btn"));
-                    this.isSelectBasketAll = false;
+                    this.btnOff(document.querySelector(".select-video-all-btn"));
+                    this.isSelectVideoAll = false;
                 }
                 else {
-                    this.selectedBasketCosmetics = [];
-                    for (var index = 0; index < cosmeticRows.length; index++) {
-                        cosmeticRows[index].classList.add("select-row");
-                        this.selectedBasketCosmetics.push({
+                    this.selectedVideos = [];
+                    for (var index = 0; index < videoRows.length; index++) {
+                        videoRows[index].classList.add("select-row");
+                        this.selectedVideos.push({
                             arrayIndex: index,
-                            cosmeticId: this.basketCosmetics[index].id
+                            videoId: this.videos[index].id
                         })
                     }
-                    this.btnOn(document.querySelector(".select-basket-all-btn"));
-                    this.isSelectBasketAll = true;
+                    this.btnOn(document.querySelector(".select-video-all-btn"));
+                    this.isSelectVideoAll = true;
                 }
             },
-            deleteBasket() {
-                for (var i in this.basketCosmetics) {
-                    this.basketCosmetics[i].showSimilar = false;
-                }
-                for (var i in this.selectedBasketCosmetics) {
-                    for (var j in this.basketCosmetics) {
-                        if (this.selectedBasketCosmetics[i].cosmeticId == this.basketCosmetics[j].id) {
-                            this.basketCosmetics.splice(j, 1);
-                            break;
-                        }
-                    }
-                }
-                this.selectedMyCosmetics = [];
-
-                this.isSelectBasketAll = true;
-                this.selectBasketAll()
-            },
-            submitBasket() {
-                console.log(this.basketCosmeticIds)
-            },
-            showSilmilarCosmetic(cosmetic) {
-                for (var i in this.basketCosmetics) {
-                    if (cosmetic.id != this.basketCosmetics[i].id)
-                        this.basketCosmetics[i].showSimilar = false;
-                }
-                cosmetic.showSimilar = !cosmetic.showSimilar;
-
-                console.log("axios 연결");
-                this.similarCosmetics = [];
-                for (var i in this.myCosmetics) {
-                    this.similarCosmetics.push(this.myCosmetics[i]);
-                }
-            }
-        },
-        updated() {
-            if (this.allowEffectOne) {
-                this.addSmallEffect(1);
-            }
-            this.allowEffectOne = false;
         },
         created() {
-            axios.get('/api/cosmetic/bigcategory/')
-                .then((res) => {
-                    console.log("GET SUCCESS", res);
-                    const data = res.data;
-
-                    this.bigCategories = []
-                    for (var i in data) {
-                        var result = {
-                            id: data[i].id,
-                            name: data[i].big_category
-                        }
-                        this.bigCategories.push(result)
-                    }
-                })
-                .catch(function (err) {
-                    console.log("GET FAIL", err);
-                });
-
-            axios.get('/api/user/cosmetic/')
-                .then((res) => {
-                    console.log("GET SUCCESS", res);
-                    const data = res.data;
-
-                    this.smallCategories = [];
-                    for (var i in data) {
-                        const cosmetic = cosmeticInsert(data[i]);
-                        this.myCosmetics.push(cosmetic);
-                        this.displayCosmetics.push(cosmetic);
-
-                        const category = {
-                            id: cosmetic.smallCategoryId,
-                            name: cosmetic.smallCategory
-                        }
-                        var isContain = false;
-                        for (var i in this.smallCategories) {
-                            if (this.smallCategories[i].id == category.id)
-                                isContain = true;
-                        }
-                        if (isContain == false)
-                            this.smallCategories.push(category);
-                    }
-                })
-                .catch(function (err) {
-                    console.log("GET FAIL", err);
-                });
-
             axios.get('/api/user/cosmetic/interested/')
                 .then((res) => {
                     console.log("GET SUCCESS", res);
                     const data = res.data;
 
                     for (var i in data)
-                        this.interestedCosmetics.push(cosmeticInsert(data[i]))
+                        this.cosmetics.push(cosmeticInsert(data[i]));
+
+                    this.videos = [
+                        {
+                            id: 1,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 2,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 3,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 4,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 5,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 6,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                    ];
                 })
                 .catch(function (err) {
                     console.log("GET FAIL", err);

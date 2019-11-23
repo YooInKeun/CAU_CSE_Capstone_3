@@ -1,2 +1,439 @@
-<h2>video_detail 페이지</h2>
-<h1>정빈 ♥ 성민</h1>
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block extra-style %}
+<style>
+    * {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    /* scroll-bar */
+    .scrollbar-lady-lips::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-color: #F5F5F5;
+    }
+
+    .scrollbar-lady-lips::-webkit-scrollbar {
+        width: 5px;
+        background-color: #F5F5F5;
+    }
+
+    .scrollbar-lady-lips::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-image: -webkit-gradient(linear, left bottom, left top, from(#ff9a9e), color-stop(99%, #fecfef),
+                to(#fecfef));
+        background-image: -webkit-linear-gradient(bottom, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+        background-image: linear-gradient(to top, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    }
+
+    /*cosmetic part*/
+    .user-cosmetic {
+        width: 100%;
+    }
+
+    .gray-line {
+        margin: 0px;
+        padding: 0px;
+        height: 1px;
+        width: 100%;
+        background-color: lightgray;
+    }
+
+    .black-line {
+        margin: 0px;
+        padding: 0px;
+        height: 2px;
+        width: 100%;
+        background-color: lightpink;
+    }
+
+    .col-content {
+        align-content: center;
+    }
+
+    .content-row {
+        min-height: 50vh;
+    }
+
+    .content-brand {
+        font-weight: bold;
+        font-size: 15px;
+        color: rgb(253, 153, 170);
+    }
+
+    .content-cosmetic {
+        font-size: 15px;
+    }
+
+    .content-expiration {
+        font-size: 15px;
+    }
+
+    .content-category {
+        font-size: 15px;
+    }
+
+    .tag-btn {
+        font-size: 13px;
+        padding: 3px 8px;
+        margin: 2px;
+        font-weight: bold;
+    }
+
+    .cosmetic-row:hover {
+        filter: grayscale(100%);
+    }
+
+    .select-row {
+        opacity: 0.7;
+        -webkit-box-shadow: 0 10px 10px -10px black;
+        -moz-box-shadow: 0 10px 10px -10px black;
+        box-shadow: 0 5px 5px -5px black;
+        border-left: 1px solid gray;
+    }
+
+    .control-bar {
+        background-color: white;
+        top: 0px;
+        z-index: 1;
+    }
+
+    .cosmetic-control-btn {
+        width: 120px;
+        height: 28px;
+        font-size: 13px;
+        padding: 3px;
+    }
+
+    .to-youtube-btn {
+        width: 130px;
+        height: 80%;
+        font-size: 15px;
+        padding: 3px;
+    }
+
+    .col-title {
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .cosmetic-section {
+        height: 75vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        margin-bottom: 8px;
+    }
+
+    .recommend-title {
+        font-size: 18px;
+    }
+
+    .video-row {
+        position: relative;
+    }
+
+    .video-row:hover {
+        filter: grayscale(100%);
+    }
+
+    .video-detail-btn {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        width: 70px;
+        height: 24px;
+        font-size: 11px;
+        padding: 3px;
+    }
+
+    .youtuber-name {
+        font-weight: bold;
+        font-size: 21px;
+        color: rgb(253, 153, 170);
+    }
+
+    .youtube-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .youtube-upload-date {
+        font-size: 16px;
+        justify-content: flex-end;
+        color: gray;
+    }
+
+    .youtube-hits {
+        font-size: 16px;
+        justify-content: flex-end;
+        color: gray;
+    }
+
+    /* transition */
+    .slide-enter-active {
+        -moz-transition-duration: 0.3s;
+        -webkit-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -moz-transition-timing-function: ease-in;
+        -webkit-transition-timing-function: ease-in;
+        -o-transition-timing-function: ease-in;
+        transition-timing-function: ease-in;
+    }
+
+    .slide-leave-active {
+        -moz-transition-duration: 0.3s;
+        -webkit-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        -webkit-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    }
+
+    .slide-enter-to,
+    .slide-leave {
+        max-height: 100px;
+        overflow: hidden;
+    }
+
+    .slide-enter,
+    .slide-leave-to {
+        overflow: hidden;
+        max-height: 0;
+    }
+
+    /* thumbnail */
+    .thumbnail {
+        width: 100%;
+    }
+
+    .thumbnail img {
+        clip-path: polygon(0 12.5%, 100% 12.5%, 100% 87.5%, 0% 87.5%);
+    }
+</style>
+{% endblock extra-style %}
+
+{% block navbar%}
+{% include 'navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fuild" id="app" style="padding: 0 80px;">
+    <div class="row d-flex align-items-center" style="height:50px;">
+    </div>
+    <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
+    <div class="row">
+        <div class="col-4">
+            <div class="row m-0" @click="selectVideo($event, index, video.id)">
+                <div class="thumbnail col-12 col-content d-flex justify-content-center align-items-center">
+                    <img :src="[[video.thumbnail]]" alt="" @click="goToYoutube"
+                        class="user-cosmetic justify-content-center">
+                </div>
+                <div class="col-12 col-content d-flex flex-column justify-content-center">
+                    <div class="row youtuber-name">[[video.youtuber]]</div>
+                    <div @click="goToYoutube" class="row youtube-title">[[video.title]]</div>
+                </div>
+                <div class="col-6 col-content d-flex flex-column justify-content-end p-0">
+                    <button class="to-youtube-btn btn btn-primary">동영상 스크랩</button>
+                </div>
+                <div class="col-6 col-content d-flex flex-column justify-content-center pr-4">
+                    <div class="row youtube-upload-date">[[video.upload_date]]</div>
+                    <div class="row youtube-hits">Views. [[video.hits]]</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-8 p-0 cosmetic-section scrollbar-lady-lips thin square mt-1">
+            <div class="container sticky-top row control-bar m-0 p-0">
+                <div class="col-12 p-0">
+                    <div class="row black-line"></div>
+
+                    <div class="row gray-line"></div>
+                    <div class="row mt-1 mb-1 pr-3 pl-3">
+                        <div class="col-6 d-inline-flex">
+                            <button @click="selectAll"
+                                class="cosmetic-control-btn btn btn-outline-primary select-all-btn">모두
+                                선택</button>
+                            <button @click="" class="ml-1 cosmetic-control-btn btn btn-outline-primary">관심 등록</button>
+                        </div>
+                    </div>
+                    <div class="row gray-line"></div>
+                    <div class="row ml-0 mr-0 mt-1 mb-1">
+                        <div class="col-2 col-title text-center">
+                        </div>
+                        <div class="col-7 col-title p-0">제품</div>
+                        <div class="col-3 col-title p-0 text-center">태그</div>
+                    </div>
+                    <div class="row black-line"></div>
+                </div>
+            </div>
+            <div v-for="(cosmetic, index) in video.cosmetics" :key="cosmetic.id"
+                class="container p-0 mt-1 mb-1 cosmetic-container cosmetic-row">
+                <div class="row m-0" @click="selectCosmetic(event, index, cosmetic.id)">
+                    <div class="col-2 col-content d-flex justify-content-center align-items-center">
+                        <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
+                    </div>
+                    <div class="col-7 col-content d-flex flex-column justify-content-center">
+                        <div class="row content-brand">[[cosmetic.brandName]]</div>
+                        <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
+                        </div>
+                    </div>
+                    <div class="col-3 col-content d-inline-flex justify-content-center align-items-center">
+                        <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
+                            <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="gray-line"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+{% include 'footer.html' %}
+{% endblock footer %}
+
+{% block extra-script %}
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    function cosmeticInsert(data) {
+        var imageLink;
+
+        if (data.cosmetic.product.image_link)
+            imageLink = data.cosmetic.product.image_link;
+        else
+            imageLink = data.cosmetic.image_link;
+
+        var tagNames = [];
+        for (var tag_index in data.cosmetic.product.tag_names)
+            tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+        const smallCategory = data.cosmetic.product.category.small_category.replace("-", "<br/>");
+
+        var cosmetic = {
+            id: data.cosmetic.id,
+            brandName: data.cosmetic.product.brand.brand_name,
+            productName: data.cosmetic.product.product_name,
+            typeName: data.cosmetic.type_name,
+            imageLink: imageLink,
+            tagNames: tagNames,
+            smallCategory: smallCategory,
+            smallCategoryId: data.cosmetic.product.category.id,
+            rgbValue: data.cosmetic.rgb_value,
+            similarCosmetics: data.cosmetic.similar_cosmetics,
+            selectedCosmetics: [],
+            showSimilar: false,
+            similarCosmetics: [],
+        };
+        return cosmetic;
+    }
+
+    var vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            video: {},
+            selectedCosmetics: [],
+            isSelectAll: false,
+        },
+        methods: {
+            btnOn(btnElement) {
+                btnElement.classList.remove("btn-outline-primary");
+                btnElement.classList.add("btn-primary");
+            },
+            btnOff(btnElement) {
+                btnElement.classList.remove("btn-primary");
+                btnElement.classList.add("btn-outline-primary");
+            },
+            selectCosmetic(event, arrayIndex, cosmeticId) {
+                console.log(cosmeticId);
+
+                var cosmeticRow = document.querySelectorAll(".cosmetic-row")[arrayIndex];
+
+                for (var index in this.selectedCosmetics) {
+                    if (this.selectedCosmetics[index].arrayIndex == arrayIndex) {
+                        cosmeticRow.classList.remove("select-row");
+                        this.selectedCosmetics.splice(index, 1);
+                        this.isSelectAll = false;
+                        this.btnOff(document.querySelector(".select-all-btn"));
+                        return;
+                    }
+                }
+                this.selectedCosmetics.push({
+                    arrayIndex: arrayIndex,
+                    cosmeticId: cosmeticId
+                })
+                cosmeticRow.classList.add("select-row");
+
+                if (this.selectedCosmetics.length == this.cosmetics.length) {
+                    this.isSelectAll = true;
+                    this.btnOn(document.querySelector(".select-all-btn"));
+                }
+            },
+            selectAll() {
+                var cosmeticRows = document.querySelectorAll(".cosmetic-row");
+
+                if (this.isSelectAll) {
+                    this.selectedCosmetics = [];
+                    for (var index = 0; index < cosmeticRows.length; index++) {
+                        cosmeticRows[index].classList.remove("select-row");
+                    }
+                    this.btnOff(document.querySelector(".select-all-btn"));
+                    this.isSelectAll = false;
+                }
+                else {
+                    this.selectedCosmetics = [];
+                    for (var index = 0; index < cosmeticRows.length; index++) {
+                        cosmeticRows[index].classList.add("select-row");
+                        this.selectedCosmetics.push({
+                            arrayIndex: index,
+                            cosmeticId: this.video.cosmetics[index].id
+                        })
+                    }
+                    this.btnOn(document.querySelector(".select-all-btn"));
+                    this.isSelectAll = true;
+                }
+            },
+            goToYoutube() {
+                window.open(
+                    this.video.link,
+                    '_blank'
+                );
+            }
+        },
+        created() {
+            axios.get('/api/user/cosmetic/interested/')
+                .then((res) => {
+                    console.log("GET SUCCESS", res);
+                    const data = res.data;
+                    this.video = {
+                        id: 1,
+                        title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                        thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                        link: "https://youtu.be/zRfSYDLZMPk",
+                        upload_date: "2016. 11. 4.",
+                        hits: "858875",
+                        youtuber: "Risabae",
+                    };
+                    this.video.cosmetics = [];
+                    for (var i in data)
+                        this.video.cosmetics.push(cosmeticInsert(data[i]))
+                })
+                .catch(function (err) {
+                    console.log("GET FAIL", err);
+                });
+
+
+        },
+    })
+</script>
+{% endblock extra-script %}

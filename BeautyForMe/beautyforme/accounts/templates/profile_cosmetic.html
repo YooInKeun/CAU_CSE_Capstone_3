@@ -21,8 +21,6 @@
   <div id="app" class="d-flex justify-content-center">
     <div class="inputBox w-50">
       <input id="user_id" type="text" value="{{ user.pk }}" style="visibility:hidden;" disabled />
-      <!-- <input id="username" type="text" value="{{ user.username }}" style="visibility:hidden;" disabled />
-      <input id="password" type="text" value="{{ user.password }}" style="visibility:hidden;" disabled /> -->
 
       <h2 class="text-center m-5">{{ user.last_name }}<small>님의 프로필</small></h2>
       <h4 class="input-title">이름</h4>
@@ -80,8 +78,6 @@
     el: "#app",
     data: {
       user_id: "",
-      // username: "",
-      // password: "",
       email: "",
       nickname: "",
       phone: "",
@@ -92,8 +88,6 @@
     created: function () {
       console.log("created()");
       this.user_id = document.getElementById("user_id").value;
-      // this.username = document.getElementById("username").value;
-      // this.password = document.getElementById("password").value;
       this.fetch_profile();
     },
     mounted() {
@@ -102,12 +96,6 @@
     },
     methods: {
       update_profile: function () {
-        // var userData = {
-        //   user: this.user_id,
-        //   username: this.username,
-        //   password: this.password,
-        //   email: this.email
-        // }
         var postData = {
           user: this.user_id,
           email: this.email,
@@ -118,12 +106,6 @@
           address_detail: this.address_detail,
         };
         console.log(postData);
-        // axios
-        //   .put("/api/user/" + this.user_id + "/", userData)
-        //   .then(function (res) {
-        //   })
-        //   .catch(function (err) {
-        //   });
 
         axios
           .put("/api/profile/" + this.user_id + "/", postData)
@@ -141,17 +123,9 @@
       fetch_profile: function () {
         console.log("fetch_profile()");
         var user = this;
-        // axios
-        //   .get("/api/user/")
-        //   .then(function (res) {
-        //     console.log("GET SUCCESS", res);
-        //     user.email = res.data[0].email;
-        //   })
-        //   .catch(function (err) {
-        //     console.log("GET FAIL", err);
-        //   });
+
         axios
-          .get("/api/profile/")
+          .get("/api/user/cosmetic/importance/")
           .then(function (res) {
             console.log("GET SUCCESS", res);
             user.email = res.data[0].email;
@@ -164,38 +138,6 @@
           .catch(function (err) {
             console.log("GET FAIL", err);
           });
-      },
-      searchAddress() {
-        new daum.Postcode({
-          oncomplete: function (data) {
-            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-
-            // 각 주소의 노출 규칙에 따라 주소를 조합한다.
-            // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-            var addr = ""; // 주소 변수
-
-            //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
-            if (data.userSelectedType === "R") {
-              // 사용자가 도로명 주소를 선택했을 경우
-              addr = data.roadAddress;
-            } else {
-              // 사용자가 지번 주소를 선택했을 경우(J)
-              addr = data.jibunAddress;
-            }
-
-            // 우편번호와 주소 정보를 해당 필드에 넣는다.
-            document.querySelector(".input-zip-code").value =
-              data.zonecode;
-            document.querySelector(".input-address").value = addr;
-            // 커서를 상세주소 필드로 이동한다.
-            document.querySelector(".input-address-detail").value = "";
-            document.querySelector(".input-address-detail").focus();
-          }
-        }).open();
-      },
-      insertAddressInfo() {
-        this.zip_code = this.$el.querySelector(".input-zip-code").value;
-        this.address = this.$el.querySelector(".input-address").value;
       },
     }
   });

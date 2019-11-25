@@ -230,12 +230,14 @@ class SmallCategoryInfo(APIView):
 class CosmeticImportanceInfo(APIView):
 
     def get(self, request, format=None):
+        cosmetic_importance = {}
         try:
             queryset = Cosmetic_Importance.objects.filter(user=request.user)
-            serializer = CosmeticImportanceSerializer(queryset, many=True)
+            cosmetic_importance['importance'] = queryset[0].importance
+            # serializer = CosmeticImportanceSerializer(queryset, many=True)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.data)
+        return Response(cosmetic_importance)
 
     def put(self, request, format=None):
         try:

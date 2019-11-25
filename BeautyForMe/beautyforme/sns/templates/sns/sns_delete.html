@@ -1,0 +1,11 @@
+{% extends 'instagram_base.html' %}
+{% block content %}
+
+<div class="alert alert-primary" role="alert">
+    진짜로 {{object}}를 지우시겠습니까?
+</div>
+<form action ="" method ="post">
+    {% csrf_token%}
+    <input type="submit" value="Delete OK">
+</form>
+{% endblock %}

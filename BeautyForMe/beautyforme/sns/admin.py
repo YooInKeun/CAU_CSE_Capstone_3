@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Sns
 
-# Register your models here.
+admin.site.register(Sns)
+# admin.site.register(Comment)

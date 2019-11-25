@@ -1,0 +1,231 @@
+{% extends 'instagram_base.html' %}
+{% load crispy_forms_tags %} 
+
+
+{% load staticfiles %}
+ 
+{% block extra-style %}
+
+<style>
+.card{
+    width : 650px;
+    float : right;
+}
+
+
+.dummy{
+    color : #ffffff;
+    font-size : 50px;
+}
+.wrapper{
+    width : 350px;
+    position: fixed;
+    
+ }
+
+
+
+</style> 
+{% endblock extra-style %}
+
+{% block navbar%}
+{% include 'instagram_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<!-- <div class="container">
+    <h2>SNS 메인 페이지</h2>
+    
+    <a href="{% url 'home' %}">
+        <button type="button" class="btn btn-success">홈으로 가기</button>
+    </a>
+</div> -->
+
+<div class='container'>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-5">
+            {% for object in object_list %}
+
+            <div class="card">
+                <div class="card-header">
+                    <b>{{ object.author }}</b>
+                </div>
+                <img src=" {{ object.image.url }}" class="card-img-top" alt="...">
+                <li>
+                <div class="card-body">
+                    
+                    <div class="uploader col-3"> <b>{{ object.author }}</b></div>
+                    <div class="content col-9">{{ object.text }}</div>
+                    
+                </div>
+                </li>
+                <ul class="list-group list-group-flush">
+
+                   <li class="list-group-item">
+                        <a href="{% url 'sns:like' object.id %}" class="float-left btn-like {%if user in object.like.all %} active {%endif%}">
+                            {%if user in object.like.all %}
+                            <img src='{% static "img/red_heart.png" %}' width="50px">
+                            {%else%}
+                            <img src='{% static "img/GG.png" %}' width="50px">
+                            {%endif%}
+                        </a>
+                        {% if object.like.all.count %}
+                        <span class = "float-left">
+                            <br>
+                            {{object.like.all.count}} 명이 좋아합니다
+                        </span>
+                        {% endif %}
+                        <a href="{% url 'sns:favorite' object.id %}" class="float-right btn-favorite {%if user in object.favorite.all %}active{%endif%}">저장하기!</a>
+                    </li>
+                    <li class="list-group-item">생성일 : {{ object.created }}</li>
+    
+                </ul>
+                <div class="card-body">
+                    {% for comment in object.comment.all %}
+                        <div class="comment {% if request.user == comment.author %} col-9 {% else %} col-12 {% endif %} text-left">
+                            <p>
+                                <b>{{ comment.author.username }}</b> &nbsp {{ comment.content }}
+                            </p>
+                        </div>
+                        {% if request.user == comment.author %}
+                            <div class="comment-button-container col-3 text-right">
+                                <form action="{% url 'comment:comment-delete' pk=comment.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button class="btn comment-delete" onclick="return confirm('정말로 삭제합니까?');">삭제</button>
+                                </form>
+                                <form action="{% url 'comment:comment-update' pk=comment.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="btn comment-edit">수정</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="comment-creator-div row" >
+                        <div class="comment-form col-12">
+                            <form action="{% url 'comment:comment-create' object.id %}" method="post">{% csrf_token %}
+                                {{ comment_form | crispy }}
+                                
+                                <input type="submit" class="btn btn-primary"/>
+                            </form>
+                        </div>
+                    </div>      
+                    <a href="{% url 'sns:detail' object.id %}" class="card-link">댓글달기</a>
+                    <a href="{% url 'sns:update' object.id %}" class="card-link">수정하기</a>
+                    <a href="{% url 'sns:delete' object.id %}" class="card-link">삭제하기</a>
+
+                </div>
+
+                
+                <li class="list-group-item">
+                   
+                </li>
+                
+            </div>
+            <div class = "dummy"> 
+               
+            </div>
+
+            {% endfor %}
+
+        </div>
+        <div class="wrapper">
+            <div class="left" id="sidebar">
+                {% load static %}
+                <div class="card_profile" style="">
+                    <h5 class="card-title">admin</h5>
+                    <img src="{% static 'img/벚꽃.jpg' %}" class="card-img-top">
+                    <div class="card-body">
+                        <p class="card-text">회원님의 스토리를 확인해보세요!</p>
+                        <a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rightwrapper">
+            <div class="right" id="sidebar">
+                {% load static %}
+                <div class="right_profile" style="">
+                    <h5 class="rightcard-title">admin</h5>
+                    <img src="{% static 'img/벚꽃.jpg' %}" class="rightcard-img-top">
+                    <div class="rightcard-body">
+                        <p class="rightcard-text">회원님의 스토리를 확인해보세요!</p>
+                        <a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- <div class='container'>
+    <div class='row'>
+        <div class="col"></div>
+        <div class="col-5">
+            {% for object in object_list %}
+            <div class="card">
+                <div class="card-header">
+                    {{ object.author}}
+                </div>
+                <img src = "{{object.image.url}}" class = "card-img-top" alt=>
+                <div class = "card-body">
+                    <p class="card-text">{{object.text}}</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% if user.is_authenticated %}
+                    <li class="list-group-item">
+                        <a href="{% url 'sns:like' object.id %}" class = "float-left btn-like" {%if user in object.like.all%} active {%endif%}>좋아요!</a>
+                        {% if object.like.all.cout %}
+                        <span class = "float-left">
+                            {{object.like.all.count}}
+                        </span>
+                        {% endif %}
+                        <a href="{% url 'sns:favorite' object.id %}" class = "float-right btn-favorite" {%if user in object.favorite.all%} active {%endif%}>저장!</a>
+                    </li>
+                    {% endif %}
+                    <li class="list-group-item">생성일 : {{object.created}}</li>
+                </ul>
+                <div class="card-body">
+                    <a href="{% url 'sns:detail' object.id %}" class="card-link">댓글</a>
+                    <a href="{% url 'sns:update' object.id %}" class="card-link">수정</a>
+                    <a href="{% url 'sns:delete' object.id %}" class="card-link">삭제</a>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col"></div>
+</div> -->
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}
+
+{% block extra-script %}
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    var vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            isHeart : false
+        },
+        methods: {
+
+        },
+    })
+</script>
+
+{% endblock extra-script %}
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'sns/js/feed_list_js.js' %}"></script>
+{% endblock %}

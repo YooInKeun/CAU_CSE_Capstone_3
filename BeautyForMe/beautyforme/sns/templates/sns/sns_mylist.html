@@ -1,0 +1,63 @@
+{% extends 'instagram_base.html' %}
+
+{% load staticfiles %}
+ 
+{% block extra-style %}
+{% endblock extra-style %}
+
+{% block navbar%}
+{% include 'instagram_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12" >
+        <div id = "mdb-lightbox no-margin">
+            <div class = "row">
+                {% for object in object_list%}
+                {% if object.author == request.user%}
+                <figure class="col-md-4">
+                    <div style="width:18rem;">
+                        <img src = {{object.image.url}} class="card-img-top" alt="...">
+                    </div>
+                </figure>
+                {% endif %}
+                {% endfor%}
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+<!-- 사진 -->
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/sns.css' %}" />
+<div class="photo-container row">
+        <div class="photo-carousel">
+            <img src = "{{object.image.url}}" /> 
+        </div>
+</div>
+
+{% endblock content %}
+{% block footer %}
+{% endblock footer %}
+
+{% block extra-script %}
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    var vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+
+        },
+        methods: {
+
+        },
+    })
+</script>
+{% endblock extra-script %}

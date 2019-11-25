@@ -33,6 +33,15 @@
     justify-content: center;
   }
 
+  .importance-avg {
+    font-size: 17px;
+    font-weight: bold;
+    border: 2px solid pink;
+    border-radius: 8px;
+    padding: 2px 6px;
+    margin: 0 8px;
+  }
+
   .importance-input {
     text-align: center;
     font-size: 14px;
@@ -65,24 +74,25 @@
 {% block content %}
 <div id="app">
   <div class="container">
-    <div v-for="category in categories">
+    <div v-for="(category, index) in categories">
       <div class="row ">
-        <div v-html="category.bigCategory"
-          class="col-12 big-category-title d-flex justify-content-center align-items-center"></div>
+        <div class="col-12 big-category-title d-flex justify-content-center align-items-center">
+          [[category.bigCategory]] <span class="importance-avg">[[ averageImportance[index] ]]</span>
+        </div>
       </div>
       <div class="row category-section">
         <div v-for="smallCategory in category.smallCategories"
           class="col-2 category-wrapper d-felx justify-content-center mt-1">
           <div v-html="smallCategory.name" class="category-title row text-center"></div>
           <div class="d-flex justify-content-center">
-            <input type="number" min=0 max=10 class="importance-input" :value="smallCategory.value">
-            [[smallCategory.value]]
+            <input type="number" min=0 max=10 class="importance-input" :value="smallCategory.value"
+              v-model="smallCategory.value">
           </div>
         </div>
       </div>
     </div>
     <div class="row d-flex justify-content-end mr-2 mt-3 mb-3">
-      <button class="btn btn-primary save-btn">저장하기</button>
+      <button @click="submitImportantce" class="btn btn-primary save-btn">저장하기</button>
     </div>
   </div>
 </div>
@@ -101,95 +111,60 @@
       categories: [],
       loadUserOnce: true,
     },
+    computed: {
+      averageImportance() {
+        var bigCategoryAvg = [];
+
+        for (var i in this.categories) {
+          var avg = 0;
+          for (var j in this.categories[i].smallCategories) {
+            avg += parseInt(this.categories[i].smallCategories[j].value);
+          }
+          avg /= this.categories[i].smallCategories.length;
+          bigCategoryAvg.push(avg.toFixed(1));
+        }
+        return bigCategoryAvg;
+      }
+    },
+    methods: {
+      submitImportantce() {
+        console.log(this.averageImportance);
+        var importance = [];
+        for (var i in this.categories) {
+          importance.push({
+            big_category: this.categories[i].bigCategory,
+            small_categories: []
+          })
+          for (var j in this.categories[i].smallCategories) {
+            importance[i].small_categories.push([this.categories[i].smallCategories[j].name, this.categories[i].smallCategories[j].value]);
+          }
+        }
+        console.log(importance);
+      }
+    },
     created() {
-      axios.get('/api/cosmetic/bigcategory/')
+      axios.get('/api/user/cosmetic/importance/')
         .then((res) => {
           const data = res.data;
-          this.categories = [];
 
-          for (var i = 0; i < data.length; i++) {
-            this.categories.push({
-              bigCategory: "",
-              smallCategories: {},
-            });
-          }
-          for (var i in data) {
-            this.categories[i].bigCategory = data[i].big_category;
-
-            var postData = {
-              params: {
-                big_category_id: data[i].id,
-                big_category_index: i
-              }
-            };
-            axios.get('/api/cosmetic/smallcategory/', postData)
-              .then((response) => {
-                const smallData = response.data;
-                const bigCategoryIndex = response.config.params.big_category_index;
-
-                this.categories[bigCategoryIndex].smallCategories = [];
-                for (var index in smallData) {
-                  const name = smallData[index].small_category.replace("-", "<br/>");
-                  this.categories[bigCategoryIndex].smallCategories.push({
-                    name: name
-                  });
-                }
-                if (this.loadUserOnce)
-                  this.loadUserOnce = false;
+          for (var key in data.importance) {
+            var smallCategories = [];
+            for (var smallKey in data.importance[key]) {
+              smallCategories.push({
+                name: smallKey,
+                value: data.importance[key][smallKey],
               })
-              .catch(function (err) {
-                console.log("GET FAIL", err);
-              });
+            }
+            this.categories.push({
+              bigCategory: key,
+              smallCategories: smallCategories
+            });
           }
         })
         .catch(function (err) {
           console.log("GET FAIL", err);
         });
     },
-    updated() {
-      if (this.loadUserOnce == false) {
-        axios.get('/api/user/cosmetic/importance/')
-          .then((response) => {
-<<<<<<< HEAD
-            console.log(response)
-            console.log(response.data);
-=======
-            var inputStream = "";
-            for (var i in response.data.importance) {
-              if (response.data.importance[i] != '"') {
-                inputStream = inputStream.concat('', response.data.importance[i]);
-              }
-            }
-            inputStream = inputStream.replace("{", "").replace("}", "");
-
-            var splitedInputStream = inputStream.split(", ");
-            for (var i in splitedInputStream) {
-              var name = splitedInputStream[i].split(": ")[0].replace("-", "<br/>");
-              var value = splitedInputStream[i].split(": ")[1];
-              for (var i in this.categories) {
-                for (var j in this.categories[i].smallCategories) {
-                  if (this.categories[i].smallCategories[j].name == name) {
-                    this.categories[i].smallCategories[j]["value"] = value;
-                  }
-                }
-              }
-            }
-            console.log(this.categories);
-<<<<<<< HEAD
-
->>>>>>> 화장품 중요도 받아오기
-=======
->>>>>>> 카테고리 수신 수정
-          })
-          .catch(function (err) {
-            console.log("GET FAIL", err);
-          });
-
-        this.loadUserOnce = true;
-      }
-    },
-    methods: {
-    }
   });
 </script>
 {% endblock %}

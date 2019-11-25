@@ -76,6 +76,7 @@
           <div v-html="smallCategory.name" class="category-title row text-center"></div>
           <div class="d-flex justify-content-center">
             <input type="number" min=0 max=10 class="importance-input" :value="smallCategory.value">
+            [[smallCategory.value]]
           </div>
         </div>
       </div>
@@ -98,7 +99,7 @@
     el: "#app",
     data: {
       categories: [],
-      loadUserOnce: false,
+      loadUserOnce: true,
     },
     created() {
       axios.get('/api/cosmetic/bigcategory/')
@@ -133,6 +134,8 @@
                     name: name
                   });
                 }
+                if (this.loadUserOnce)
+                  this.loadUserOnce = false;
               })
               .catch(function (err) {
                 console.log("GET FAIL", err);
@@ -160,7 +163,6 @@
             inputStream = inputStream.replace("{", "").replace("}", "");
 
             var splitedInputStream = inputStream.split(", ");
-            console.log(splitedInputStream);
             for (var i in splitedInputStream) {
               var name = splitedInputStream[i].split(": ")[0].replace("-", "<br/>");
               var value = splitedInputStream[i].split(": ")[1];
@@ -173,8 +175,11 @@
               }
             }
             console.log(this.categories);
+<<<<<<< HEAD
 
 >>>>>>> 화장품 중요도 받아오기
+=======
+>>>>>>> 카테고리 수신 수정
           })
           .catch(function (err) {
             console.log("GET FAIL", err);

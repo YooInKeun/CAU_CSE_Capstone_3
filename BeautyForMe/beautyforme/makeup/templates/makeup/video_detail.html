@@ -265,7 +265,8 @@
                     <div class="row ml-0 mr-0 mt-1 mb-1">
                         <div class="col-2 col-title text-center">
                         </div>
-                        <div class="col-7 col-title p-0">제품</div>
+                        <div class="col-5 col-title p-0">제품</div>
+                        <div class="col-2 col-title p-0 text-center">카테고리</div>
                         <div class="col-3 col-title p-0 text-center">태그</div>
                     </div>
                     <div class="row black-line"></div>
@@ -277,10 +278,13 @@
                     <div class="col-2 col-content d-flex justify-content-center align-items-center">
                         <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
                     </div>
-                    <div class="col-7 col-content d-flex flex-column justify-content-center">
+                    <div class="col-5 col-content d-flex flex-column justify-content-center">
                         <div class="row content-brand">[[cosmetic.brandName]]</div>
                         <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
                         </div>
+                    </div>
+                    <div class="col-2 col-content d-inline-flex justify-content-center align-items-center">
+                        <div v-html="cosmetic.smallCategory" class="row content-cosmetic text-center"></div>
                     </div>
                     <div class="col-3 col-content d-inline-flex justify-content-center align-items-center">
                         <span v-for="tag in cosmetic.tagNames" class="justify-content-center">

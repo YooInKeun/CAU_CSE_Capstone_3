@@ -1,2 +1,605 @@
-<h2>video_list 페이지</h2>
-<h1>인근 ♥ 수진</h1>
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block extra-style %}
+<style>
+    * {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    /* scroll-bar */
+    .scrollbar-lady-lips::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-color: #F5F5F5;
+    }
+
+    .scrollbar-lady-lips::-webkit-scrollbar {
+        width: 5px;
+        background-color: #F5F5F5;
+    }
+
+    .scrollbar-lady-lips::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-image: -webkit-gradient(linear, left bottom, left top, from(#ff9a9e), color-stop(99%, #fecfef),
+                to(#fecfef));
+        background-image: -webkit-linear-gradient(bottom, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+        background-image: linear-gradient(to top, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    }
+
+    /*cosmetic part*/
+    .user-cosmetic {
+        width: 100%;
+    }
+
+    .gray-line {
+        margin: 0px;
+        padding: 0px;
+        height: 1px;
+        width: 100%;
+        background-color: lightgray;
+    }
+
+    .black-line {
+        margin: 0px;
+        padding: 0px;
+        height: 2px;
+        width: 100%;
+        background-color: lightpink;
+    }
+
+    .col-content {
+        align-content: center;
+    }
+
+    .content-row {
+        min-height: 50vh;
+    }
+
+    .content-brand {
+        font-weight: bold;
+        font-size: 14px;
+        color: rgb(253, 153, 170);
+    }
+
+    .content-cosmetic {
+        font-size: 14px;
+    }
+
+    .content-expiration {
+        font-size: 15px;
+    }
+
+    .content-category {
+        font-size: 15px;
+    }
+
+    .tag-btn {
+        font-size: 11px;
+        padding: 2px 6px;
+        margin: 1px;
+        font-weight: bold;
+    }
+
+    .cosmetic-row:hover {
+        filter: grayscale(100%);
+    }
+
+    .select-row {
+        opacity: 0.7;
+        -webkit-box-shadow: 0 10px 10px -10px black;
+        -moz-box-shadow: 0 10px 10px -10px black;
+        box-shadow: 0 5px 5px -5px black;
+        border-left: 1px solid gray;
+    }
+
+    .control-bar {
+        background-color: white;
+        top: 0px;
+        z-index: 1;
+    }
+
+    .cosmetic-control-btn {
+        width: 120px;
+        height: 28px;
+        font-size: 13px;
+        padding: 3px;
+    }
+
+    .col-title {
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .cosmetic-section {
+        height: 75vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        margin-bottom: 8px;
+    }
+
+    .recommend-title {
+        font-size: 18px;
+    }
+
+    .video-row {
+        position: relative;
+    }
+
+    .video-row:hover {
+        filter: grayscale(100%);
+    }
+
+    .video-detail-btn {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        width: 70px;
+        height: 24px;
+        font-size: 11px;
+        padding: 3px;
+    }
+
+    /* transition */
+    .slide-enter-active {
+        -moz-transition-duration: 0.3s;
+        -webkit-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -moz-transition-timing-function: ease-in;
+        -webkit-transition-timing-function: ease-in;
+        -o-transition-timing-function: ease-in;
+        transition-timing-function: ease-in;
+    }
+
+    .slide-leave-active {
+        -moz-transition-duration: 0.3s;
+        -webkit-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        -webkit-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+        transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    }
+
+    .slide-enter-to,
+    .slide-leave {
+        max-height: 100px;
+        overflow: hidden;
+    }
+
+    .slide-enter,
+    .slide-leave-to {
+        overflow: hidden;
+        max-height: 0;
+    }
+
+    /* thumbnail */
+    .thumbnail {
+        width: 100%;
+    }
+
+    .thumbnail img {
+        clip-path: polygon(0 12.5%, 100% 12.5%, 100% 87.5%, 0% 87.5%);
+    }
+</style>
+{% endblock extra-style %}
+
+{% block navbar%}
+{% include 'navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fuild" id="app" style="padding: 0 80px;">
+    <div class="row d-flex align-items-center" style="height:80px;">
+        <h5 class="m-0">뷰티 동영상 목록</h5>
+    </div>
+    <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
+    <div class="row">
+        <div class="col-12 p-0 cosmetic-section scrollbar-lady-lips thin square mt-1">
+            <div class="container sticky-top row control-bar m-0 p-0">
+                <div class="col-12 p-0">
+                    <div class="row black-line"></div>
+                    <div class="row gray-line"></div>
+                    <div class="row mt-1 mb-1 pr-3 pl-3">
+                        <div class="col-6 d-inline-flex">
+                            <button @click="selectVideoAll"
+                                class="cosmetic-control-btn btn btn-outline-primary select-video-all-btn">모두
+                                선택</button>
+                            <button @click="" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩하기</button>
+                        </div>
+                        <div class="col-6 d-inline-flex justify-content-end">
+                        </div>
+                    </div>
+                    <div class="row gray-line"></div>
+                    <div class="row ml-0 mr-0 mt-1 mb-1">
+                        <div class="col-7 col-title pl-3">추천 영상</div>
+                        <div class="col-5 col-title pl-3">포함 제품</div>
+                    </div>
+                    <div class="row black-line"></div>
+                </div>
+            </div>
+            <div v-for="(video, index) in videos" :key="video.id"
+                class="container p-0 mt-1 mb-1 cosmetic-container video-row">
+                <div class="row m-0" @click="selectVideo($event, index, video.id)">
+                    <div class="thumbnail col-3 col-content d-flex justify-content-center align-items-center">
+                        <img :src="[[video.thumbnail]]" alt="" class="user-cosmetic justify-content-center">
+                    </div>
+                    <div class="col-4 col-content d-flex flex-column justify-content-center">
+                        <div class="row content-brand">[[video.youtuber]]</div>
+                        <div class="row content-cosmetic">[[video.title]]</div>
+                        <div class="row content-cosmetic">[[video.upload_date]] / Views. [[video.hits]]</div>
+                    </div>
+                    <div class="col-5 col-content d-flex flex-column justify-content-center pl-4">
+                        <div v-for="cosmetic in video.cosmetics" class="row content-cosmetic">
+                            <span class="content-brand mr-1">[[ cosmetic.brandName ]]</span> [[ cosmetic.productName ]]
+                            [[ cosmetic.typeName ]]
+                        </div>
+                    </div>
+                </div>
+                <div class="btn btn-outline-primary cosmetic-control-btn video-detail-btn">
+                    자세히 보기
+                </div>
+                <div class="gray-line"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+{% include 'footer.html' %}
+{% endblock footer %}
+
+{% block extra-script %}
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    function cosmeticInsert(data) {
+        var imageLink;
+
+        if (data.cosmetic.product.image_link)
+            imageLink = data.cosmetic.product.image_link;
+        else
+            imageLink = data.cosmetic.image_link;
+
+        var tagNames = [];
+        for (var tag_index in data.cosmetic.product.tag_names)
+            tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+        const smallCategory = data.cosmetic.product.category.small_category.replace("-", "<br/>");
+
+        var cosmetic = {
+            id: data.cosmetic.id,
+            brandName: data.cosmetic.product.brand.brand_name,
+            productName: data.cosmetic.product.product_name,
+            typeName: data.cosmetic.type_name,
+            imageLink: imageLink,
+            tagNames: tagNames,
+            smallCategory: smallCategory,
+            smallCategoryId: data.cosmetic.product.category.id,
+            rgbValue: data.cosmetic.rgb_value,
+            similarCosmetics: data.cosmetic.similar_cosmetics,
+            selectedCosmetics: [],
+            showSimilar: false,
+            similarCosmetics: [],
+        };
+        return cosmetic;
+    }
+
+    var vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            cosmetics: [],
+            videos: [],
+            selectedCosmetics: [],
+            selectedVideos: [],
+            isSelectAll: false,
+            isSelectVideosAll: false,
+        },
+        methods: {
+            btnOn(btnElement) {
+                btnElement.classList.remove("btn-outline-primary");
+                btnElement.classList.add("btn-primary");
+            },
+            btnOff(btnElement) {
+                btnElement.classList.remove("btn-primary");
+                btnElement.classList.add("btn-outline-primary");
+            },
+            selectCosmetic(event, arrayIndex, cosmeticId) {
+                console.log(cosmeticId);
+
+                var cosmeticRow = document.querySelectorAll(".cosmetic-row")[arrayIndex];
+
+                for (var index in this.selectedCosmetics) {
+                    if (this.selectedCosmetics[index].arrayIndex == arrayIndex) {
+                        cosmeticRow.classList.remove("select-row");
+                        this.selectedCosmetics.splice(index, 1);
+                        this.isSelectAll = false;
+                        this.btnOff(document.querySelector(".select-all-btn"));
+                        return;
+                    }
+                }
+                this.selectedCosmetics.push({
+                    arrayIndex: arrayIndex,
+                    cosmeticId: cosmeticId
+                })
+                cosmeticRow.classList.add("select-row");
+
+                if (this.selectedCosmetics.length == this.cosmetics.length) {
+                    this.isSelectAll = true;
+                    this.btnOn(document.querySelector(".select-all-btn"));
+                }
+            },
+            selectAll() {
+                var cosmeticRows = document.querySelectorAll(".cosmetic-row");
+
+                if (this.isSelectAll) {
+                    this.selectedCosmetics = [];
+                    for (var index = 0; index < cosmeticRows.length; index++) {
+                        cosmeticRows[index].classList.remove("select-row");
+                    }
+                    this.btnOff(document.querySelector(".select-all-btn"));
+                    this.isSelectAll = false;
+                }
+                else {
+                    this.selectedCosmetics = [];
+                    for (var index = 0; index < cosmeticRows.length; index++) {
+                        cosmeticRows[index].classList.add("select-row");
+                        this.selectedCosmetics.push({
+                            arrayIndex: index,
+                            cosmeticId: this.cosmetics[index].id
+                        })
+                    }
+                    this.btnOn(document.querySelector(".select-all-btn"));
+                    this.isSelectAll = true;
+                }
+            },
+            selectVideo(event, arrayIndex, videoId) {
+                console.log(videoId);
+
+                var videoRow = document.querySelectorAll(".video-row")[arrayIndex];
+
+                for (var index in this.selectedVideos) {
+                    if (this.selectedVideos[index].arrayIndex == arrayIndex) {
+                        videoRow.classList.remove("select-row");
+                        this.selectedVideos.splice(index, 1);
+                        this.isSelectVideoAll = false;
+                        this.btnOff(document.querySelector(".select-video-all-btn"));
+                        return;
+                    }
+                }
+                this.selectedVideos.push({
+                    arrayIndex: arrayIndex,
+                    videoId: videoId
+                })
+                videoRow.classList.add("select-row");
+
+                if (this.selectedVideos.length == this.videos.length) {
+                    this.isSelectVideoAll = true;
+                    this.btnOn(document.querySelector(".select-video-all-btn"));
+                }
+            },
+            selectVideoAll() {
+                var videoRows = document.querySelectorAll(".video-row");
+
+                if (this.isSelectVideoAll) {
+                    this.selectedVideos = [];
+                    for (var index = 0; index < videoRows.length; index++) {
+                        videoRows[index].classList.remove("select-row");
+                    }
+                    this.btnOff(document.querySelector(".select-video-all-btn"));
+                    this.isSelectVideoAll = false;
+                }
+                else {
+                    this.selectedVideos = [];
+                    for (var index = 0; index < videoRows.length; index++) {
+                        videoRows[index].classList.add("select-row");
+                        this.selectedVideos.push({
+                            arrayIndex: index,
+                            videoId: this.videos[index].id
+                        })
+                    }
+                    this.btnOn(document.querySelector(".select-video-all-btn"));
+                    this.isSelectVideoAll = true;
+                }
+            },
+        },
+        created() {
+            axios.get('/api/user/cosmetic/interested/')
+                .then((res) => {
+                    console.log("GET SUCCESS", res);
+                    const data = res.data;
+
+                    for (var i in data)
+                        this.cosmetics.push(cosmeticInsert(data[i]));
+
+                    this.videos = [
+                        {
+                            id: 1,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 2,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 3,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 4,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 5,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                        {
+                            id: 6,
+                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
+                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
+                            link: "https://youtu.be/zRfSYDLZMPk",
+                            upload_date: "2016. 11. 4.",
+                            hits: "858875",
+                            youtuber: "Risabae",
+                            cosmetics: [
+                                {
+                                    id: 1,
+                                    brandName: "바비브라운",
+                                    productName: "크러쉬드 리퀴드 립",
+                                    typeName: "피치 앤 콰이엇",
+                                },
+                                {
+                                    id: 2,
+                                    brandName: "공칠이공(0720)",
+                                    productName: "레알틴트",
+                                    typeName: "레알핑크",
+                                },
+                                {
+                                    id: 3,
+                                    brandName: "겔랑",
+                                    productName: "루즈 오토마띠끄",
+                                    typeName: "102",
+                                },
+                            ]
+                        },
+                    ];
+                })
+                .catch(function (err) {
+                    console.log("GET FAIL", err);
+                });
+        },
+    })
+</script>
+{% endblock extra-script %}

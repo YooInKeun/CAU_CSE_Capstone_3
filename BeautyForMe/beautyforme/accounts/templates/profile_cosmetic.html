@@ -140,6 +140,20 @@
           }
         }
         console.log(importance);
+
+        var params = {
+          importance: importance
+        };
+
+        axios.put('/api/user/cosmetic/importance/', params)
+          .then((res) => {
+              console.log("PUT SUCESS", res)
+              alert("수정 완료되었습니다")
+          })
+          .catch(function (err) {
+              console.log("PUT FAIL", err);
+              alert("오류가 발생했습니다")
+          });
       }
     },
     created() {

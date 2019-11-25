@@ -233,19 +233,20 @@ class CosmeticImportanceInfo(APIView):
         cosmetic_importance = {}
         try:
             queryset = Cosmetic_Importance.objects.filter(user=request.user)
-            cosmetic_importance['importance'] = queryset[0].importance
+            cosmetic_importance['importance'] = json.loads(queryset[0].importance)
             # serializer = CosmeticImportanceSerializer(queryset, many=True)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_importance)
 
     def put(self, request, format=None):
+        cosmetic_importance = {}
         try:
-            cosmetic_importance = Cosmetic_Importance.objects.get(pk=request.data['cosmetic_importance_id'])
-            cosmetic_importance.importance = request.data['importance'] # 수정 필요
-            cosmetic_importance.save()
-            queryset= Cosmetic_Importance.objects.filter(pk=request.data['cosmetic_importance_id'])
-            serializer = CosmeticImportanceSerializer(queryset, many=True)
+            cosmetic_importance_obj = Cosmetic_Importance.objects.get(user=request.user)
+            cosmetic_importance_obj.importance = request.data['importance'] # 수정 필요
+            cosmetic_importance_obj.save()
+            cosmetic_importance['importance'] = cosmetic_importance_obj.importance
+            # serializer = CosmeticImportanceSerializer(queryset, many=True)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.data)
+        return Response(cosmetic_importance)

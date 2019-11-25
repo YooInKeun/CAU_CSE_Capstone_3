@@ -80,17 +80,17 @@ class CosmeticInfo(APIView):
                 serializer = CosmeticSerializer(queryset, many=True)
                 return Response(serializer.data)
             elif request.query_params['is_clicked'] == "true":
-                page_num = request.query_params['page_num']
+                page_num = int(request.query_params['page_num'])
                 queryset = Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])).order_by('id')[30*(page_num-1):30*page_num]
                 size = len(Cosmetic.objects.filter(product__in=Product.objects.filter(product_name__contains=request.query_params['query_cosmetic'])))
         except:
             try:
                 small_category_id = request.query_params['small_category_id']
-                page_num = request.query_params['page_num']
+                page_num = int(request.query_params['page_num'])
                 queryset = Cosmetic.objects.filter(product__category__pk=small_category_id).order_by('id')[20*(page_num-1):20*page_num]
                 size = len(Cosmetic.objects.filter(product__category__pk=small_category_id))
             except:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         #     속도가 너무 느림
         #     cosmetics = Cosmetic.objects.all()
         #     selected_cosmetic_ids = []
@@ -102,6 +102,7 @@ class CosmeticInfo(APIView):
         
         # if request.query_params['is_clicked'] == "true":
         serializer = CosmeticSerializer(queryset, many=True)
+        print(serializer.data)
         return Response({
             'cosmetics': serializer.data,
             'cosmetic_size': size

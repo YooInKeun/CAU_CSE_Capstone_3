@@ -102,7 +102,7 @@ class CosmeticInfo(APIView):
         
         # if request.query_params['is_clicked'] == "true":
         serializer = CosmeticSerializer(queryset, many=True)
-        print(serializer.data)
+
         return Response({
             'cosmetics': serializer.data,
             'cosmetic_size': size

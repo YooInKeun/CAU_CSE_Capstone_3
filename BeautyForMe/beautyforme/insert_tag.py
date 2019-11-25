@@ -6,7 +6,7 @@ from cosmetic.models import *
 import csv
 
 if __name__=='__main__':
-    with open('db_insert_data/All Data/색조.csv') as csvDataFile:
+    with open('db_insert_data/All Data/final_cosmetics.csv') as csvDataFile:
         csvReader = csv.reader(csvDataFile)
         data=list(csv.reader(csvDataFile))
 
@@ -18,3 +18,4 @@ if __name__=='__main__':
                 except:
                     # print(data[i][j])
                     Tag(tag_name=data[i][j]).save()
+                    print(data[i][j])

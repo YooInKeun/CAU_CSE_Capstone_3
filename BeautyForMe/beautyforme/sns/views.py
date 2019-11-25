@@ -49,7 +49,7 @@ class SnsList(FormMixin, ListView):
 
 class SnsCreate(CreateView):
     model = Sns
-    fields = ['author', 'text', 'image']
+    fields = ['text', 'image']
     template_name_suffix = '_create'
     success_url = '/'
 
@@ -100,7 +100,8 @@ class SnsDetail(DetailView):
 
 
 class SnsLike(View):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        print(kwargs)
         if not request.user.is_authenticated:  # 로그인확인
             return HttpResponseForbidden()
         else:

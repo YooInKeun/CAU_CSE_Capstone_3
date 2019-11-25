@@ -23,6 +23,11 @@
     
  }
 
+ .card-img-profile{
+     width: 350px;
+     height: 420px;
+ }
+
 
 
 </style> 
@@ -42,7 +47,7 @@
     </a>
 </div> -->
 
-<div class='container'>
+<div id='app' class='container'>
     <div class="row">
         <div class="col"></div>
         <div class="col-5">
@@ -64,12 +69,15 @@
                 <ul class="list-group list-group-flush">
 
                    <li class="list-group-item">
-                        <a href="{% url 'sns:like' object.id %}" class="float-left btn-like {%if user in object.like.all %} active {%endif%}">
-                            {%if user in object.like.all %}
-                            <img src='{% static "img/red_heart.png" %}' width="50px">
-                            {%else%}
-                            <img src='{% static "img/GG.png" %}' width="50px">
-                            {%endif%}
+                        <!-- href="{% url 'sns:like' object.id %}" -->
+                        <a class="float-left btn-like {%if user in object.like.all %} active {%endif%}" v-on:click="likeChange({{ object.id }})">
+                            <!-- <input id="user_like" type="text" value="{{ object.like.all }}" style="visibility:hidden;" disabled />
+                            <input id="user" type="text" value="{{ user }}" style="visibility:hidden;" disabled /> -->
+                            {% if user in object.like.all %}
+                            <img src='{% static "img/red_heart.png" %}' width="50px" :key="isHeart">
+                            {% else %}
+                            <img src='{% static "img/GG.png" %}' width="50px" :key="isHeart">
+                            {% endif %}
                         </a>
                         {% if object.like.all.count %}
                         <span class = "float-left">
@@ -134,9 +142,9 @@
         <div class="wrapper">
             <div class="left" id="sidebar">
                 {% load static %}
-                <div class="card_profile" style="">
-                    <h5 class="card-title">admin</h5>
-                    <img src="{% static 'img/벚꽃.jpg' %}" class="card-img-top">
+                <div class="card_profile">
+                    <h5 class="card-title">{{user.last_name}}님의 프로필</h5>
+                    <img src="{% static 'img/벚꽃.jpg' %}" class="card-img-profile">
                     <div class="card-body">
                         <p class="card-text">회원님의 스토리를 확인해보세요!</p>
                         <a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a>
@@ -145,7 +153,7 @@
             </div>
         </div>
 
-        <div class="rightwrapper">
+        <!-- <div class="rightwrapper">
             <div class="right" id="sidebar">
                 {% load static %}
                 <div class="right_profile" style="">
@@ -157,7 +165,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
     </div>
 </div>
@@ -217,15 +225,30 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-            isHeart : false
+            userObjectsAll: null,
+            user: null,
+            isHeart : null,
         },
         methods: {
-
+            likeChange(object_id) {
+                var postData = object_id
+                axios.post('/sns/like/' + postData + '/')
+                .then(function (response) {
+                    console.log(response);
+                    location.reload()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
         },
     })
 </script>
 
 {% endblock extra-script %}
 {% block javascript %}
-    <script type="text/javascript" src="{% static 'sns/js/feed_list_js.js' %}"></script>
+<script type="text/javascript" src="{% static 'sns/js/feed_list_js.js' %}"></script>
+<script>
+
+</script>
 {% endblock %}

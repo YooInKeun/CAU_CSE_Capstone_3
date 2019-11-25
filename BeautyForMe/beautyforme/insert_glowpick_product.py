@@ -6,7 +6,7 @@ from cosmetic.models import *
 import csv
 
 if __name__=='__main__':
-    with open('db_insert_data/All Data/색조.csv') as csvDataFile:
+    with open('db_insert_data/All Data/final_cosmetics.csv') as csvDataFile:
         csvReader = csv.reader(csvDataFile)
         data=list(csv.reader(csvDataFile))
         # Product.objects.all().delete()
@@ -24,7 +24,7 @@ if __name__=='__main__':
 
         for i in range(0, len(data), 6):
             try:
-                Product.objects.get(product_name=data[i+1][0])
+                Product.objects.get(brand=Brand.objects.get(brand_name=data[i][0]), product_name=data[i+1][0])
                 print("이미 존재하는 제품입니다.")
             except:
                 product = Product(brand=Brand.objects.get(brand_name=data[i][0]),
@@ -35,7 +35,7 @@ if __name__=='__main__':
                 product.save()
 
                 try:
-                    for j in range(len(data[i])):
+                    for j in range(len(data[i+3])):
                         product.tag_names.add(Tag.objects.get(tag_name=data[i+3][j]))
                 except:
                     print("tag pass")

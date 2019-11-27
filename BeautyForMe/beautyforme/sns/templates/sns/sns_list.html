@@ -13,9 +13,9 @@
 }
 
 
-.dummy{
-    color : #ffffff;
-    font-size : 50px;
+.img{
+    width: 30px;
+    height: 30px;
 }
 .wrapper{
     width : 350px;
@@ -77,12 +77,12 @@
                             {{object.like.all.count}} 명이 좋아합니다
                         </span>
                         {% endif %}
-                        <a href="{% url 'sns:favorite' object.id %}" class="float-right btn-favorite {%if user in object.favorite.all %}active{%endif%}">저장하기!</a>
+                        <!-- <a href="{% url 'sns:favorite' object.id %}" class="float-right btn-favorite {%if user in object.favorite.all %}active{%endif%}">저장하기!</a> -->
                     </li>
                     <li class="list-group-item">생성일 : {{ object.created }}</li>
     
                 </ul>
-                <div class="card-body">
+                <div class="card-body row"> 
                     {% for comment in object.comment.all %}
                         <div class="comment {% if request.user == comment.author %} col-9 {% else %} col-12 {% endif %} text-left">
                             <p>
@@ -91,6 +91,7 @@
                         </div>
                         {% if request.user == comment.author %}
                             <div class="comment-button-container col-3 text-right">
+                                <div class="row">
                                 <form action="{% url 'comment:comment-delete' pk=comment.pk %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="next" value="{{ request.path }}">
@@ -101,20 +102,18 @@
                                     <button class="btn comment-edit">수정</button>
                                 </form>
                             </div>
+                            </div>
                         {% endif %}
                     {% endfor %}
                     <div class="comment-creator-div row" >
                         <div class="comment-form col-12">
                             <form action="{% url 'comment:comment-create' object.id %}" method="post">{% csrf_token %}
                                 {{ comment_form | crispy }}
-                                
                                 <input type="submit" class="btn btn-primary"/>
                             </form>
                         </div>
                     </div>      
-                    <a href="{% url 'sns:detail' object.id %}" class="card-link">댓글달기</a>
-                    <a href="{% url 'sns:update' object.id %}" class="card-link">수정하기</a>
-                    <a href="{% url 'sns:delete' object.id %}" class="card-link">삭제하기</a>
+                   
 
                 </div>
 
@@ -145,19 +144,7 @@
             </div>
         </div>
 
-        <div class="rightwrapper">
-            <div class="right" id="sidebar">
-                {% load static %}
-                <div class="right_profile" style="">
-                    <h5 class="rightcard-title">admin</h5>
-                    <img src="{% static 'img/벚꽃.jpg' %}" class="rightcard-img-top">
-                    <div class="rightcard-body">
-                        <p class="rightcard-text">회원님의 스토리를 확인해보세요!</p>
-                        <a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
 
     </div>
 </div>

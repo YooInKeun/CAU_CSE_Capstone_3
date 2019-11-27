@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import (
     DeleteView,
     CreateView,
     UpdateView
 )
+from django.urls import reverse_lazy
 
 from beautyforme.mixins import ValidAuthorRequiredMixin
 from comment.models import Comment
@@ -35,18 +36,14 @@ class CommentCreateAjaxView(LoginRequiredMixin, CreateView):
             .order_by('created')
         }
 
-        return render(self.request, 'sns/sns_list.html', context)
+        return redirect('/')
 
 
-class CommentUpdateView(ValidAuthorRequiredMixin, UpdateView):
+class CommentUpdateView(UpdateView):
     model = Comment
     template_name_suffix = '_update_form'
     fields = ['content']
-    success_url = '/'
-
-    def get_success_url(self):
-        # 현재 Comment의 absolute_url로 리다이렉트 한다.
-        return Comment.objects.get(pk=self.kwargs['pk']).get_absolute_url()
+    success_url = reverse_lazy('sns:index')
 
 
 class CommentDeleteView(ValidAuthorRequiredMixin, DeleteView):

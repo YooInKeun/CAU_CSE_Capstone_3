@@ -3,7 +3,7 @@
 {% block content %}
     <form method="post">
         {% csrf_token %}
-        {{ form | crispy }}
+        {{ form.as_p }}
         <input type="submit" class="btn btn-primary" value="수정"/>
     </form>
 {% endblock %}

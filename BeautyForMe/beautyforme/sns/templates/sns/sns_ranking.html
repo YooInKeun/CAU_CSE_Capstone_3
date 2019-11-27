@@ -7,19 +7,18 @@
 {% block extra-style %}
 
 <style>
-.card{
-    width : 650px;
-    float : right;
+.Ranking{
+    font-size:80px;
 }
 
 
-.dummy{
-    color : #ffffff;
-    font-size : 50px;
+.small{
+    width: 80px;
+    height: 80px;
 }
-.wrapper{
-    width : 350px;
-    position: fixed;
+.collapse{
+    width: 70px;
+    height: 70px;
     
  }
 
@@ -41,126 +40,83 @@
         <button type="button" class="btn btn-success">홈으로 가기</button>
     </a>
 </div> -->
-
-<div class='container'>
-    <div class="row">
-        <div class="col"></div>
-        <div class="col-5">
-            {% for object in object_list %}
-
-            <div class="card">
-                <div class="card-header">
-                    <b>{{ object.author }}</b>
-                </div>
-                <img src=" {{ object.image.url }}" class="card-img-top" alt="...">
-                <li>
-                <div class="card-body">
-                    
-                    <div class="uploader col-3"> <b>{{ object.author }}</b></div>
-                    <div class="content col-9">{{ object.text }}</div>
-                    
-                </div>
-                </li>
-                <ul class="list-group list-group-flush">
-
-                   <li class="list-group-item">
-                        <a href="{% url 'sns:like' object.id %}" class="float-left btn-like {%if user in object.like.all %} active {%endif%}">
-                            {%if user in object.like.all %}
-                            <img src='{% static "img/red_heart.png" %}' width="50px">
-                            {%else%}
-                            <img src='{% static "img/GG.png" %}' width="50px">
-                            {%endif%}
-                        </a>
-                        {% if object.like.all.count %}
-                        <span class = "float-left">
-                            <br>
-                            {{object.like.all.count}} 명이 좋아합니다
-                        </span>
-                        {% endif %}
-                        <a href="{% url 'sns:favorite' object.id %}" class="float-right btn-favorite {%if user in object.favorite.all %}active{%endif%}">저장하기!</a>
-                    </li>
-                    <li class="list-group-item">생성일 : {{ object.created }}</li>
-    
-                </ul>
-                <div class="card-body">
-                    {% for comment in object.comment.all %}
-                        <div class="comment {% if request.user == comment.author %} col-9 {% else %} col-12 {% endif %} text-left">
-                            <p>
-                                <b>{{ comment.author.username }}</b> &nbsp {{ comment.content }}
-                            </p>
-                        </div>
-                        {% if request.user == comment.author %}
-                            <div class="comment-button-container col-3 text-right">
-                                <form action="{% url 'comment:comment-delete' pk=comment.pk %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.path }}">
-                                    <button class="btn comment-delete" onclick="return confirm('정말로 삭제합니까?');">삭제</button>
-                                </form>
-                                <form action="{% url 'comment:comment-update' pk=comment.pk %}" method="post">
-                                    {% csrf_token %}
-                                    <button class="btn comment-edit">수정</button>
-                                </form>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                    <div class="comment-creator-div row" >
-                        <div class="comment-form col-12">
-                            <form action="{% url 'comment:comment-create' object.id %}" method="post">{% csrf_token %}
-                                {{ comment_form | crispy }}
-                                
-                                <input type="submit" class="btn btn-primary"/>
-                            </form>
-                        </div>
-                    </div>      
-                    <a href="{% url 'sns:detail' object.id %}" class="card-link">댓글달기</a>
-                    <a href="{% url 'sns:update' object.id %}" class="card-link">수정하기</a>
-                    <a href="{% url 'sns:delete' object.id %}" class="card-link">삭제하기</a>
-
-                </div>
-
-                
-                <li class="list-group-item">
-                   
-                </li>
-                
-            </div>
-            <div class = "dummy"> 
-               
-            </div>
-
-            {% endfor %}
-
-        </div>
-        <div class="wrapper">
-            <div class="left" id="sidebar">
-                {% load static %}
-                <div class="card_profile" style="">
-                    <h5 class="card-title">admin</h5>
-                    <img src="{% static 'img/벚꽃.jpg' %}" class="card-img-top">
-                    <div class="card-body">
-                        <p class="card-text">회원님의 스토리를 확인해보세요!</p>
-                        <a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="rightwrapper">
-            <div class="right" id="sidebar">
-                {% load static %}
-                <div class="right_profile" style="">
-                    <h5 class="rightcard-title">admin</h5>
-                    <img src="{% static 'img/벚꽃.jpg' %}" class="rightcard-img-top">
-                    <div class="rightcard-body">
-                        <p class="rightcard-text">회원님의 스토리를 확인해보세요!</p>
-                        <a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="Ranking" >Day Ranking</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="select_box">
+          <li class="active"><a href="/Day/">Day</a></li>
+          <li><a href="/Week/">Week</a></li>
+          <li><a href="/Month/">Month</a></li>
+ 
+        </ul>
+      </div><!--/.nav-collapse -->
     </div>
-</div>
+  </nav>
+
+  <br>
+  <br>
+  <br>
+  <!-- Main jumbotron for a primary marketing message or call to action -->
+  <div class="jumbotron">
+    <div class="container">
+      <p style="font-size:60px;">Day   Ranking</p>
+      <p style="font-size:30px;">오늘의 최고의 메이크업은?</p>
+    </div>
+  </div>
+  <div class="container">
+      <div class="row">
+      <div class="col-lg-offset-1" id="bokeh_graph"></div>
+      </div>
+  </div>
+
+  <div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-lg-12 col-lg-offset-1">
+        <h2>Day</h2>
+        <table class="table table-striped" id="star_table">
+          <tr>
+            <th>Rank</th>
+            <th></th>
+            <th>Name</th>
+            <th>Number</th>
+            <th>Go</th>
+          </tr>
+          <tr>
+            <th>1</th>
+            <th><img class='small' src="{% static 'img/벚꽃.jpg' %}"></th>
+            <th>JeongBin</th>
+            <th>13</th>
+            <th><a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a></th>
+          </tr>
+          <tr>
+            <th>2</th>
+            <th><img class='small' src="{% static 'img/아이린.png' %}"></th>
+            <th>inkeun</th>
+            <th>10</th>
+            <th><a  href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a></th>
+          </tr>
+          <tr>
+            <th>3</th>
+            <th><img class='small' src="{% static 'img/슬기.png' %}"></th>
+            <th>bumsu</th>
+            <th>8</th>
+            <th><a  href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a></th>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <hr>
+  </div> <!-- /container -->
 
 <!-- <div class='container'>
     <div class='row'>

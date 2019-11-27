@@ -319,8 +319,10 @@
             imageLink = data.cosmetic.image_link;
 
         var tagNames = [];
-        for (var tag_index in data.cosmetic.product.tag_names)
-            tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+        for (var tag_index in data.cosmetic.product.tag_names) {
+            if (tagNames.length < 3)
+                tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+        }
         const smallCategory = data.cosmetic.product.category.small_category.replace("-", "<br/>");
 
         var cosmetic = {
@@ -420,12 +422,12 @@
                     console.log("GET SUCCESS", res);
                     const data = res.data;
                     this.video = {
-                        id: 1,
-                        title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
-                        thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
-                        link: "https://youtu.be/zRfSYDLZMPk",
-                        upload_date: "2016. 11. 4.",
-                        hits: "858875",
+                        id: 2,
+                        title: "원더걸스 선미 메이크업 WonderGirls Sunmi Why so lonely makeup l 이사배(Risabae Makeup)",
+                        thumbnail: "https://img.youtube.com/vi/WYNt6Ybpa8s/0.jpg",
+                        link: "https://youtu.be/WYNt6Ybpa8s",
+                        upload_date: "2016. 8. 1.",
+                        hits: "1245284",
                         youtuber: "Risabae",
                     };
                     this.video.cosmetics = [];

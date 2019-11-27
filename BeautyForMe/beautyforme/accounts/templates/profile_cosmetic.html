@@ -4,6 +4,19 @@
 
 {% block extra-style%}
 <style>
+  .page-title {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    margin: 0px;
+  }
+
+  .description-row {
+    border-top: 1px solid rgb(182, 182, 182);
+    border-bottom: 1px solid rgb(182, 182, 182);
+    padding: 15px 0px;
+  }
+
   .big-category-title {
     font-size: 24px;
     height: 80px;
@@ -47,7 +60,7 @@
     font-size: 14px;
     padding: 5px;
     border: 0px;
-    border: 1px solid pink;
+    border: 1.5px solid pink;
     border-radius: 5px;
   }
 
@@ -74,6 +87,13 @@
 {% block content %}
 <div id="app">
   <div class="container">
+    <div class="row">
+      <h4 class="page-title">화장품의 중요도를 설정해주세요</h4>
+    </div>
+    <div class="row description-row">
+      <div class="col-12 m-0 p-0">중요한 화장품에 높은 점수를 주세요.</div>
+      <div class="col-12 m-0 p-0">최대 10점까지 점수를 줄 수 있습니다.</div>
+    </div>
     <div v-for="(category, index) in categories">
       <div class="row ">
         <div class="col-12 big-category-title d-flex justify-content-center align-items-center">

@@ -158,9 +158,9 @@
     }
 
     .cosmetic-container {
-        margin: 0 3%;
+        margin: 0 3% 50px 3%;
         width: 94%;
-        height: 80vh;
+        height: 73vh;
         overflow-y: scroll;
     }
 
@@ -217,6 +217,19 @@
         overflow: hidden;
         max-height: 0;
     }
+
+    .pagination-wrapper {
+        position: absolute;
+        bottom: 0px;
+        background-color: white;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+    }
+
+    .pagination a.active {
+        background-color: pink;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -259,8 +272,8 @@
                     </div>
                 </div>
             </transition>
-            <div v-if="fullSearch" class="cosmetic-container">
-                <h5 class="mt-5 mb-3 text-center">[[ staticResults.length ]]개의 검색결과</h5>
+            <div v-if="fullSearch" class="cosmetic-container" id="cosmetic-search-result">
+                <h5 class="mt-5 mb-3 text-center">[[ searchResultLength ]]개의 검색결과</h5>
                 <div class="gray-line"></div>
                 <div v-for="cosmetic in staticResults" :key="cosmetic.id" @click="selectCosmetic(cosmetic)"
                     class=" container p-0 mt-1 mb-1">
@@ -269,33 +282,30 @@
                             <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center"
                                 width=100>
                         </div>
-                        <div class="col-4 col-content d-flex flex-column justify-content-center">
+                        <div class="col-5 col-content d-flex flex-column justify-content-center">
                             <div class="row search-result-item">[[cosmetic.brandName]]</div>
                             <div class="row search-result-item">[[cosmetic.productName]] [[cosmetic.typeName]]
                             </div>
                         </div>
-                        <div class="col-3 col-content d-flex flex-column justify-content-center">
-                            <div class="row justify-content-center content-category">[[cosmetic.smallCategory]]
+                        <div class="col-2 col-content d-flex flex-column justify-content-center">
+                            <div v-html="cosmetic.smallCategory"
+                                class="row justify-content-center content-category search-result-item text-center">
                             </div>
                         </div>
-                        <div class="col-2 col-content d-inline-flex justify-content-center align-items-center">
-                            <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
+                        <div class="col-2 col-content d-flex flex-column justify-content-center align-items-center">
+                            <div v-for="tag in cosmetic.tagNames">
                                 <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
-                            </span>
+                            </div>
                         </div>
                     </div>
                     <div class="gray-line"></div>
                 </div>
-                <div class="row justify-content-center">
+                <div class="row justify-content-center pagination-wrapper">
                     <div class="pagination">
-                        <a href="#">&laquo;</a>
-                        <a href="#">1</a>
-                        <a class="active" href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#">4</a>
-                        <a href="#">5</a>
-                        <a href="#">6</a>
-                        <a href="#">&raquo;</a>
+                        <a href="#" @click="searchOtherPage($event, searchPages[0].num - 1)">&laquo;</a>
+                        <a v-for="page in searchPages" @click="searchOtherPage($event, page.num)" :class="page.class"
+                            href="#">[[page.num]]</a>
+                        <a href="#" @click="searchOtherPage($event, searchPages[9].num + 1)">&raquo;</a>
                     </div>
                 </div>
             </div>
@@ -391,9 +401,11 @@
                                     <option disabled value="">알람 주기를 선택해주세요</option>
                                     <option value="0">알람 없음</option>
                                     <option value="7">일주일 전 알람</option>
+                                    <option value="15">보름 전</option>
                                     <option value="30">1달 전 알람</option>
                                     <option value="60">2달 전 알람</option>
                                     <option value="90">3달 전 알람</option>
+                                    <option value="180">6달 전</option>
                                 </select>
                             </div>
                         </div>
@@ -471,6 +483,29 @@
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
+    function cosmeticInsert(data) {
+        var imageLink;
+
+        if (data.cosmetic.product.image_link)
+            imageLink = data.cosmetic.product.image_link;
+        else
+            imageLink = data.cosmetic.image_link;
+
+        var tagNames = [];
+        for (var index in data.cosmetic.product.tag_names)
+            tagNames.push(data.cosmetic.product.tag_names[index].tag_name);
+
+        var cosmetic = {
+            id: data.cosmetic.id,
+            brandName: data.cosmetic.product.brand.brand_name,
+            productName: data.cosmetic.product.product_name,
+            typeName: data.cosmetic.type_name,
+            imageLink: imageLink,
+            tagNames: tagNames
+        };
+        return cosmetic;
+    }
+
     var register = new Vue({
         delimiters: ['[[', ']]'],
         el: '#app',
@@ -496,7 +531,10 @@
                 staticResults: [],
                 myCosmetics: [],
                 interestedCosmetics: [],
-                cosmeticListView: true
+                cosmeticListView: true,
+                searchPages: [],
+                searchResultLength: 0,
+                pageSize: 0,
             }
         },
         computed: {
@@ -676,6 +714,33 @@
                     }
                 }
             },
+            parsingCosmetics(data) {
+                var imageLink;
+
+                if (data.product.image_link)
+                    imageLink = data.product.image_link;
+                else
+                    imageLink = data.image_link;
+
+                var tagNames = [];
+                for (var i in data.product.tag_names) {
+                    if (tagNames.length < 3) {
+                        tagNames.push(data.product.tag_names[i].tag_name);
+                    }
+                }
+
+                var result = {
+                    id: data.id,
+                    brandName: data.product.brand.brand_name,
+                    smallCategory: data.product.category.small_category.replace("-", "<br/>"),
+                    productName: data.product.product_name,
+                    typeName: data.type_name,
+                    imageLink: imageLink,
+                    tagNames: tagNames
+                }
+
+                return result;
+            },
             searchCosmetic(event, isKey) {
                 if (this.queryCosmetic == "" || event.keyCode == 27) {
                     this.searching = false;
@@ -714,32 +779,79 @@
                 axios.get('/api/cosmetic/', postData)
                     .then((res) => {
                         console.log("GET SUCCESS", res);
+
                         this.searchResults = [];
                         if (this.searching == false)
                             this.staticResults = [];
 
-                        for (var i in res.data) {
-                            const data = res.data[i];
-                            var imageLink;
-
-                            if (data.product.image_link)
-                                imageLink = data.product.image_link;
-                            else
-                                imageLink = data.image_link;
-
-                            var tagNames = [];
-                            for (var i in data.product.tag_names)
-                                tagNames.push(data.product.tag_names[i].tag_name);
-
-                            var result = {
-                                id: data.id,
-                                brandName: data.product.brand.brand_name,
-                                smallCategory: data.product.category.small_category,
-                                productName: data.product.product_name,
-                                typeName: data.type_name,
-                                imageLink: imageLink,
-                                tagNames: tagNames
+                        var responseCosmetics = [];
+                        if (res.config.params.is_keyuped) {
+                            responseCosmetics = res.data;
+                        }
+                        else {
+                            responseCosmetics = res.data.cosmetics;
+                            this.searchPages = [];
+                            this.pageSize = res.data.cosmetics.length;
+                            for (var i = 1; i <= res.data.cosmetic_size / this.pageSize + 1; i++) {
+                                this.searchPages.push({
+                                    num: i,
+                                    class: "",
+                                });
+                                if (this.searchPages.length == 10)
+                                    break;
                             }
+                            this.searchPages[0].class = "active";
+                            this.searchResultLength = res.data.cosmetic_size;
+                        }
+
+                        for (var i in responseCosmetics) {
+                            const data = responseCosmetics[i];
+                            const result = this.parsingCosmetics(data);
+
+                            if (this.searching)
+                                this.searchResults.push(result);
+                            else
+                                this.staticResults.push(result);
+                        }
+                    })
+                    .catch((err) => {
+                        console.log("GET FAIL", err);
+                    });
+            },
+            searchOtherPage(event, pageNum) {
+                window.scrollTo(0, 0);
+                this.$el.querySelector("#cosmetic-search-result").scrollTo(0, 0);
+                var postData = {
+                    params: {
+                        query_cosmetic: this.queryCosmetic,
+                        is_keyuped: false,
+                        is_clicked: true,
+                        page_num: pageNum
+                    }
+                };
+                axios.get('/api/cosmetic/', postData)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+
+                        this.searchResults = [];
+                        if (this.searching == false)
+                            this.staticResults = [];
+
+                        var responseCosmetics = res.data.cosmetics;
+                        this.searchPages = [];
+                        for (var i = parseInt((pageNum - 1) / 10) * 10 + 1; i <= parseInt(res.data.cosmetic_size / this.pageSize) + 1; i++) {
+                            this.searchPages.push({
+                                num: i,
+                                class: "",
+                            });
+                            if (this.searchPages.length == 10)
+                                break;
+                        }
+                        this.searchPages[((pageNum % 10 - 1) + 10) % 10].class = "active";
+
+                        for (var i in responseCosmetics) {
+                            const data = responseCosmetics[i];
+                            const result = this.parsingCosmetics(data);
 
                             if (this.searching)
                                 this.searchResults.push(result);
@@ -753,29 +865,6 @@
             },
         },
         created() {
-            function cosmeticInsert(data) {
-                var imageLink;
-
-                if (data.cosmetic.product.image_link)
-                    imageLink = data.cosmetic.product.image_link;
-                else
-                    imageLink = data.cosmetic.image_link;
-
-                var tagNames = [];
-                for (var index in data.cosmetic.product.tag_names)
-                    tagNames.push(data.cosmetic.product.tag_names[index].tag_name);
-
-                var cosmetic = {
-                    id: data.cosmetic.id,
-                    brandName: data.cosmetic.product.brand.brand_name,
-                    productName: data.cosmetic.product.product_name,
-                    typeName: data.cosmetic.type_name,
-                    imageLink: imageLink,
-                    tagNames: tagNames
-                };
-                return cosmetic;
-            }
-
             axios.get('/api/user/cosmetic/')
                 .then((res) => {
                     console.log("GET SUCCESS", res);

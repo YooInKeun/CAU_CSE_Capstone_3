@@ -300,10 +300,10 @@
                         <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
                         </div>
                     </div>
-                    <div class="col-3 col-content d-inline-flex justify-content-center align-items-center">
-                        <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
+                    <div class="col-3 col-content d-flex flex-column justify-content-center align-items-center">
+                        <div v-for="tag in cosmetic.tagNames" class="justify-content-center">
                             <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
-                        </span>
+                        </div>
                     </div>
                 </div>
                 <div class="gray-line"></div>
@@ -350,10 +350,10 @@
                         <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
                         </div>
                     </div>
-                    <div class="col-3 col-content d-inline-flex justify-content-center align-items-center">
-                        <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
+                    <div class="col-3 col-content d-flex flex-column justify-content-center align-items-center">
+                        <div v-for="tag in cosmetic.tagNames" class="justify-content-center">
                             <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
-                        </span>
+                        </div>
                     </div>
                     <div class="col-1 col-content d-inline-flex justify-content-center align-items-center">
                         <button class="btn btn-primary tag-btn similar-btn"
@@ -374,10 +374,10 @@
                                     [[similarCosmetic.typeName]]
                                 </div>
                             </div>
-                            <div class="col-3 col-content d-inline-flex justify-content-center align-items-center">
-                                <span v-for="tag in similarCosmetic.tagNames" class="justify-content-center">
+                            <div class="col-3 col-content d-flex flex-column justify-content-center align-items-center">
+                                <div v-for="tag in similarCosmetic.tagNames" class="justify-content-center">
                                     <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
-                                </span>
+                                </div>
                             </div>
                             <div class="col-1 col-content d-inline-flex justify-content-center align-items-center">
                                 <button class="btn btn-primary tag-btn similar-btn"
@@ -413,8 +413,10 @@
             imageLink = data.cosmetic.image_link;
 
         var tagNames = [];
-        for (var tag_index in data.cosmetic.product.tag_names)
-            tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+        for (var tag_index in data.cosmetic.product.tag_names) {
+            if (tagNames.length < 2)
+                tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+        }
         const smallCategory = data.cosmetic.product.category.small_category.replace("-", "<br/>");
 
         var cosmetic = {
@@ -649,7 +651,7 @@
                     axios.get('/api/cosmetic/', postData)
                         .then((res) => {
                             console.log("GET SUCCESS", res);
-                            const data = res.data;
+                            const data = res.data.cosmetics;
 
                             this.displayCosmetics = [];
 
@@ -660,8 +662,10 @@
                                     imageLink = data[i].image_link;
 
                                 var tagNames = [];
-                                for (var tag_index in data[i].product.tag_names)
-                                    tagNames.push(data[i].product.tag_names[tag_index].tag_name);
+                                for (var tag_index in data[i].product.tag_names) {
+                                    if (tagNames.length < 2)
+                                        tagNames.push(data[i].product.tag_names[tag_index].tag_name);
+                                }
                                 const smallCategory = data[i].product.category.small_category.replace("-", "<br/>");
 
                                 var cosmetic = {

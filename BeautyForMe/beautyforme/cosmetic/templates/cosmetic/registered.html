@@ -314,8 +314,8 @@
                             <div
                                 class="col-8  mt-2 mb-2 col-content d-inline-block-flex justify-content-start align-items-center">
                                 <span v-for="category in categories">
-                                    <button class="btn btn-outline-primary tag-btn detail-category"
-                                        @click="selectCategory($event, category)">[[category]]</button>
+                                    <button v-html="category" class="btn btn-outline-primary tag-btn detail-category"
+                                        @click="selectCategory($event, category)"></button>
                                 </span>
                             </div>
                         </div>
@@ -409,7 +409,8 @@
                         </div>
                     </div>
                     <div class="col-1 col-content d-flex flex-column justify-content-center">
-                        <div class="row justify-content-center content-category">[[cosmetic.smallCategory]]
+                        <div v-html="cosmetic.smallCategory"
+                            class="row justify-content-center content-category text-center">
                         </div>
                     </div>
                     <div class="col-2 col-content d-inline-flex justify-content-center align-items-center">
@@ -439,9 +440,11 @@
                                 class="alarm-select text-center" style="text-align-last:center;">
                                 <option value="0">알람 없음</option>
                                 <option value="7">일주일 전</option>
+                                <option value="15">보름 전</option>
                                 <option value="30">1달 전</option>
                                 <option value="60">2달 전</option>
                                 <option value="90">3달 전</option>
+                                <option value="180">6달 전</option>
                             </select>
                         </div>
                     </div>
@@ -468,7 +471,8 @@
                         </div>
                     </div>
                     <div class="col-1 col-content d-flex flex-column justify-content-center">
-                        <div class="row justify-content-center content-category">[[cosmetic.smallCategory]]
+                        <div v-html="cosmetic.smallCategory"
+                            class="row justify-content-center content-category text-center">
                         </div>
                     </div>
                     <div class="col-1 col-title text-center"></div>
@@ -926,7 +930,7 @@
                     return;
                 }
 
-                if(event.target.value == "off") {
+                if (event.target.value == "off") {
                     event.target.value = "on";
                 }
                 else {
@@ -957,18 +961,18 @@
                 var message = "";
                 cosmetic.alarmCycle = alarmCycle;
 
-                if(cosmetic.isConsentAlarm == false && alarmCycle > 0) {
+                if (cosmetic.isConsentAlarm == false && alarmCycle > 0) {
                     cosmetic.isConsentAlarm = true;
                     this.allowSwitching = true;
                     message = "알람이 켜졌습니다."
                 }
-                else if(cosmetic.isConsentAlarm == false && alarmCycle == 0) {
+                else if (cosmetic.isConsentAlarm == false && alarmCycle == 0) {
                     message = "알람이 기간이 변경되었습니다."
                 }
-                else if(cosmetic.isConsentAlarm && alarmCycle > 0) {
+                else if (cosmetic.isConsentAlarm && alarmCycle > 0) {
                     message = "알람이 기간이 변경되었습니다."
                 }
-                else if(cosmetic.isConsentAlarm && alarmCycle == 0) {
+                else if (cosmetic.isConsentAlarm && alarmCycle == 0) {
                     cosmetic.isConsentAlarm = false;
                     this.allowSwitching = true;
                     message = "알람이 꺼졌습니다."
@@ -1002,8 +1006,10 @@
                     imageLink = data.cosmetic.image_link;
 
                 var tagNames = [];
-                for (var tag_index in data.cosmetic.product.tag_names)
-                    tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+                for (var tag_index in data.cosmetic.product.tag_names) {
+                    if (tagNames.length < 3)
+                        tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
+                }
 
                 const expirationDate = new Date(data.expiration_date);
                 const diffTime = (expirationDate - today);
@@ -1017,7 +1023,7 @@
                     typeName: data.cosmetic.type_name,
                     imageLink: imageLink,
                     tagNames: tagNames,
-                    smallCategory: data.cosmetic.product.category.small_category,
+                    smallCategory: data.cosmetic.product.category.small_category.replace("-", "<br/>"),
                     expirationDate: data.expiration_date,
                     restDay: restDay,
                     absRestDay: Math.abs(restDay),

@@ -242,11 +242,20 @@ class CosmeticImportanceInfo(APIView):
     def put(self, request, format=None):
         cosmetic_importance = {}
         try:
+            queryset = Cosmetic_Importance.objects.filter(user=request.user)
+            cosmetic_importance = json.loads(queryset[0].importance)
+            for i in range(len(request.data['importance'])):
+                big_category = request.data['importance'][i]['big_category']
+                for j in range(len(request.data['importance'][i]['small_categories'])):
+                    small_category = request.data['importance'][i]['small_categories'][j][0]
+                    value = request.data['importance'][i]['small_categories'][j][1]
+                    cosmetic_importance[big_category][small_category] = value
             cosmetic_importance_obj = Cosmetic_Importance.objects.get(user=request.user)
-            cosmetic_importance_obj.importance = request.data['importance'] # 수정 필요
+            cosmetic_importance_obj.importance = json.dumps(cosmetic_importance)
             cosmetic_importance_obj.save()
-            cosmetic_importance['importance'] = cosmetic_importance_obj.importance
-            # serializer = CosmeticImportanceSerializer(queryset, many=True)
+            queryset = Cosmetic_Importance.objects.filter(user=request.user)
+            cosmetic_importance = {}
+            cosmetic_importance['importance'] = json.loads(queryset[0].importance)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_importance)

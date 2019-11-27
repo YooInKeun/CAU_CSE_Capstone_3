@@ -91,7 +91,7 @@ class Cosmetic_Importance(models.Model):
                                     },
                                     
                                 "베이스": {
-                                    "메이크업베이스:":10, "톤업크림":10, "베이스프라이머":10, "포인트프라이머":10, 
+                                    "메이크업베이스":10, "톤업크림":10, "베이스프라이머":10, "포인트프라이머":10, 
                                     "파운데이션":10, "비비크림":10, "씨씨크림":10, "쿠션타입":10, "컨실러":10, "팩트":10,
                                     "파우더":10, "트윈케익":10
                                     },
@@ -102,6 +102,8 @@ class Cosmetic_Importance(models.Model):
                                     "하이라이터":10, "쉐딩":10, "블러셔":10
                                     }
                             }, ensure_ascii=False))
+    def __str__(self):
+        return '(' + str(self.user) + ') ' + str(self.importance)
 
 @receiver(post_save, sender=User)
 def create_user_cosmetic_importance(sender, instance, created, **kwargs):

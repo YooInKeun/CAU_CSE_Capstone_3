@@ -17,5 +17,7 @@ if __name__=='__main__':
                     # print("이미 존재하는 태그명입니다.")
                 except:
                     # print(data[i][j])
+                    if data[i][j] == '' or data[i][j] == " ":
+                        continue
                     Tag(tag_name=data[i][j]).save()
                     print(data[i][j])

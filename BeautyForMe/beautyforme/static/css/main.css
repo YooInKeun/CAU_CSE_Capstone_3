@@ -1,0 +1,27 @@
+.sub-title {
+    font-weight: 200;
+    font-size: 2em;
+    margin-bottom: 40px;
+  }
+  
+  .bottom {
+    margin-top: 50px;
+  }
+  
+  .bottom .l7 {
+    margin-top: 30px;
+  }
+  
+  h4.bottom-header {
+    font-weight: 200;
+    font-size: 2em;
+    margin-bottom: 40px;
+  }
+  
+  .bottom-button {
+    margin-top: 30px;
+  }
+  
+  .divider {
+    border-top: #ddd;
+  }

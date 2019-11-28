@@ -14,7 +14,7 @@ class Profile(models.Model):
     # phone = PhoneNumberField(blank=True, default="")
     zip_code = models.CharField(max_length=10, blank=True, default="")
     address = models.CharField(max_length=20, blank=True, default="")
-    address_detail = models.CharField(max_length=10, blank=True, default="")
+    address_detail = models.CharField(max_length=20, blank=True, default="")
     image = models.ImageField(blank=True)
     following = JSONField(default="")
 

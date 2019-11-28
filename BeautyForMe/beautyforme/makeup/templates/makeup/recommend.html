@@ -347,8 +347,11 @@
                                 class="ml-1 cosmetic-control-btn btn btn-outline-primary">삭제</button>
                         </div>
                         <div class="col-6 d-inline-flex justify-content-end">
-                            <button @click="submitBasket" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">결과
-                                보기</button>
+                            <form method="POST" action="{% url 'makeup:recommend_result' %}">
+                                {% csrf_token %}
+                                <textarea name='selected_cosmetics' style="display:none;">[[basketCosmetics]]</textarea>
+                                <input class=" ml-1 cosmetic-control-btn btn btn-outline-primary" type="submit" value="결과보기">
+                            </form>
                         </div>
                     </div>
                     <div class="row gray-line"></div>
@@ -890,7 +893,7 @@
                 this.selectBasketAll()
             },
             submitBasket() {
-                console.log(this.basketCosmeticIds)
+                console.log(this.selectedBasketCosmetics)
             },
             showSilmilarCosmetic(cosmetic) {
                 for (var i in this.basketCosmetics) {

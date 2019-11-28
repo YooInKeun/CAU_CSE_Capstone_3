@@ -133,8 +133,8 @@
 
     .video-detail-btn {
         position: absolute;
-        right: 3px;
-        bottom: 3px;
+        right: 5px;
+        bottom: 5px;
         width: 70px;
         height: 24px;
         font-size: 11px;
@@ -208,7 +208,8 @@
                             <button @click="selectAll"
                                 class="cosmetic-control-btn btn btn-outline-primary select-all-btn">모두
                                 선택</button>
-                            <button @click="" class="ml-1 cosmetic-control-btn btn btn-outline-primary">관심 등록</button>
+                            <button @click="addInterested" class="ml-1 cosmetic-control-btn btn btn-outline-primary">관심
+                                등록</button>
                         </div>
                     </div>
                     <div class="row gray-line"></div>
@@ -265,7 +266,11 @@
                     <div class="col-4 col-content d-flex flex-column justify-content-center">
                         <div class="row content-brand">[[video.youtuber]]</div>
                         <div class="row content-cosmetic">[[video.title]]</div>
-                        <div class="row content-cosmetic">[[video.upload_date]] / Views. [[video.hits]]</div>
+                        <div class="row content-cosmetic">[[video.upload_date]] / Views. [[video.hits]]
+                        </div>
+                        <div class="ml-3 btn btn-outline-primary cosmetic-control-btn video-detail-btn">
+                            자세히
+                        </div>
                     </div>
                     <div class="col-5 col-content d-flex flex-column justify-content-center pl-4">
                         <div v-for="cosmetic in video.cosmetics" class="row content-cosmetic">
@@ -274,9 +279,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="btn btn-outline-primary cosmetic-control-btn video-detail-btn">
-                    자세히 보기
-                </div>
+
                 <div class="gray-line"></div>
             </div>
         </div>
@@ -395,6 +398,24 @@
                     this.isSelectAll = true;
                 }
             },
+            addInterested() {
+                console.log(this.selectedCosmetics);
+                for (var i in this.selectedCosmetics) {
+                    var postData = {
+                        cosmetic_id: this.selectedCosmetics[i].cosmeticId,
+                    };
+
+                    console.log(postData);
+
+                    axios.post('/api/user/cosmetic/interested/', postData)
+                        .then((res) => {
+                            console.log("GET SUCCESS", res);
+                        })
+                        .catch(function (err) {
+                            console.log("GET FAIL", err);
+                        });
+                }
+            },
             selectVideo(event, arrayIndex, videoId) {
                 console.log(videoId);
 
@@ -446,7 +467,7 @@
             },
         },
         created() {
-            axios.get('/api/user/cosmetic/interested/')
+            axios.get('/api/user/cosmetic/')
                 .then((res) => {
                     console.log("GET SUCCESS", res);
                     const data = res.data;

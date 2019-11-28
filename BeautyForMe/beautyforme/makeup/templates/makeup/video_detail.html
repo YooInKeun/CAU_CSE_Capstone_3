@@ -258,7 +258,8 @@
                             <button @click="selectAll"
                                 class="cosmetic-control-btn btn btn-outline-primary select-all-btn">모두
                                 선택</button>
-                            <button @click="" class="ml-1 cosmetic-control-btn btn btn-outline-primary">관심 등록</button>
+                            <button @click="addInterested" class="ml-1 cosmetic-control-btn btn btn-outline-primary">관심
+                                등록</button>
                         </div>
                     </div>
                     <div class="row gray-line"></div>
@@ -414,10 +415,28 @@
                     this.video.link,
                     '_blank'
                 );
-            }
+            },
+            addInterested() {
+                console.log(this.selectedCosmetics);
+                for (var i in this.selectedCosmetics) {
+                    var postData = {
+                        cosmetic_id: this.selectedCosmetics[i].cosmeticId,
+                    };
+
+                    console.log(postData);
+
+                    axios.post('/api/user/cosmetic/interested/', postData)
+                        .then((res) => {
+                            console.log("GET SUCCESS", res);
+                        })
+                        .catch(function (err) {
+                            console.log("GET FAIL", err);
+                        });
+                }
+            },
         },
         created() {
-            axios.get('/api/user/cosmetic/interested/')
+            axios.get('/api/user/cosmetic/')
                 .then((res) => {
                     console.log("GET SUCCESS", res);
                     const data = res.data;

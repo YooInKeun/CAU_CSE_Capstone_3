@@ -59,27 +59,12 @@
 
     .content-brand {
         font-weight: bold;
-        font-size: 14px;
+        font-size: 15px;
         color: rgb(253, 153, 170);
     }
 
     .content-cosmetic {
-        font-size: 14px;
-    }
-
-    .content-expiration {
         font-size: 15px;
-    }
-
-    .content-category {
-        font-size: 15px;
-    }
-
-    .tag-btn {
-        font-size: 11px;
-        padding: 2px 6px;
-        margin: 1px;
-        font-weight: bold;
     }
 
     .cosmetic-row:hover {
@@ -133,12 +118,12 @@
 
     .video-detail-btn {
         position: absolute;
-        right: 5px;
-        bottom: 5px;
-        width: 70px;
-        height: 24px;
-        font-size: 11px;
-        padding: 3px;
+        right: 25px;
+        bottom: 25px;
+        width: 80px;
+        height: 30px;
+        font-size: 13px;
+        padding: 5px;
     }
 
     /* transition */
@@ -199,7 +184,7 @@
     <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
     <div class="row">
         <div class="col-12 p-0 cosmetic-section scrollbar-lady-lips thin square mt-1">
-            <div class="container sticky-top row control-bar m-0 p-0">
+            <div class="row sticky-top row control-bar m-0 p-0">
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>
                     <div class="row gray-line"></div>
@@ -211,6 +196,7 @@
                             <button @click="" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩하기</button>
                         </div>
                         <div class="col-6 d-inline-flex justify-content-end">
+                            <button @click="" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">유튜버 필터</button>
                         </div>
                     </div>
                     <div class="row gray-line"></div>
@@ -222,7 +208,7 @@
                 </div>
             </div>
             <div v-for="(video, index) in videos" :key="video.id"
-                class="container p-0 mt-1 mb-1 cosmetic-container video-row">
+                class="container-fluid p-0 mt-1 mb-1 cosmetic-container video-row">
                 <div class="row m-0" @click="selectVideo($event, index, video.id)">
                     <div class="thumbnail col-3 col-content d-flex justify-content-center align-items-center">
                         <img :src="[[video.thumbnail]]" alt="" class="user-cosmetic justify-content-center">
@@ -230,7 +216,11 @@
                     <div class="col-4 col-content d-flex flex-column justify-content-center">
                         <div class="row content-brand">[[video.youtuber]]</div>
                         <div class="row content-cosmetic">[[video.title]]</div>
-                        <div class="row content-cosmetic">[[video.upload_date]] / Views. [[video.hits]]</div>
+                        <div class="row content-cosmetic">[[video.upload_date]] / Views. [[video.hits]]
+                        </div>
+                        <div class="ml-3 btn btn-outline-primary cosmetic-control-btn video-detail-btn">
+                            자세히
+                        </div>
                     </div>
                     <div class="col-5 col-content d-flex flex-column justify-content-center pl-4">
                         <div v-for="cosmetic in video.cosmetics" class="row content-cosmetic">
@@ -238,9 +228,6 @@
                             [[ cosmetic.typeName ]]
                         </div>
                     </div>
-                </div>
-                <div class="btn btn-outline-primary cosmetic-control-btn video-detail-btn">
-                    자세히 보기
                 </div>
                 <div class="gray-line"></div>
             </div>

@@ -1,85 +1,27 @@
-<nav
-  class="navbar navbar-expand-lg navbar-dark sticky-top"
-  style="background-color: #ff9eac !important;"
->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: #ff9eac !important;">
   <div class="container">
-    <a
-      class="navbar-brand text-white"
-      href="{% url 'home' %}"
-      style="font-size:18px;"
-      >Beauty For Me</a
-    >
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <a class="navbar-brand text-white" href="{% url 'home' %}" style="font-size:18px;">Beauty For Me</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span><i class="fa fa-navicon"></i></span>
     </button>
     <div class="collapse navbar-collapse " id="navbarNav">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'cosmetic:registered' %}"
-            >화장품 관리</a
-          >
+          <a class="nav-link" href="{% url 'cosmetic:registered' %}">화장품 관리</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'makeup:recommend' %}"
-            >메이크업 영상 추천</a
-          >
+          <a class="nav-link" href="{% url 'makeup:recommend' %}">메이크업 영상 추천</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'sns:index' %}">SNS</a>
         </li>
       </ul>
       <ul class="nav navbar-nav">
-        <li class="nav-item d-flex align-items-center">
-          <a
-            class="nav-link"
-            data-toggle="collapse"
-            href="#search"
-            aria-expanded="false"
-            aria-controls="search"
-          >
-            <i class="fa fa-search" aria-hidden="true"></i>Search
-          </a>
-
-          <div class="collapse" id="search">
-            <form class="form-inline mx-2 my-lg-0" method="GET" action="">
-              <input
-                class="form-control mr-sm-2 h-50"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-                name="q"
-                {%
-                if
-                q
-                %}
-                value="{{ q }}"
-                {%
-                endif
-                %}
-              />
-            </form>
-          </div>
-        </li>
-
         <li class="nav-item">
           <div class="dropdown ">
-            <a
-              class="dropdown-toggle nav-link"
-              href="#"
-              role="button"
-              id="dropdownMenuLink"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
+            <a class="dropdown-toggle nav-link" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
               Accounts
             </a>
             {% if user.is_authenticated %}

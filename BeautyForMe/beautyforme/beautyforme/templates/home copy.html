@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% load staticfiles %}
 
 {% block extra-style %}
@@ -108,7 +109,16 @@
         border-radius: 50%;
     }
 
+    /* modal */
+    .modal {
+        position: fixed !important;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
 
+    .modal-content {
+        position: relative;
+        top: 25vh;
+    }
 
     nav ul a:hover {
         background-color: unset;
@@ -126,7 +136,15 @@
         </button>
         <div class="collapse navbar-collapse " id="navbarNav">
             <ul class="navbar-nav mr-auto">
-
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cosmetic:registered' %}">화장품 관리</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'makeup:recommend' %}">메이크업 영상 추천</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'sns:index' %}">SNS</a>
+                </li>
             </ul>
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
@@ -157,6 +175,7 @@
     </div>
 </nav>
 {% endblock %}
+
 
 {% block content %}
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -208,115 +227,149 @@
         </div>
     </div>
 </div>
-
-<div class="App">
-    <main>
-        <div class="main-page">
-            <div class="banner-image">
-                <div class="container banner-text">
-                    <h3 id="banner-title">당신의 아름다움을 꺼내쓰세요</h3>
-                    <p>뷰티 폴미가 당신의 숨어있던 아름다움을 찾아드립니다</p>
-                </div>
+<!-- <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="static/img/carousel3.png" alt="carousel3" style="width:100%;">
+            <div class="carousel-title">
+                <h1 class="title">Beauty For Me</h1>
+                <h3 class="subtitle">당신의 아름다움을 꺼내쓰세요</h3>
+                <p></p>
             </div>
-            <div class="row container main-cards section">
-                <div class="col l4">
-                    <div class="card">
-                        <a href="{% url 'cosmetic:registered' %}">
-                            <div class="card-image"><img src="{% static 'main/img/map.jpg' %}" alt=" image-2"></div>
-                            <div class="card-content black-text">
-                                <span class="card-title center">화장품 관리하기</span>
-                                <p class="card-desc">당신의 화장대에서 기억에서 잊혀진 화장품을 찾아보세요. 잊고 있던 화장품이 당신을 더욱 아름답게 해줄 거예요!</p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col l4">
-                    <div class="card">
-                        <a href="{% url 'makeup:recommend' %}">
-                            <div class="card-image"><img src="{% static 'main/img/class.png' %}" alt=" image-2">
-                            </div>
-                            <div class="card-content black-text">
-                                <span class="card-title center">뷰티 유튜브 추천받기</span>
-                                <p class="card-desc">본인에게 맞는 수업이 어떤건지 잘 모르시겠나요? 그래서 준비했습니다. 공간과 함께하는 다양한 멘토들의 재능과
-                                    그들의 수업을
-                                    확인해보세요.</p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col l4">
-                    <div class="card">
-                        <a href="{% url 'sns:index' %}">
-                            <div class="card-image"><img src="{% static 'main/img/space.jpg' %}" alt=" image-2">
-                            </div>
-                            <div class="card-content black-text">
-                                <span class="card-title center">메이크업 후기 공유</span>
-                                <p class="card-desc">나만의 강의실, 공방을 가지고 있지 않아도 괜찮아요. 공간에서 제공하는 맞춤형 스페이스 시설을 둘러보세요.</p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+        </div>
+        <div class="carousel-item">
+            <img src="static/img/carousel7.png" alt="carousel7" style="width:100%;">
+            <div class="carousel-title">
+                <h1 class="title">화장품 추천 서비스</h1>
+                <h3 class="subtitle">당신의 화장품이 사용된 유튜브 영상 추천</h3>
             </div>
-            <h3 class="center sub-title">숨겨진 당신의 아름다움을 찾아보세요</h3>
-            <div class="parallax-container">
-                <div class="parallax">
-                    <img src="{% static 'main/img/community.jpg' %}">
-                </div>
+        </div>
+        <div class="carousel-item">
+            <img src="static/img/carousel8.png" alt="carousel8" style="width:100%;">
+            <div class="carousel-title">
+                <h1 class="title">SNS 서비스</h1>
+                <h3 class="subtitle">친구들과 화장법을 게시물로 공유</h3>
             </div>
-            <p class="center container parallax-desc">소소하게 일상 생활에 지장이 안가도록 그리고 또 재미도 있어야 하고 그런 취미들을 찾고 싶은데 자신이 어떤 걸
-                하면 좋을지
-                고민되나요? 조용한 것? 도전적인 것? 어떤 성향과 잘 맞을지 탐험을 해보세요!</p>
-            <div class="row container bottom">
-                <hr class="divider" />
-                <div class="col l7">
-                    <h4 class="center bottom-header">클래스 강사가 되어보세요</h4>
-                    <p>공간 서비스는 검증된 강사 및 멘토를 등록받아 클래스를 운영하고 관리하에 있는 스페이스 및 부대시설을 이용할 수 있도록 도와드리고 있습니다. 평소 본인의 재능을
-                        주변사람들과 나누고 싶었거나
-                        시설 및 공간 부족으로 어려움을 겪고 계신 여러분들의 등록을 기다리고 있습니다.</p>
-                    <div class="center bottom-button">
-                        <button class="btn z-depth-0 orange lighten-2 waves-effect waves-red modal-trigger"
-                            data-target="modal1">강사 등록</button>
-                        <div id="modal1" class="modal">
-                            <form class="mentor-form container">
-                                <div class="modal-content center">
-                                    <h4>강사 등록하기</h4>
-                                    <p>공간 강사로 등록하세요</p>
-                                </div>
-                                <div class="field">
-                                    <label for="name" class="left">이름</label>
-                                    <input type="text" name="name">
-                                </div>
-                                <div class="field">
-                                    <label for="contact" class="left">연락처</label>
-                                    <input type="text" name="contact">
-                                </div>
-                                <div class="field section">
-                                    <label for="request" class="left">당신에 대해서 더 알려주세요</label>
-                                    <textarea name="request" id="request" cols="30" rows="80"></textarea>
-                                </div>
-                                <div class="field center section">
-                                    <a class="btn teal lighten-2 z-depth-0 waves-effect waves-light">신청하기</a>
-                                </div>
-                            </form>
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div> -->
+<div class="main-page">
+    <div class="banner-image">
+        <div class="container banner-text">
+            <h3 id="banner-title">당신의 아름다움을 꺼내쓰세요</h3>
+            <p>뷰티 폴미가 당신의 숨어있던 아름다움을 찾아드립니다</p>
+        </div>
+    </div>
+    <div class="row container main-cards section">
+        <div class="col l4">
+            <div class="card">
+                <a href="">
+                    <div class="card-image"><img src="" alt=" image-2"></div>
+                    <div class="card-content black-text">
+                        <span class="card-title center">내 주변 클래스 탐색하기</span>
+                        <p class="card-desc">현재 위치를 중심으로 주변에서 이루어지는 클래스 활동에 대해 알아보세요. 가까운 곳에서 일어나는 일일수록 놓치기 쉬운 법이죠.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col l4">
+            <div class="card">
+                <a href="">
+                    <div class="card-image"><img src="" alt=" image-2"></div>
+                    <div class="card-content black-text">
+                        <span class="card-title center">클래스 목록 보기</span>
+                        <p class="card-desc">본인에게 맞는 수업이 어떤건지 잘 모르시겠나요? 그래서 준비했습니다. 공간과 함께하는 다양한 멘토들의 재능과 그들의 수업을
+                            확인해보세요.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col l4">
+            <div class="card">
+                <a href="">
+                    <div class="card-image"><img src="" alt=" image-2"></div>
+                    <div class="card-content black-text">
+                        <span class="card-title center">스페이스 대여하기</span>
+                        <p class="card-desc">나만의 강의실, 공방을 가지고 있지 않아도 괜찮아요. 공간에서 제공하는 맞춤형 스페이스 시설을 둘러보세요.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <h3 class="center sub-title">지금 여러분의 취미를 찾아보세요</h3>
+    <div class="parallax-container">
+        <div class="parallax">
+            <img src="{% static 'img/carousel8.png' %}">
+        </div>
+    </div>
+    <p class="center container parallax-desc">소소하게 일상 생활에 지장이 안가도록 그리고 또 재미도 있어야 하고 그런 취미들을 찾고 싶은데 자신이 어떤 걸 하면 좋을지
+        고민되나요? 조용한 것? 도전적인 것? 어떤 성향과 잘 맞을지 탐험을 해보세요!</p>
+    <div class="row container bottom">
+        <hr class="divider" />
+        <div class="col l7">
+            <h4 class="center bottom-header">클래스 강사가 되어보세요</h4>
+            <p>공간 서비스는 검증된 강사 및 멘토를 등록받아 클래스를 운영하고 관리하에 있는 스페이스 및 부대시설을 이용할 수 있도록 도와드리고 있습니다. 평소 본인의 재능을 주변사람들과 나누고 싶었거나
+                시설 및 공간 부족으로 어려움을 겪고 계신 여러분들의 등록을 기다리고 있습니다.</p>
+            <div class="center bottom-button">
+                <button class="btn z-depth-0 orange lighten-2 waves-effect waves-red modal-trigger"
+                    data-target="modal1">강사 등록</button>
+                <div id="modal1" class="modal">
+                    <form class="mentor-form container">
+                        <div class="modal-content center">
+                            <h4>강사 등록하기</h4>
+                            <p>공간 강사로 등록하세요</p>
                         </div>
-                    </div>
-                </div>
-                <div class="col l4 offset-l1">
-                    <img src="{% static 'main/img/community.gif' %}" style="max-width:300px; max-height: 300px">
+                        <div class="field">
+                            <label for="name" class="left">이름</label>
+                            <input type="text" name="name">
+                        </div>
+                        <div class="field">
+                            <label for="contact" class="left">연락처</label>
+                            <input type="text" name="contact">
+                        </div>
+                        <div class="field section">
+                            <label for="request" class="left">당신에 대해서 더 알려주세요</label>
+                            <textarea name="request" id="request" cols="30" rows="80"></textarea>
+                        </div>
+                        <div class="field center section">
+                            <a class="btn teal lighten-2 z-depth-0 waves-effect waves-light">신청하기</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </main>
+        <div class="col l4 offset-l1">
+            <img src="" style="max-width:300px; max-height: 300px">
+        </div>
+    </div>
 </div>
 <button id="modalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
     유통기한 알림
 </button>
 <input id="is_alarm_time" value={{is_alarm_time}}>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+{% endblock content %}
+
+{% block footer %}
+{% include 'footer.html' %}
+{% endblock footer %}
+
+{% block extra-script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('.parallax').parallax();
-    });
     $(document).ready(function () {
         $('.parallax').parallax();
         var is_alarm_time = document.getElementById("is_alarm_time").value
@@ -358,8 +411,4 @@
         }
     };
 </script>
-{% endblock %}
-
-{% block footer %}
-{% include 'footer.html' %}
-{% endblock footer %}
+{% endblock extra-script %}

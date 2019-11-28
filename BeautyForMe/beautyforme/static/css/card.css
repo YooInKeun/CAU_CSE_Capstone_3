@@ -1,0 +1,18 @@
+.main-cards {
+    margin: 50px auto;
+  }
+  
+  .main-cards .card {
+    padding: 0 0;
+    height: 400px;
+  }
+  
+  .main-cards .card .card-image {
+    height: 200px;
+  }
+  
+  .main-cards .card .card-content .card-desc {
+    margin-top: 20px;
+    text-align: justify;
+    font-weight: lighter;
+  }

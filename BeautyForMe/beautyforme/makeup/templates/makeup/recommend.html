@@ -16,9 +16,9 @@
         justify-content: center;
         align-items: center;
         margin: 0px;
-        border-bottom: 1px solid rgb(158, 165, 158);
-        border-left: 1px solid rgb(158, 165, 158);
-        border-right: 1px solid rgb(158, 165, 158);
+        border-bottom: 1px solid rgb(173, 106, 80);
+        border-left: 1px solid rgb(173, 106, 80);
+        border-right: 1px solid rgb(173, 106, 80);
     }
 
     .small-category-tab {
@@ -38,14 +38,14 @@
     .big-category-tab:hover {
         font-size: 15px;
         font-weight: bold;
-        background-color: gray;
+        background-color: lightcoral;
         color: white;
     }
 
     .seleted-big-category {
         font-size: 15px;
         font-weight: bold;
-        background-color: gray;
+        background-color: lightcoral;
         color: white;
     }
 
@@ -87,7 +87,7 @@
 
     /*cosmetic part*/
     .user-cosmetic {
-        width: 100%;
+        height: 80px;
     }
 
     .gray-line {
@@ -219,6 +219,21 @@
         overflow: hidden;
         max-height: 0;
     }
+
+    /* pagination */
+    .pagination-wrapper {
+        background-color: white;
+        position: unset !important;
+    }
+
+    .pagination a.active {
+        background-color: pink;
+    }
+
+    .pagination a {
+        font-size: 14px;
+        padding: 5px 10px;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -232,7 +247,7 @@
         <h4 class="m-0">화장품을 선택하고 영상을 추천받아 보세요!</h4>
     </div>
     <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
-    <div class="row">
+    <div class="row position-relative">
         <div class="col-2 p-0">
             <div class="row m-0">
                 <div class="col-3 p-0 big-category-wrapper">
@@ -264,7 +279,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-5 p-0 cosmetic-section scrollbar-lady-lips thin square mt-1">
+        <div class="col-5 p-0 cosmetic-section scrollbar-lady-lips thin square mt-1" id="cosmetic-search-result">
             <div class="container sticky-top row control-bar m-0 p-0">
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>
@@ -307,6 +322,14 @@
                     </div>
                 </div>
                 <div class="gray-line"></div>
+            </div>
+            <div v-if="isInUser == false" class="row justify-content-center pagination-wrapper">
+                <div class="pagination">
+                    <a href="#" @click="searchOtherPage($event, searchPages[0].num - 1)">&laquo;</a>
+                    <a v-for="page in searchPages" @click="searchOtherPage($event, page.num)" :class="page.class"
+                        href="#">[[page.num]]</a>
+                    <a href="#" @click="searchOtherPage($event, searchPages[9].num + 1)">&raquo;</a>
+                </div>
             </div>
         </div>
         <div class="col-5 p-0 pl-3 cosmetic-section scrollbar-lady-lips thin square mt-1">
@@ -461,6 +484,9 @@
             selectedBasketCosmetics: [],
             isBasketSelectAll: false,
             similarCosmetics: [],
+            searchPages: [],
+            searchResultLength: 0,
+            pageSize: 0,
         },
         computed: {
             myCategories() {
@@ -653,35 +679,24 @@
                             console.log("GET SUCCESS", res);
                             const data = res.data.cosmetics;
 
+                            this.searchPages = [];
+                            this.pageSize = res.data.cosmetics.length;
+                            for (var i = 1; i <= res.data.cosmetic_size / this.pageSize + 1; i++) {
+                                this.searchPages.push({
+                                    num: i,
+                                    class: "",
+                                });
+                                if (this.searchPages.length == 10)
+                                    break;
+                            }
+                            this.searchPages[0].class = "active";
+                            this.searchResultLength = res.data.cosmetic_size;
+
                             this.displayCosmetics = [];
 
                             for (var i in data) {
-                                if (data[i].product.image_link)
-                                    imageLink = data[i].product.image_link;
-                                else
-                                    imageLink = data[i].image_link;
+                                this.displayCosmetics.push(this.parsingCosmetics(data[i]));
 
-                                var tagNames = [];
-                                for (var tag_index in data[i].product.tag_names) {
-                                    if (tagNames.length < 2)
-                                        tagNames.push(data[i].product.tag_names[tag_index].tag_name);
-                                }
-                                const smallCategory = data[i].product.category.small_category.replace("-", "<br/>");
-
-                                var cosmetic = {
-                                    id: data[i].id,
-                                    brandName: data[i].product.brand.brand_name,
-                                    productName: data[i].product.product_name,
-                                    typeName: data[i].type_name,
-                                    imageLink: imageLink,
-                                    tagNames: tagNames,
-                                    smallCategory: smallCategory,
-                                    smallCategoryId: data[i].product.category.id,
-                                    rgbValue: data[i].rgb_value,
-                                    similarCosmetics: data[i].similar_cosmetics,
-                                    selectedCosmetics: [],
-                                }
-                                this.displayCosmetics.push(cosmetic);
                             }
                             return cosmetic;
                         })
@@ -889,7 +904,70 @@
                 for (var i in this.myCosmetics) {
                     this.similarCosmetics.push(this.myCosmetics[i]);
                 }
-            }
+            },
+            searchOtherPage(event, pageNum) {
+                window.scrollTo(0, 0);
+                this.$el.querySelector("#cosmetic-search-result").scrollTo(0, 0);
+                var postData = {
+                    params: {
+                        small_category_id: this.selectedSmallId,
+                        page_num: pageNum
+                    }
+                };
+                axios.get('/api/cosmetic/', postData)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+                        const data = res.data.cosmetics;
+
+                        this.searchPages = [];
+                        for (var i = parseInt((pageNum - 1) / 10) * 10 + 1; i <= parseInt(res.data.cosmetic_size / this.pageSize) + 1; i++) {
+                            this.searchPages.push({
+                                num: i,
+                                class: "",
+                            });
+                            if (this.searchPages.length == 10)
+                                break;
+                        }
+                        this.searchPages[((pageNum % 10 - 1) + 10) % 10].class = "active";
+
+                        this.displayCosmetics = [];
+
+                        for (var i in data) {
+                            this.displayCosmetics.push(this.parsingCosmetics(data[i]));
+                        }
+                        return cosmetic;
+                    })
+                    .catch(function (err) {
+                        console.log("GET FAIL", err);
+                    });
+            },
+            parsingCosmetics(data) {
+                var imageLink;
+
+                if (data.product.image_link)
+                    imageLink = data.product.image_link;
+                else
+                    imageLink = data.image_link;
+
+                var tagNames = [];
+                for (var i in data.product.tag_names) {
+                    if (tagNames.length < 2) {
+                        tagNames.push(data.product.tag_names[i].tag_name);
+                    }
+                }
+
+                var result = {
+                    id: data.id,
+                    brandName: data.product.brand.brand_name,
+                    smallCategory: data.product.category.small_category.replace("-", "<br/>"),
+                    productName: data.product.product_name,
+                    typeName: data.type_name,
+                    imageLink: imageLink,
+                    tagNames: tagNames
+                }
+
+                return result;
+            },
         },
         updated() {
             if (this.allowEffectOne) {

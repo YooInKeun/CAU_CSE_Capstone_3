@@ -164,6 +164,10 @@
         overflow-y: scroll;
     }
 
+    .register-section {
+        padding: 0 3%;
+    }
+
     /* scroll-bar */
     .scrollbar-lady-lips::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
@@ -241,7 +245,7 @@
 <div class="container-fluid" id="app">
     <div class="row main-row">
         <div class="col-8 mt-5 mb-5 pt-1">
-            <div class="search-wrapper d-flex justify-content-center align-items-center">
+            <div class="search-wrapper d-flex justify-content-center align-items-center pb-1">
                 <input @keyup="searchCosmetic($event, true)" v-model="queryCosmetic" placeholder="화장품의 제품명을 검색해주세요"
                     class="form-control search-input pl-2" />
                 <button @click="searchCosmetic($event, false)" class="search-btn btn btn-primary">검색</button>
@@ -272,7 +276,8 @@
                     </div>
                 </div>
             </transition>
-            <div v-if="fullSearch" class="cosmetic-container" id="cosmetic-search-result">
+            <div v-if="fullSearch" class="cosmetic-container scrollbar-lady-lips thin square"
+                id="cosmetic-search-result">
                 <h5 class="mt-5 mb-3 text-center">[[ searchResultLength ]]개의 검색결과</h5>
                 <div class="gray-line"></div>
                 <div v-for="cosmetic in staticResults" :key="cosmetic.id" @click="selectCosmetic(cosmetic)"
@@ -309,7 +314,7 @@
                     </div>
                 </div>
             </div>
-            <div v-else>
+            <div v-else class="register-section">
                 <div class="container-fluid left-col scrollbar-lady-lips thin square">
                     <div class="row mt-4">
                         <div class="col-6 d-flex justify-content-center align-items-center">

@@ -58,6 +58,8 @@ def recommend_result(request):
     context['videos'] = []
     video_list = json.loads(serializers.serialize('json', video_queryset))
     for video in video_list:
+        youtuber = Youtuber.objects.get(pk=video['fields']['youtuber']).name
+        video['fields']['youtuber'] = youtuber
         context['videos'].append(video['fields'])
     for idx, val in enumerate(sorted_videos):
         context['videos'][idx]['score'] = val[1]
@@ -76,10 +78,10 @@ def recommend_result(request):
             product_name = str(Product.objects.get(pk=cosmetic['fields']['product']))
             parenthesis_pos = product_name.find(']')
             product_name = product_name[parenthesis_pos+2:]
+            cosmetic_info['id'] = cosmetic['pk']
             cosmetic_info['productName'] = product_name
             cosmetic_info['typeName'] = cosmetic['fields']['type_name'].strip()
-            context['videos'][idx]['containedCosmetics'].append(cosmetic_info) 
-    print(context)
+            context['videos'][idx]['containedCosmetics'].append(cosmetic_info)
     return render(request, 'makeup/recommend_result.html', {'context':context})
 
 # class RecommendResultTV(TemplateView):

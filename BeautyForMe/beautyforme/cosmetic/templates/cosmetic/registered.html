@@ -366,10 +366,10 @@
                     <button @click="confirmDelete" class="cosmetic-control-btn btn btn-outline-primary">삭제</button>
                 </div>
                 <div class="col-6 d-flex justify-content-end">
-                    <button @click="changeToMy" class="my-cosmetic-btn cosmetic-control-btn btn btn-primary">내
+                    <button @click="changeToMy" class="my-cosmetic-btn cosmetic-control-btn btn btn-outline-primary">내
                         화장품</button>
                     <button @click="changeToInterested"
-                        class="interested-cosmetic-btn cosmetic-control-btn btn btn-outline-primary ml-1">관심
+                        class="interested-cosmetic-btn cosmetic-control-btn btn btn-primary ml-1">관심
                         화장품</button>
                 </div>
             </div>
@@ -508,7 +508,7 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-            showMyCosmetic: true,
+            showMyCosmetic: false,
             isSelectMyAll: false,
             isSelectInterestedAll: false,
             myCosmetics: [],
@@ -1067,6 +1067,7 @@
             this.displayMyCosmetics = this.myCosmetics;
             this.displayInterestedCosmetics = this.interestedCosmetics;
             console.log(this.myCosmetics);
+            this.allowSwitching = true;
         },
         updated() {
             if (this.allowSwitching) {

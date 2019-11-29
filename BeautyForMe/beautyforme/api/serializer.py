@@ -1,5 +1,6 @@
 from accounts.models import *
 from cosmetic.models import *
+from makeup.models import *
 from rest_framework import serializers
 
 
@@ -83,4 +84,16 @@ class SmallCategorySerializer(serializers.ModelSerializer):
 class CosmeticImportanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cosmetic_Importance
+        fields = '__all__'
+
+class YoutuberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Youtuber
+        fields = '__all__'
+
+class VideoSerializer(serializers.ModelSerializer):
+    youtuber = YoutuberSerializer()
+    
+    class Meta:
+        model = Video
         fields = '__all__'

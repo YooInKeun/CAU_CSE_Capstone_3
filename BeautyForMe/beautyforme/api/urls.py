@@ -20,4 +20,8 @@ urlpatterns = [
     url(r'^cosmetic/smallcategory/(?P<pk>[\w:|-]+)/$', views.SmallCategoryInfo.as_view()),
     url(r'^cosmetic/$', views.CosmeticInfo.as_view()),
     url(r'^cosmetic/(?P<pk>[\w:|-]+)/$', views.CosmeticInfo.as_view()),
+    url(r'^video/detail/$', views.VideoDetailInfo.as_view()),
+    url(r'^video/detail/(?P<pk>[\w:|-]+)/$', views.VideoDetailInfo.as_view()),
+    url(r'^video/$', views.VideoInfo.as_view()),
+    url(r'^video/(?P<pk>[\w:|-]+)/$', views.VideoInfo.as_view()),
 ]

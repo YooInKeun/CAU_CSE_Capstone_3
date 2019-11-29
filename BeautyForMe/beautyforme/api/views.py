@@ -259,3 +259,36 @@ class CosmeticImportanceInfo(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_importance)
+
+class VideoInfo(APIView):
+    # permission_classes = [IsAdminUser]
+
+    def get(self, request, format=None):
+        page_num = request.query_params['page_num']
+        queryset = Big_Category.objects.all()
+        serializer = BigCategorySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+class VideoDetailInfo(APIView):
+    # permission_classes = [IsAdminUser]
+
+    def get(self, request, pk, format=None):
+        queryset = Video.objects.filter(pk=pk)
+        serializer = VideoSerializer(queryset, many=True)
+        video_info = {}
+        video_info['video'] = serializer.data[0]
+        raw = video_info['video']['cosmetics']
+        raw = raw.replace("'", "\"")
+        cosmetic_ids = json.loads(raw)
+        cosmetics = []
+        for key in cosmetic_ids.keys():
+            cosmetic_info = {}
+            cosmetic = Cosmetic.objects.get(id=cosmetic_ids[key])
+            cosmetic_info['id'] = cosmetic_ids[key]
+            cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
+            cosmetic_info['productName'] = cosmetic.product.product_name
+            cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
+            cosmetics.append(cosmetic_info)
+        
+        video_info['video']['cosmetics'] = cosmetics
+        return Response(video_info)

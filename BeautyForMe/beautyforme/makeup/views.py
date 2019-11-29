@@ -82,6 +82,7 @@ def recommend_result(request):
             cosmetic_info['productName'] = product_name
             cosmetic_info['typeName'] = cosmetic['fields']['type_name'].strip()
             context['videos'][idx]['containedCosmetics'].append(cosmetic_info)
+    # print(context)
     return render(request, 'makeup/recommend_result.html', {'context':context})
 
 # class RecommendResultTV(TemplateView):

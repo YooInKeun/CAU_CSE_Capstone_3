@@ -272,6 +272,7 @@ class AllVideoInfo(APIView):
 
         videos_info = {}
         videos_info['video'] = serializer.data
+        videos_info['video_size'] = len(Video.objects.all())
         for i in range(len(videos_info['video'])):
             raw = videos_info['video'][i]['cosmetics']
             raw = raw.replace("'", "\"")
@@ -284,6 +285,12 @@ class AllVideoInfo(APIView):
                 cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
                 cosmetic_info['productName'] = cosmetic.product.product_name
                 cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
+                cosmetic_info['bigCategory'] = cosmetic.product.category.big_category.big_category
+                cosmetic_info['smallCategory'] = cosmetic.product.category.small_category 
+                cosmetic_info['imageLink'] = cosmetic.image_link
+                cosmetic_info['rgbValue'] = cosmetic.rgb_value
+                tag_names = json.loads(serializers.serialize('json', cosmetic.product.tag_names.all()))
+                cosmetic_info['tagNames'] = tag_names
                 cosmetics.append(cosmetic_info)
         
             videos_info['video'][i]['cosmetics'] = cosmetics
@@ -329,7 +336,7 @@ class FilteredVideoInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
-        # page_num = request.data['page_num']
+        # page_num = int(request.data['page_num'])
         # youtuber_id = int(request.data['youtuber_id'])
         page_num = int(request.query_params['page_num'])
         youtuber_id = int(request.query_params['youtuber_id'])
@@ -338,6 +345,7 @@ class FilteredVideoInfo(APIView):
 
         videos_info = {}
         videos_info['video'] = serializer.data
+        videos_info['video_size'] = len(Video.objects.filter(youtuber__id=youtuber_id))
         for i in range(len(videos_info['video'])):
             raw = videos_info['video'][i]['cosmetics']
             raw = raw.replace("'", "\"")
@@ -350,6 +358,12 @@ class FilteredVideoInfo(APIView):
                 cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
                 cosmetic_info['productName'] = cosmetic.product.product_name
                 cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
+                cosmetic_info['bigCategory'] = cosmetic.product.category.big_category.big_category
+                cosmetic_info['smallCategory'] = cosmetic.product.category.small_category 
+                cosmetic_info['imageLink'] = cosmetic.image_link
+                cosmetic_info['rgbValue'] = cosmetic.rgb_value
+                tag_names = json.loads(serializers.serialize('json', cosmetic.product.tag_names.all()))
+                cosmetic_info['tagNames'] = tag_names
                 cosmetics.append(cosmetic_info)
         
             videos_info['video'][i]['cosmetics'] = cosmetics

@@ -274,15 +274,13 @@
                         <div class="row content-cosmetic">{{video.title}}</div>
                         <div class="row content-cosmetic">{{video.upload_date}} / Views. {{video.hits}}
                         </div>
+                        {{video.cosmetics}}
+                        {{video.containedCosmetics}}
                         <div class="ml-3 btn btn-outline-primary cosmetic-control-btn video-detail-btn">
-                            <a href="{% url 'makeup:video_detail' pk=video.id %}">자세히</a>
+                            <a href="{% url 'makeup:video_detail' video.id %}">자세히</a>
                         </div>
                     </div>
-<<<<<<< HEAD
                     <div class="col-5 col-content d-flex flex-column justify-content-center pl-4 right-col">
-=======
-                    <div class="col-5 col-content d-flex flex-column justify-content-center pl-4">
->>>>>>> 8224d5d511c6951bc8b3380f302af08b07b77d84
                         {% for cosmetic in video.containedCosmetics %}
                         <div class="row content-cosmetic">
                             <span class="content-brand mr-1">{{ cosmetic.brandName }}</span> {{ cosmetic.productName }}

@@ -60,6 +60,7 @@ def recommend_result(request):
     for video in video_list:
         youtuber = Youtuber.objects.get(pk=video['fields']['youtuber']).name
         video['fields']['youtuber'] = youtuber
+        video['fields']['id'] = video['pk']
         context['videos'].append(video['fields'])
     for idx, val in enumerate(sorted_videos):
         context['videos'][idx]['score'] = val[1]

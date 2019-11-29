@@ -52,6 +52,8 @@ def recommend_result(request):
     video_queryset = Video.objects.filter(title="Fuck You")
     context = {}
     sorted_videos = sorted(video_scores.items(), key=lambda element:element[1], reverse=True)
+
+    '''
     for sorted_video in sorted_videos:
         video_queryset |= Video.objects.filter(pk=sorted_video[0])
     context['cosmetics'] = cosmetics['cosmetics']
@@ -62,11 +64,26 @@ def recommend_result(request):
         video['fields']['youtuber'] = youtuber
         video['fields']['id'] = video['pk']
         context['videos'].append(video['fields'])
+        # print(video['fields'])
+    for idx, val in enumerate(sorted_videos):
+        context['videos'][idx]['score'] = val[1]
+    '''
+
+    context['cosmetics'] = cosmetics['cosmetics']
+    context['videos'] = []
+    for sorted_video in sorted_videos:
+        video_queryset = Video.objects.filter(pk=sorted_video[0])
+        video= json.loads(serializers.serialize('json', video_queryset))
+        youtuber = Youtuber.objects.get(pk=video[0]['fields']['youtuber']).name
+        video[0]['fields']['youtuber'] = youtuber
+        video[0]['fields']['id'] = video[0]['pk']
+        context['videos'].append(video[0]['fields'])
     for idx, val in enumerate(sorted_videos):
         context['videos'][idx]['score'] = val[1]
     
     contained_cosmetics = []
     sorted_scores_cosmetic_ids = sorted(video_scores_contained_cosmetic_ids, key=lambda element:element[0], reverse=True)
+    print(sorted_scores_cosmetic_ids)
     for idx, sorted_scores_cosmetic_id in enumerate(sorted_scores_cosmetic_ids):
         context['videos'][idx]['containedCosmetics'] = []
         cosmetic_queryset = Cosmetic.objects.filter(rgb_value="Fuck You")

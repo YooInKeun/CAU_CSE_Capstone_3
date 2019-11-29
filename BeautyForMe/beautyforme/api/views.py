@@ -260,14 +260,34 @@ class CosmeticImportanceInfo(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_importance)
 
-class VideoInfo(APIView):
+class AllVideoInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
-        page_num = request.query_params['page_num']
-        queryset = Big_Category.objects.all()
-        serializer = BigCategorySerializer(queryset, many=True)
-        return Response(serializer.data)
+        page_num = request.data['page_num']
+        # page_num = request.query_params['page_num']
+        page_num = int(page_num)
+        queryset = Video.objects.all().order_by('id')[10*(page_num-1):10*page_num]
+        serializer = VideoSerializer(queryset, many=True)
+
+        videos_info = {}
+        videos_info['video'] = serializer.data
+        for i in range(len(videos_info['video'])):
+            raw = videos_info['video'][i]['cosmetics']
+            raw = raw.replace("'", "\"")
+            cosmetic_ids = json.loads(raw)
+            cosmetics = []
+            for key in cosmetic_ids.keys():
+                cosmetic_info = {}
+                cosmetic = Cosmetic.objects.get(id=cosmetic_ids[key])
+                cosmetic_info['id'] = cosmetic_ids[key]
+                cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
+                cosmetic_info['productName'] = cosmetic.product.product_name
+                cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
+                cosmetics.append(cosmetic_info)
+        
+            videos_info['video'][i]['cosmetics'] = cosmetics
+        return Response(videos_info)
 
 class VideoDetailInfo(APIView):
     # permission_classes = [IsAdminUser]
@@ -275,8 +295,10 @@ class VideoDetailInfo(APIView):
     def get(self, request, pk, format=None):
         queryset = Video.objects.filter(pk=pk)
         serializer = VideoSerializer(queryset, many=True)
+
         video_info = {}
         video_info['video'] = serializer.data[0]
+
         raw = video_info['video']['cosmetics']
         raw = raw.replace("'", "\"")
         cosmetic_ids = json.loads(raw)

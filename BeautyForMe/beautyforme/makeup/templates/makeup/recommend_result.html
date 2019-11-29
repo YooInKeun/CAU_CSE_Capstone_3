@@ -135,10 +135,15 @@
         position: absolute;
         right: 5px;
         bottom: 5px;
-        width: 70px;
+        width: 50px;
         height: 24px;
         font-size: 11px;
         padding: 3px;
+    }
+
+    .right-col {
+        border-left: 0.5px solid lightgray;
+        margin-bottom: 2px;
     }
 
     /* transition */
@@ -219,20 +224,21 @@
                     <div class="row black-line"></div>
                 </div>
             </div>
-            <div v-for="(cosmetic, index) in cosmetics" :key="cosmetic.id"
-                class="container p-0 mt-1 mb-1 cosmetic-container cosmetic-row">
-                <div class="row m-0" @click="selectCosmetic($event, index, cosmetic.id)">
+            {% for cosmetic in context.cosmetics %}
+            <div class="container p-0 mt-1 mb-1 cosmetic-container cosmetic-row">
+                <div class="row m-0" @click="selectCosmetic($event, {{ forloop.counter0 }}, {{ cosmetic.id }})">
                     <div class="col-3 col-content d-flex justify-content-center align-items-center">
-                        <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
+                        <img src="{{ cosmetic.imageLink }}" alt="" class="user-cosmetic justify-content-center">
                     </div>
                     <div class="col-9 col-content d-flex flex-column justify-content-center">
-                        <div class="row content-brand">[[cosmetic.brandName]]</div>
-                        <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
+                        <div class="row content-brand">{{ cosmetic.brandName }}</div>
+                        <div class="row content-cosmetic">{{ cosmetic.productName }} {{ cosmetic.typeName }}
                         </div>
                     </div>
                 </div>
                 <div class="gray-line"></div>
             </div>
+            {% endfor %}
         </div>
         <div class="col-8 p-0 pl-3 cosmetic-section scrollbar-lady-lips thin square mt-1">
             <div class="container sticky-top row control-bar m-0 p-0">
@@ -257,31 +263,38 @@
                     <div class="row black-line"></div>
                 </div>
             </div>
-            <div v-for="(video, index) in videos" :key="video.id"
-                class="container p-0 mt-1 mb-1 cosmetic-container video-row">
-                <div class="row m-0" @click="selectVideo($event, index, video.id)">
+            {% for video in context.videos %}
+            <div class="container p-0 mt-1 mb-1 cosmetic-container video-row">
+                <div class="row m-0" @click="selectVideo($event, {{ forloop.counter0 }}, {{ video.id }})">
                     <div class="thumbnail col-3 col-content d-flex justify-content-center align-items-center">
-                        <img :src="[[video.thumbnail]]" alt="" class="user-cosmetic justify-content-center">
+                        <img src="{{ video.thumbnail }}" alt="" class="user-cosmetic justify-content-center">
                     </div>
                     <div class="col-4 col-content d-flex flex-column justify-content-center">
-                        <div class="row content-brand">[[video.youtuber]]</div>
-                        <div class="row content-cosmetic">[[video.title]]</div>
-                        <div class="row content-cosmetic">[[video.upload_date]] / Views. [[video.hits]]
+                        <div class="row content-brand">{{video.youtuber}}</div>
+                        <div class="row content-cosmetic">{{video.title}}</div>
+                        <div class="row content-cosmetic">{{video.upload_date}} / Views. {{video.hits}}
                         </div>
                         <div class="ml-3 btn btn-outline-primary cosmetic-control-btn video-detail-btn">
-                            자세히
+                            <a href="{% url 'makeup:video_detail' pk=video.id %}">자세히</a>
                         </div>
                     </div>
+<<<<<<< HEAD
+                    <div class="col-5 col-content d-flex flex-column justify-content-center pl-4 right-col">
+=======
                     <div class="col-5 col-content d-flex flex-column justify-content-center pl-4">
-                        <div v-for="cosmetic in video.cosmetics" class="row content-cosmetic">
-                            <span class="content-brand mr-1">[[ cosmetic.brandName ]]</span> [[ cosmetic.productName ]]
-                            [[ cosmetic.typeName ]]
+>>>>>>> 8224d5d511c6951bc8b3380f302af08b07b77d84
+                        {% for cosmetic in video.containedCosmetics %}
+                        <div class="row content-cosmetic">
+                            <span class="content-brand mr-1">{{ cosmetic.brandName }}</span> {{ cosmetic.productName }}
+                            {{ cosmetic.typeName }}
                         </div>
+                        {% endfor %}
                     </div>
                 </div>
 
                 <div class="gray-line"></div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>
@@ -465,179 +478,7 @@
                     this.isSelectVideoAll = true;
                 }
             },
-        },
-        created() {
-            axios.get('/api/user/cosmetic/')
-                .then((res) => {
-                    console.log("GET SUCCESS", res);
-                    const data = res.data;
-
-                    for (var i in data)
-                        this.cosmetics.push(cosmeticInsert(data[i]));
-
-                    this.videos = [
-                        {
-                            id: 1,
-                            title: "K-pop idol Suzy makeup 수지 화보 메이크업 싱크로율은? l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/4RnJVdE6Wxg/0.jpg",
-                            link: "https://youtu.be/4RnJVdE6Wxg",
-                            upload_date: "2016. 8. 23.",
-                            hits: "1137834",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 1,
-                                    brandName: "조르지오아르마니",
-                                    productName: "디자이너 리프트 파운데이션 [SPF20/PA+++]",
-                                    typeName: "#2 핑크 베이스",
-                                },
-                                {
-                                    id: 2,
-                                    brandName: "로라메르시에",
-                                    productName: "시크릿 카뮤플라지",
-                                    typeName: "SC3(노랗거나 핑크 톤의 보통 피부톤)",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "슈에무라",
-                                    productName: "하드포뮬라",
-                                    typeName: "씰브라운",
-                                },
-                                {
-                                    id: 4,
-                                    brandName: "바닐라코",
-                                    productName: "프라임 프라이머 피니쉬 블러 팩트",
-                                    typeName: "BLENDING",
-                                },
-                            ]
-                        },
-                        {
-                            id: 2,
-                            title: "원더걸스 선미 메이크업 WonderGirls Sunmi Why so lonely makeup l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/WYNt6Ybpa8s/0.jpg",
-                            link: "https://youtu.be/WYNt6Ybpa8s",
-                            upload_date: "2016. 8. 1.",
-                            hits: "1245284",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 1,
-                                    brandName: "조르지오아르마니",
-                                    productName: "디자이너 리프트 파운데이션 [SPF20/PA+++]",
-                                    typeName: "#2 핑크 베이스",
-                                },
-                                {
-                                    id: 2,
-                                    brandName: "로라메르시에",
-                                    productName: "시크릿 카뮤플라지",
-                                    typeName: "SC3(노랗거나 핑크 톤의 보통 피부톤)",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "슈에무라",
-                                    productName: "하드포뮬라",
-                                    typeName: "씰브라운",
-                                },
-                            ]
-                        },
-                        {
-                            id: 3,
-                            title: "영화 '아가씨' 김민희 메이크업! l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/CZ9qlm2Jr2Q/0.jpg",
-                            link: "https://youtu.be/CZ9qlm2Jr2Q",
-                            upload_date: "2016. 6. 20.",
-                            hits: "855987",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 3,
-                                    brandName: "슈에무라",
-                                    productName: "하드포뮬라",
-                                    typeName: "씰브라운",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "베네피트 (benefit)",
-                                    productName: "헬로 플로리스 [SPF15]",
-                                    typeName: "아이보리",
-                                },
-                            ]
-                        },
-                        {
-                            id: 4,
-                            title: "I.O.I 정채연 메이크업 Jeong Chaeyeon make up! l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/ON2RIwPiGDo/0.jpg",
-                            link: "https://youtu.be/ON2RIwPiGDo",
-                            upload_date: "2016. 5. 16.",
-                            hits: "429295",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 3,
-                                    brandName: "슈에무라",
-                                    productName: "하드포뮬라",
-                                    typeName: "아콘",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "베네피트 (benefit)",
-                                    productName: "헬로 플로리스 [SPF15]",
-                                    typeName: "아이보리",
-                                },
-                            ]
-                        },
-                        {
-                            id: 5,
-                            title: "TWICE Cheer Up 사나 메이크업 샤샤샤~ l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/QNxMmcpc3iY/0.jpg",
-                            link: "https://youtu.be/QNxMmcpc3iY",
-                            upload_date: "2016. 5. 12.",
-                            hits: "312392",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 2,
-                                    brandName: "로라메르시에",
-                                    productName: "시크릿 카뮤플라지",
-                                    typeName: "SC3(노랗거나 핑크 톤의 보통 피부톤)",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "슈에무라",
-                                    productName: "하드포뮬라",
-                                    typeName: "아콘",
-                                },
-                            ]
-                        },
-                        {
-                            id: 6,
-                            title: "장나라 메이크업 한번더 헤퓌엔딩 l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/fCJQp9Av8P0/0.jpg",
-                            link: "https://youtu.be/fCJQp9Av8P0",
-                            upload_date: "2016. 5. 5.",
-                            hits: "324071",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 3,
-                                    brandName: "베네피트 (benefit)",
-                                    productName: "헬로 플로리스 [SPF15]",
-                                    typeName: "아이보리",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "슈에무라",
-                                    productName: "하드포뮬라",
-                                    typeName: "아콘",
-                                },
-                            ]
-                        },
-                    ];
-                })
-                .catch(function (err) {
-                    console.log("GET FAIL", err);
-                });
-        },
+        }
     })
 </script>
 {% endblock extra-script %}

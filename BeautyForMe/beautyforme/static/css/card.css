@@ -1,18 +1,26 @@
 .main-cards {
     margin: 50px auto;
-  }
-  
-  .main-cards .card {
-    padding: 0 0;
-    height: 400px;
-  }
-  
-  .main-cards .card .card-image {
-    height: 200px;
-  }
-  
-  .main-cards .card .card-content .card-desc {
-    margin-top: 20px;
-    text-align: justify;
-    font-weight: lighter;
-  }
+}
+
+.main-cards .card {
+  padding: 0 0;
+  height: 450px;
+}
+
+.main-cards .card .card-image {
+  height: 250px;
+}
+
+.main-cards .card .card-content .card-desc {
+  margin-top: 20px;
+  text-align: justify;
+  font-weight: lighter;
+}
+
+.card { 
+  transition: all .2s ease-in-out; 
+}
+
+.card:hover { 
+  transform: scale(1.03); 
+}

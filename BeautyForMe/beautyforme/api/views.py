@@ -314,6 +314,12 @@ class VideoDetailInfo(APIView):
             cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
             cosmetic_info['productName'] = cosmetic.product.product_name
             cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
+            cosmetic_info['bigCategory'] = cosmetic.product.category.big_category.big_category
+            cosmetic_info['smallCategory'] = cosmetic.product.category.small_category 
+            cosmetic_info['imageLink'] = cosmetic.image_link
+            cosmetic_info['rgbValue'] = cosmetic.rgb_value
+            tag_names = json.loads(serializers.serialize('json', cosmetic.product.tag_names.all()))
+            cosmetic_info['tagNames'] = tag_names
             cosmetics.append(cosmetic_info)
         
         video_info['video']['cosmetics'] = cosmetics

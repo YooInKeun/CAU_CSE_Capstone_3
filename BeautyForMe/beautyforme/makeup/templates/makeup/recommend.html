@@ -234,6 +234,12 @@
         font-size: 14px;
         padding: 5px 10px;
     }
+
+    .all-video-btn {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -243,8 +249,13 @@
 
 {% block content %}
 <div class="container-fuild" id="app" style="padding: 0 80px;">
-    <div class="row d-flex align-items-center" style="height:120px;">
-        <h4 class="m-0">화장품을 선택하고 영상을 추천받아 보세요!</h4>
+    <div class="position-relative">
+        <div class="row d-flex align-items-center" style="height:120px;">
+            <h4 class="m-0">화장품을 선택하고 영상을 추천받아 보세요!</h4>
+        </div>
+        <div class="all-video-btn">
+            <a href="{% url 'makeup:video' %}"><button class="btn btn-primary btn-sm">전체 뷰티 동영상 보기</button></a>
+        </div>
     </div>
     <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
     <div class="row position-relative">

@@ -24,7 +24,10 @@
       <!-- <input id="username" type="text" value="{{ user.username }}" style="visibility:hidden;" disabled />
       <input id="password" type="text" value="{{ user.password }}" style="visibility:hidden;" disabled /> -->
 
-      <h2 class="text-center m-5">{{ user.last_name }}<small>님의 프로필</small></h2>
+      <h2 class="text-center mt-5 mb-3">{{ user.last_name }}<small>님의 프로필</small></h2>
+      <div class="d-flex justify-content-end mb-4">
+        <a href="{% url 'accounts:importance' %}"><button class="btn btn-primary btn-sm">화장품 중요도 설정하기</button></a>
+      </div>
       <h4 class="input-title">이름</h4>
       <div class="input-wrap">
         <input class="name form-control mb-3" type="text" value="{{ user.last_name }}" disabled />

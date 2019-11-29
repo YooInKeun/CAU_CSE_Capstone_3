@@ -264,8 +264,8 @@ class AllVideoInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
-        page_num = request.data['page_num']
-        # page_num = request.query_params['page_num']
+        # page_num = request.data['page_num']
+        page_num = request.query_params['page_num']
         page_num = int(page_num)
         queryset = Video.objects.all().order_by('id')[10*(page_num-1):10*page_num]
         serializer = VideoSerializer(queryset, many=True)
@@ -287,6 +287,10 @@ class AllVideoInfo(APIView):
                 cosmetics.append(cosmetic_info)
         
             videos_info['video'][i]['cosmetics'] = cosmetics
+
+        youtuber_list = Youtuber.objects.all()
+        serializer = YoutuberSerializer(youtuber_list, many=True)
+        videos_info['youtuber_list'] = serializer.data
         return Response(videos_info)
 
 class VideoDetailInfo(APIView):
@@ -314,3 +318,33 @@ class VideoDetailInfo(APIView):
         
         video_info['video']['cosmetics'] = cosmetics
         return Response(video_info)
+
+class FilteredVideoInfo(APIView):
+    # permission_classes = [IsAdminUser]
+
+    def get(self, request, format=None):
+        # page_num = request.data['page_num']
+        # youtuber_id = int(request.data['youtuber_id'])
+        page_num = int(request.query_params['page_num'])
+        youtuber_id = int(request.query_params['youtuber_id'])
+        queryset = Video.objects.filter(youtuber__id=youtuber_id).order_by('id')[10*(page_num-1):10*page_num]
+        serializer = VideoSerializer(queryset, many=True)
+
+        videos_info = {}
+        videos_info['video'] = serializer.data
+        for i in range(len(videos_info['video'])):
+            raw = videos_info['video'][i]['cosmetics']
+            raw = raw.replace("'", "\"")
+            cosmetic_ids = json.loads(raw)
+            cosmetics = []
+            for key in cosmetic_ids.keys():
+                cosmetic_info = {}
+                cosmetic = Cosmetic.objects.get(id=cosmetic_ids[key])
+                cosmetic_info['id'] = cosmetic_ids[key]
+                cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
+                cosmetic_info['productName'] = cosmetic.product.product_name
+                cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
+                cosmetics.append(cosmetic_info)
+        
+            videos_info['video'][i]['cosmetics'] = cosmetics
+        return Response(videos_info)

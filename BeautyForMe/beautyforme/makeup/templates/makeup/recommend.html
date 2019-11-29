@@ -361,7 +361,8 @@
                             <form method="POST" action="{% url 'makeup:recommend_result' %}">
                                 {% csrf_token %}
                                 <textarea name='selected_cosmetics' style="display:none;">[[basketCosmetics]]</textarea>
-                                <input class=" ml-1 cosmetic-control-btn btn btn-outline-primary" type="submit" value="결과보기">
+                                <input class=" ml-1 cosmetic-control-btn btn btn-outline-primary" type="submit"
+                                    value="결과보기">
                             </form>
                         </div>
                     </div>
@@ -703,7 +704,8 @@
                                 if (this.searchPages.length == 10)
                                     break;
                             }
-                            this.searchPages[0].class = "active";
+                            if (this.searchPages[0] != "")
+                                this.searchPages[0].class = "active";
                             this.searchResultLength = res.data.cosmetic_size;
 
                             this.displayCosmetics = [];
@@ -712,7 +714,6 @@
                                 this.displayCosmetics.push(this.parsingCosmetics(data[i]));
 
                             }
-                            return cosmetic;
                         })
                         .catch(function (err) {
                             console.log("GET FAIL", err);

@@ -169,6 +169,11 @@
     .thumbnail img {
         clip-path: polygon(0 12.5%, 100% 12.5%, 100% 87.5%, 0% 87.5%);
     }
+
+    .right-col {
+        border-left: 0.5px solid lightgray;
+        margin-bottom: 2px;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -222,7 +227,7 @@
                             자세히
                         </div>
                     </div>
-                    <div class="col-5 col-content d-flex flex-column justify-content-center pl-4">
+                    <div class="col-5 col-content d-flex flex-column justify-content-center pl-4 right-col">
                         <div v-for="cosmetic in video.cosmetics" class="row content-cosmetic">
                             <span class="content-brand mr-1">[[ cosmetic.brandName ]]</span> [[ cosmetic.productName ]]
                             [[ cosmetic.typeName ]]

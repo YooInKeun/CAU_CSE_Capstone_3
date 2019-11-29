@@ -135,7 +135,7 @@
         position: absolute;
         right: 5px;
         bottom: 5px;
-        width: 70px;
+        width: 50px;
         height: 24px;
         font-size: 11px;
         padding: 3px;
@@ -219,20 +219,21 @@
                     <div class="row black-line"></div>
                 </div>
             </div>
-            <div v-for="(cosmetic, index) in cosmetics" :key="cosmetic.id"
-                class="container p-0 mt-1 mb-1 cosmetic-container cosmetic-row">
-                <div class="row m-0" @click="selectCosmetic($event, index, cosmetic.id)">
+            {% for cosmetic in context.cosmetics %}
+            <div class="container p-0 mt-1 mb-1 cosmetic-container cosmetic-row">
+                <div class="row m-0" @click="selectCosmetic($event, {{ forloop.counter0 }}, {{ cosmetic.id }})">
                     <div class="col-3 col-content d-flex justify-content-center align-items-center">
-                        <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center">
+                        <img src="{{ cosmetic.imageLink }}" alt="" class="user-cosmetic justify-content-center">
                     </div>
                     <div class="col-9 col-content d-flex flex-column justify-content-center">
-                        <div class="row content-brand">[[cosmetic.brandName]]</div>
-                        <div class="row content-cosmetic">[[cosmetic.productName]] [[cosmetic.typeName]]
+                        <div class="row content-brand">{{ cosmetic.brandName }}</div>
+                        <div class="row content-cosmetic">{{ cosmetic.productName }} {{ cosmetic.typeName }}
                         </div>
                     </div>
                 </div>
                 <div class="gray-line"></div>
             </div>
+            {% endfor %}
         </div>
         <div class="col-8 p-0 pl-3 cosmetic-section scrollbar-lady-lips thin square mt-1">
             <div class="container sticky-top row control-bar m-0 p-0">
@@ -257,31 +258,34 @@
                     <div class="row black-line"></div>
                 </div>
             </div>
-            <div v-for="(video, index) in videos" :key="video.id"
-                class="container p-0 mt-1 mb-1 cosmetic-container video-row">
-                <div class="row m-0" @click="selectVideo($event, index, video.id)">
+            {% for video in context.videos %}
+            <div class="container p-0 mt-1 mb-1 cosmetic-container video-row">
+                <div class="row m-0" @click="selectVideo($event, {{ forloop.counter0 }}, {{ video.id }})">
                     <div class="thumbnail col-3 col-content d-flex justify-content-center align-items-center">
-                        <img :src="[[video.thumbnail]]" alt="" class="user-cosmetic justify-content-center">
+                        <img src="{{ video.thumbnail }}" alt="" class="user-cosmetic justify-content-center">
                     </div>
                     <div class="col-4 col-content d-flex flex-column justify-content-center">
-                        <div class="row content-brand">[[video.youtuber]]</div>
-                        <div class="row content-cosmetic">[[video.title]]</div>
-                        <div class="row content-cosmetic">[[video.upload_date]] / Views. [[video.hits]]
+                        <div class="row content-brand">{{video.youtuber}}</div>
+                        <div class="row content-cosmetic">{{video.title}}</div>
+                        <div class="row content-cosmetic">{{video.upload_date}} / Views. {{video.hits}}
                         </div>
                         <div class="ml-3 btn btn-outline-primary cosmetic-control-btn video-detail-btn">
                             자세히
                         </div>
                     </div>
                     <div class="col-5 col-content d-flex flex-column justify-content-center pl-4">
-                        <div v-for="cosmetic in video.cosmetics" class="row content-cosmetic">
-                            <span class="content-brand mr-1">[[ cosmetic.brandName ]]</span> [[ cosmetic.productName ]]
-                            [[ cosmetic.typeName ]]
+                        {% for cosmetic in video.containedCosmetics %}
+                        <div class="row content-cosmetic">
+                            <span class="content-brand mr-1">{{ cosmetic.brandName }}</span> {{ cosmetic.productName }}
+                            {{ cosmetic.typeName }}
                         </div>
+                        {% endfor %}
                     </div>
                 </div>
 
                 <div class="gray-line"></div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>

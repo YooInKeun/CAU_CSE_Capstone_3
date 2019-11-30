@@ -244,12 +244,14 @@ class CosmeticImportanceInfo(APIView):
         try:
             queryset = Cosmetic_Importance.objects.filter(user=request.user)
             cosmetic_importance = json.loads(queryset[0].importance)
+
             for i in range(len(request.data['importance'])):
                 big_category = request.data['importance'][i]['big_category']
                 for j in range(len(request.data['importance'][i]['small_categories'])):
                     small_category = request.data['importance'][i]['small_categories'][j][0]
                     value = request.data['importance'][i]['small_categories'][j][1]
                     cosmetic_importance[big_category][small_category] = value
+                    
             cosmetic_importance_obj = Cosmetic_Importance.objects.get(user=request.user)
             cosmetic_importance_obj.importance = json.dumps(cosmetic_importance)
             cosmetic_importance_obj.save()
@@ -323,6 +325,7 @@ class VideoBookmarkInfo(APIView):
             queryset = Video_Bookmark.objects.filter(video__title="Fuck You")
             video_bookmarks = {}
             video_ids = request.data['video_ids']
+
             for video_id in video_ids:
                 video_bookmark = Video_Bookmark()
                 video_bookmark.user = request.user
@@ -341,6 +344,20 @@ class VideoBookmarkInfo(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(video_bookmarks, status=status.HTTP_201_CREATED)
+
+    def get(self, request, format=None):
+        try:
+            queryset = Video_Bookmark.objects.filter(user__pk=1)
+            serializer = VideoBookmarkSerializer(queryset, many=True)
+            video_bookmarks = {}
+            video_bookmarks['video_bookmarks'] = serializer.data
+
+            for i in range(len(video_bookmarks['video_bookmarks'])):
+                raw = video_bookmarks['video_bookmarks'][i]['video']['cosmetics']
+                video_bookmarks['video_bookmarks'][i]['video']['cosmetics'] = parse_cosmetic_ids(raw)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(video_bookmarks)
 
 
 # 화장품 JsonField -> 화장품 정보 추출 

@@ -234,12 +234,6 @@
         font-size: 14px;
         padding: 5px 10px;
     }
-
-    .all-video-btn {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-    }
 </style>
 {% endblock extra-style %}
 
@@ -252,9 +246,6 @@
     <div class="position-relative">
         <div class="row d-flex align-items-center" style="height:120px;">
             <h4 class="m-0">화장품을 선택하고 영상을 추천받아 보세요!</h4>
-        </div>
-        <div class="all-video-btn">
-            <a href="{% url 'makeup:video' %}"><button class="btn btn-primary btn-sm">전체 뷰티 동영상 보기</button></a>
         </div>
     </div>
     <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
@@ -315,7 +306,13 @@
                     <div class="row black-line"></div>
                 </div>
             </div>
-            <div v-for="(cosmetic, index) in displayCosmetics" :key="cosmetic.id"
+
+            <div v-if="displayCosmetics.length == 0" class="text-center mt-5 mb-5">표시할 화장품이 없습니다.
+                {% if not user.is_authenticated %}
+                <div class="mt-3"><a href="{% url 'accounts:login' %}">로그인 하러 가기</a></div>
+                {% endif %}
+            </div>
+            <div v-else v-for="(cosmetic, index) in displayCosmetics" :key="cosmetic.id"
                 class="container p-0 mt-1 mb-1 cosmetic-container cosmetic-row">
                 <div class="row m-0" @click="displayCosmeticClick($event, index, cosmetic)">
                     <div class="col-2 col-content d-flex justify-content-center align-items-center">
@@ -588,8 +585,11 @@
             addSmallEffect(index) {
                 const smallCategoryRow = this.$el.querySelectorAll(".small-category-tab")[index];
                 const targetTriangle = this.$el.querySelectorAll(".triangle")[index];
-                smallCategoryRow.classList.add("seleted-small-category");
-                targetTriangle.classList.remove("hide");
+
+                if (smallCategoryRow != null && targetTriangle != null) {
+                    smallCategoryRow.classList.add("seleted-small-category");
+                    targetTriangle.classList.remove("hide");
+                }
 
                 this.selectedSmallIndex = index;
             },
@@ -695,6 +695,10 @@
                             const data = res.data.cosmetics;
 
                             this.searchPages = [];
+                            if (res.data.cosmetic_size == 0) {
+                                this.displayCosmetics = [];
+                                return;
+                            }
                             this.pageSize = res.data.cosmetics.length;
                             for (var i = 1; i <= res.data.cosmetic_size / this.pageSize + 1; i++) {
                                 this.searchPages.push({
@@ -712,7 +716,6 @@
 
                             for (var i in data) {
                                 this.displayCosmetics.push(this.parsingCosmetics(data[i]));
-
                             }
                         })
                         .catch(function (err) {

@@ -274,9 +274,11 @@
                         <div class="row content-cosmetic">{{video.title}}</div>
                         <div class="row content-cosmetic">{{video.upload_date}} / Views. {{video.hits}}
                         </div>
-                        <div class="ml-3 btn btn-outline-primary cosmetic-control-btn video-detail-btn">
-                            <a href="{% url 'makeup:video_detail' video.id %}">자세히</a>
-                        </div>
+                        <a href="{% url 'makeup:video_detail' pk=video.id %}">
+                            <div class="ml-3 btn btn-outline-primary cosmetic-control-btn video-detail-btn">
+                                자세히
+                            </div>
+                        </a>
                     </div>
                     <div class="col-5 col-content d-flex flex-column justify-content-center pl-4 right-col">
                         {% for cosmetic in video.containedCosmetics %}
@@ -409,21 +411,37 @@
             },
             addInterested() {
                 console.log(this.selectedCosmetics);
-                for (var i in this.selectedCosmetics) {
-                    var postData = {
-                        cosmetic_id: this.selectedCosmetics[i].cosmeticId,
-                    };
+                var successCount = 0;
+                var failCount = 0;
+                const saveInterested = async () => {
+                    for (var i in this.selectedCosmetics) {
+                        var postData = {
+                            cosmetic_id: this.selectedCosmetics[i].cosmeticId,
+                        };
 
-                    console.log(postData);
+                        console.log(postData);
 
-                    axios.post('/api/user/cosmetic/interested/', postData)
-                        .then((res) => {
-                            console.log("GET SUCCESS", res);
-                        })
-                        .catch(function (err) {
-                            console.log("GET FAIL", err);
-                        });
+                        await axios.post('/api/user/cosmetic/interested/', postData)
+                            .then((res) => {
+                                console.log("GET SUCCESS", res);
+                                successCount += 1;
+                            })
+                            .catch((err) => {
+                                console.log("GET FAIL", err);
+                                failCount += 1;
+                            });
+                    }
                 }
+                saveInterested().then(
+                    () => {
+                        if (successCount > 0) {
+                            alert("관심 화장품으로 등록되었습니다.");
+                        }
+                        else if (successCount == 0 && failCount > 0) {
+                            alert("이미 등록된 화장품입니다.");
+                        }
+                    }
+                )
             },
             selectVideo(event, arrayIndex, videoId) {
                 console.log(videoId);

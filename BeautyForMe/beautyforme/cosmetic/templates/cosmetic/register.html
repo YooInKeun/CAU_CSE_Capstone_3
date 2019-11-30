@@ -61,6 +61,7 @@
     .form-in-box {
         width: 72%;
         border: 0;
+        font-size: 15px;
     }
 
     .register-form {
@@ -108,6 +109,12 @@
 
     .rest-space {
         border-bottom: 1px solid pink;
+    }
+
+    .section-title,
+    .section-value,
+    .registe-btn {
+        font-size: 15px;
     }
 
     .kind-row {
@@ -162,6 +169,7 @@
         width: 94%;
         height: 73vh;
         overflow-y: scroll;
+        overflow-x: hidden;
     }
 
     .register-section {
@@ -242,7 +250,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid" id="app">
+<div class="container" id="app">
     <div class="row main-row">
         <div class="col-8 mt-5 mb-5 pt-1">
             <div class="search-wrapper d-flex justify-content-center align-items-center pb-1">
@@ -287,7 +295,7 @@
                             <img :src="[[cosmetic.imageLink]]" alt="" class="user-cosmetic justify-content-center"
                                 width=100>
                         </div>
-                        <div class="col-5 col-content d-flex flex-column justify-content-center">
+                        <div class="col-4 col-content d-flex flex-column justify-content-center">
                             <div class="row search-result-item">[[cosmetic.brandName]]</div>
                             <div class="row search-result-item">[[cosmetic.productName]] [[cosmetic.typeName]]
                             </div>
@@ -297,7 +305,7 @@
                                 class="row justify-content-center content-category search-result-item text-center">
                             </div>
                         </div>
-                        <div class="col-2 col-content d-flex flex-column justify-content-center align-items-center">
+                        <div class="col-3 col-content d-flex flex-column justify-content-center align-items-center">
                             <div v-for="tag in cosmetic.tagNames">
                                 <button class="btn btn-outline-primary tag-btn">[[tag]]</button>
                             </div>
@@ -416,7 +424,7 @@
                         </div>
                     </div>
                     <div class="row justify-content-end register-form mt-3 pb-3">
-                        <button @click="submitCosmetic" class="btn btn-primary p-2 pr-4 pl-4">등록하기</button>
+                        <button @click="submitCosmetic" class="btn btn-primary p-2 pr-4 pl-4 registe-btn">등록하기</button>
                     </div>
                 </div>
             </div>
@@ -649,7 +657,7 @@
                                 this.useByDate = "";
                                 this.monthValue = "";
                                 this.alarmPeriod = "";
-                                alert("화장품이 등록되었습니다.")
+                                alert("화장품이 등록되었습니다.");
                             })
                             .catch(function (err) {
                                 console.log("GET FAIL", err);
@@ -797,7 +805,7 @@
                             responseCosmetics = res.data.cosmetics;
                             this.searchPages = [];
                             this.pageSize = res.data.cosmetics.length;
-                            for (var i = 1; i <= res.data.cosmetic_size / this.pageSize + 1; i++) {
+                            for (var i = 1; i <= (res.data.cosmetic_size - 1) / this.pageSize + 1; i++) {
                                 this.searchPages.push({
                                     num: i,
                                     class: "",
@@ -844,7 +852,7 @@
 
                         var responseCosmetics = res.data.cosmetics;
                         this.searchPages = [];
-                        for (var i = parseInt((pageNum - 1) / 10) * 10 + 1; i <= parseInt(res.data.cosmetic_size / this.pageSize) + 1; i++) {
+                        for (var i = parseInt((pageNum - 1) / 10) * 10 + 1; i <= parseInt((res.data.cosmetic_size - 1) / this.pageSize) + 1; i++) {
                             this.searchPages.push({
                                 num: i,
                                 class: "",

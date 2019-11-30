@@ -15,9 +15,9 @@ class Profile(models.Model):
     zip_code = models.CharField(max_length=10, blank=True, default="")
     address = models.CharField(max_length=20, blank=True, default="")
     address_detail = models.CharField(max_length=20, blank=True, default="")
-    image = models.ImageField(blank=True)
+    profile_photo = models.ImageField(blank=True)
     following = JSONField(default="")
-
+    
     def __str__(self):
         return '[' + str(self.user) + '] ' + 'Profile'
 

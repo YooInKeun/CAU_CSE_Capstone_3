@@ -1,0 +1,22 @@
+{% load static %}
+
+{% for comment in comments.all %}
+    <div class="comment {% if request.user == comment.author %} col-9 {% else %} col-12 {% endif %} text-left">
+        <p>
+            <b>{{ comment.author.username }}</b> &nbsp {{ comment.content }}
+        </p>
+    </div>
+    {% if request.user == comment.author %}
+        <div class="comment-button-container col-3 text-right">
+            <form action="{% url 'comment:comment-delete' pk=comment.pk %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button class="btn comment-delete" onclick="return confirm('정말로 삭제합니까?');">삭제</button>
+            </form>
+            <form action="{% url 'comment:comment-update' pk=comment.pk %}" method="post">
+                {% csrf_token %}
+                <button class="btn comment-edit">수정</button>
+            </form>
+        </div>
+    {% endif %}
+{% endfor %}

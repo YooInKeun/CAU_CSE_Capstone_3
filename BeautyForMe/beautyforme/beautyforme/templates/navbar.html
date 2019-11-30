@@ -13,8 +13,18 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'makeup:video' %}">메이크업 영상</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'sns:index' %}">SNS</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">SNS</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'sns:index' %}">SNS 홈</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'sns:create' %}">게시글 작성</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'sns:favorite_list' %}">스크랩</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'sns:like_list' %}">랭킹</a>
+            <div class="dropdown-divider"></div>
+          </div>
         </li>
       </ul>
       <ul class="nav navbar-nav">

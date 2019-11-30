@@ -43,20 +43,11 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
+
         <a class="Ranking" >Day Ranking</a>
       </div>
       <div class="navbar-collapse collapse">
-        <ul class="select_box">
-          <li class="active"><a href="/Day/">Day</a></li>
-          <li><a href="/Week/">Week</a></li>
-          <li><a href="/Month/">Month</a></li>
- 
-        </ul>
+
       </div><!--/.nav-collapse -->
     </div>
   </nav>
@@ -85,33 +76,38 @@
         <table class="table table-striped" id="star_table">
           <tr>
             <th>Rank</th>
-            <th></th>
+            <th>Profile</th>
             <th>Name</th>
             <th>Number</th>
             <th>Go</th>
           </tr>
-          <tr>
-            <th>1</th>
-            <th><img class='small' src="{% static 'img/벚꽃.jpg' %}"></th>
-            <th>JeongBin</th>
-            <th>13</th>
-            <th><a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a></th>
-          </tr>
-          <tr>
-            <th>2</th>
-            <th><img class='small' src="{% static 'img/아이린.png' %}"></th>
-            <th>inkeun</th>
-            <th>10</th>
-            <th><a  href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a></th>
-          </tr>
-          <tr>
-            <th>3</th>
-            <th><img class='small' src="{% static 'img/슬기.png' %}"></th>
-            <th>bumsu</th>
-            <th>8</th>
-            <th><a  href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a></th>
-          </tr>
+          
+            {% for object in object_list %}
+              <tr>
+                <th>{{forloop.counter}}</th>
+                <th>
+                  {% if object.author.profile.profile_photo %}
+                    <img class="card-img-profile" src="{{object.author.profile.profile_photo.url}}" width="70px" height="70px"> <br>
+                  {% else %}
+                    <img src="{% static 'img/123123123123.png' %}" class="noProfile" width="70px" height="70px"> <br>
+                  {% endif %}
+                </th>
+                <th>{{object.author}}</th>
+                <th>{{object.like.all.count}}</th>
+                <th>
+                  <form action="{% url 'sns:ranking'  %}" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{object.author}}">
+                      <button class="btn btn-primary">{{ object.author }} 회원님의 스토리 이동</button>
+                  </form>
+                </th>
+              </tr>
+
+            {% endfor %}
+           
         </table>
+
+        
       </div>
     </div>
 

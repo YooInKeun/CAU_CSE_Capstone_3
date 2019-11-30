@@ -14,6 +14,14 @@ class Profile(models.Model):
     zip_code = models.CharField(max_length=10, blank=True, default="")
     address = models.CharField(max_length=20, blank=True, default="")
     address_detail = models.CharField(max_length=10, blank=True, default="")
+    profile_photo = models.ImageField(blank=True)
+
+
+class Friend(models.Model):
+    me = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='me')
+    friend = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='friend')
 
 
 @receiver(post_save, sender=User)

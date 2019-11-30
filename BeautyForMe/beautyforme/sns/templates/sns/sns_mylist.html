@@ -19,6 +19,7 @@
                 {% if object.author == request.user%}
                 <figure class="col-md-4">
                     <div style="width:18rem;">
+                        {{object.author}}
                         <img src = {{object.image.url}} class="card-img-top" alt="...">
                     </div>
                 </figure>
@@ -32,11 +33,7 @@
 <!-- 사진 -->
 {% load staticfiles %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/sns.css' %}" />
-<div class="photo-container row">
-        <div class="photo-carousel">
-            <img src = "{{object.image.url}}" /> 
-        </div>
-</div>
+
 
 {% endblock content %}
 {% block footer %}

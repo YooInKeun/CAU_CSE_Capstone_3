@@ -11,20 +11,19 @@
     width : 650px;
     float : right;
 }
-
-
-.img{
-    width: 30px;
-    height: 30px;
+.dummy{
+    color : #ffffff;
+    font-size : 50px;
 }
 .wrapper{
     width : 350px;
     position: fixed;
     
  }
-
-
-
+ .card-img-profile{
+     width: 350px;
+     height: 420px;
+ }
 </style> 
 {% endblock extra-style %}
 
@@ -42,21 +41,34 @@
     </a>
 </div> -->
 
-<div class='container'>
+<div id='app' class='sumfeed' >
     <div class="row">
         <div class="col"></div>
         <div class="col-5">
             {% for object in object_list %}
-
+            <input type="hidden" class="object-card" value="{{object.id}}"/>
             <div class="card">
-                <div class="card-header">
-                    <b>{{ object.author }}</b>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <div>
+                    <b> {{ object.author }}</b>
+                    <img src= '{% static "img/톱니.png" %}' @click="changeFeed" class="delete-update" width="40px" height="40px" alt="..."  >
+                  </div>
+                 
+                    <button type="button" style="visibility:hidden;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
+                    <div class="navbar-collapse collapse">
+                        <ul class="select_box">
+                            <li><a href="{% url 'sns:update' object.id %}" class="card-link">수정하기</a></li>
+                            <li><a href="{% url 'sns:delete' object.id %}" class="card-link">삭제하기</a></li>
+                        </ul>
+                    </div><!--/.nav-collapse -->
                 </div>
+
+                
                 <img src=" {{ object.image.url }}" class="card-img-top" alt="...">
                 <li>
                 <div class="card-body">
                     
-                    <div class="uploader col-3"> <b>{{ object.author }}</b></div>
+                    <div class="uploader col-3"> <b> {{ object.id }}  {{ object.author }}</b></div>
                     <div class="content col-9">{{ object.text }}</div>
                     
                 </div>
@@ -64,12 +76,15 @@
                 <ul class="list-group list-group-flush">
 
                    <li class="list-group-item">
-                        <a href="{% url 'sns:like' object.id %}" class="float-left btn-like {%if user in object.like.all %} active {%endif%}">
-                            {%if user in object.like.all %}
-                            <img src='{% static "img/red_heart.png" %}' width="50px">
-                            {%else%}
-                            <img src='{% static "img/GG.png" %}' width="50px">
-                            {%endif%}
+                        <!-- href="{% url 'sns:like' object.id %}" -->
+                        <a class="float-left btn-like {%if user in object.like.all %} active {%endif%}" v-on:click="likeChange({{ object.id }})">
+                            <!-- <input id="user_like" type="text" value="{{ object.like.all }}" style="visibility:hidden;" disabled />
+                            <input id="user" type="text" value="{{ user }}" style="visibility:hidden;style="visibility:hidden;" disabled /> -->
+                            {% if user in object.like.all %}
+                            <img src='{% static "img/red_heart.png" %}' width="50px" :key="isHeart">
+                            {% else %}
+                            <img src='{% static "img/GG.png" %}' width="50px" :key="isHeart">
+                            {% endif %}
                         </a>
                         {% if object.like.all.count %}
                         <span class = "float-left">
@@ -77,20 +92,20 @@
                             {{object.like.all.count}} 명이 좋아합니다
                         </span>
                         {% endif %}
-                        <!-- <a href="{% url 'sns:favorite' object.id %}" class="float-right btn-favorite {%if user in object.favorite.all %}active{%endif%}">저장하기!</a> -->
+                        <a href="{% url 'sns:favorite' object.id %}" class="float-right btn-favorite {%if user in object.favorite.all %}active{%endif%}"></a>
                     </li>
                     <li class="list-group-item">생성일 : {{ object.created }}</li>
     
                 </ul>
-                <div class="card-body row"> 
+                <div v-if="showComments" class="card-body row">
                     {% for comment in object.comment.all %}
-                        <div class="comment {% if request.user == comment.author %} col-9 {% else %} col-12 {% endif %} text-left">
-                            <p>
-                                <b>{{ comment.author.username }}</b> &nbsp {{ comment.content }}
+                        <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}" class="comment {% if request.user == comment.author %} col-9 {% else %} col-12 {% endif %} text-left">
+                            <p> 
+                                <b> {{ comment.author.username }}</b> &nbsp {{ comment.content }}
                             </p>
                         </div>
-                        {% if request.user == comment.author %}
-                            <div class="comment-button-container col-3 text-right">
+                        {% if request.user == comment.author or  request.user == object.author %}
+                            <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}"class="comment-button-container col-3 text-right">
                                 <div class="row">
                                 <form action="{% url 'comment:comment-delete' pk=comment.pk %}" method="post">
                                     {% csrf_token %}
@@ -105,46 +120,73 @@
                             </div>
                         {% endif %}
                     {% endfor %}
+        
+                    <span>
+                    <button v-if="{{object.comment.all.count}} > commentCount[{{object.id}}] "@click="addCount({{object.id}})" class="btn btn-outline-primary"> 더보기 </button>
+                    </span>
+                    <br>
+                    
                     <div class="comment-creator-div row" >
                         <div class="comment-form col-12">
-                            <form action="{% url 'comment:comment-create' object.id %}" method="post">{% csrf_token %}
+                            <form action="" method="post">
+                              {% csrf_token %}
                                 {{ comment_form | crispy }}
-                                <input type="submit" class="btn btn-primary"/>
+    
+                                <input type="submit" value="댓글작성" class="btn btn-primary" v-on:click="commentChange($event, {{ object.id}})"/>
                             </form>
                         </div>
                     </div>      
-                   
-
                 </div>
-
-                
-                <li class="list-group-item">
-                   
-                </li>
-                
             </div>
-            <div class = "dummy"> 
-               
-            </div>
-
             {% endfor %}
-
         </div>
-        <div class="wrapper">
-            <div class="left" id="sidebar">
+        <div v-if="isprofile" class="wrapper">
+                <div class="left" id="sidebar">
+                    {% load static %}
+                    <div class="card_profile">
+                        <h5 class="card-title">{{user.username}}님의 프로필</h5>
+                        <button type="button" class="btn btn-success" v-on:click="isprofile=false">프로필 숨기기</button>
+                        {% if user.profile.profile_photo %}
+        
+                        <img @click="changeImage" class="card-img-profile" src="{{user.profile.profile_photo.url}}" width="200"> <br>
+                        {% else %}
+                        <img @click="changeImage" src="{% static 'img/123123123123.png' %}" class="noProfile" width="350px" height="350px"> <br>
+                        
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <p class="card-text">회원님의 스토리를 확인해보세요!</p>
+                            <img @click="changeImage" src="{% static 'img/312312312312312.png' %}" class="noProfile" width="50px" height="50px">
+                            <input type="submit" value="사진저장" class="btn btn-primary">
+                            <a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a>
+                            <form action="{% url 'sns:imageindex' %}" method="post"enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="file"style="visibility:hidden;" class="image-change-btn" name="file"/>
+                                
+                            </form>
+                                <br>
+                            
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div v-else>
+                <button type="button" class="btn btn-success" v-on:click="isprofile=true">프로필 보이기</button>
+        </div>
+
+        <!-- <div class="rightwrapper">
+            <div class="right" id="sidebar">
                 {% load static %}
-                <div class="card_profile" style="">
-                    <h5 class="card-title">admin</h5>
-                    <img src="{% static 'img/벚꽃.jpg' %}" class="card-img-top">
-                    <div class="card-body">
-                        <p class="card-text">회원님의 스토리를 확인해보세요!</p>
+                <div class="right_profile" style="">
+                    <h5 class="rightcard-title">admin</h5>
+                    <img src="{% static 'img/벚꽃.jpg' %}" class="rightcard-img-top">
+                    <div class="rightcard-body">
+                        <p class="rightcard-text">회원님의 스토리를 확인해보세요!</p>
                         <a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a>
                     </div>
                 </div>
             </div>
-        </div>
-
-        
+        </div> -->
 
     </div>
 </div>
@@ -182,7 +224,6 @@
                     <a href="{% url 'sns:delete' object.id %}" class="card-link">삭제</a>
                 </div>
             </div>
-
         </div>
         {% endfor %}
     </div>
@@ -199,20 +240,78 @@
 <script>
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
     var vm = new Vue({
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-            isHeart : false
+            userObjectsAll: null,
+            user: null,
+            isHeart : null,
+            isprofile : true,
+            commentCount : [],
+            showComments: true,
         },
         methods: {
-
+            likeChange(object_id) {
+                var postData = object_id
+                axios.post('/sns/like/' + postData + '/')
+                .then(function (response) {
+                    console.log(response);
+                    location.reload()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            },
+            commentChange(event, object_id) {
+                var postData = object_id
+                axios.post('/comment/create/'+ postData + '/')
+                alert(postData)
+                .then(function (response) {
+                    console.log(response);
+                    alert("dsads")
+                    location.reload()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            },
+            changeImage() {
+                const changeBtn = this.$el.querySelector(".image-change-btn");
+                changeBtn.click();
+            },
+            changeFeed(){
+                const changeBtn = this.$el.querySelector(".navbar-toggle");
+                changeBtn.click();
+            },
+            addCount(id) {
+                this.commentCount[id] += 3;
+                console.log(this.commentCount[id], id);
+                this.showComments = false;
+            }
         },
+        mounted() {
+            const objectAll = document.querySelectorAll(".object-card");
+            for(var i in objectAll) {
+                if(this.commentCount[objectAll[i].value] == undefined) {
+                    for(var j = this.commentCount.length; j <= objectAll[i].value; j++) {
+                        this.commentCount.push(3);
+                    }
+                }
+            }
+        },
+        updated() {
+            if(this.showComments == false)
+            this.showComments = true;
+        }
     })
+
 </script>
 
 {% endblock extra-script %}
 {% block javascript %}
-    <script type="text/javascript" src="{% static 'sns/js/feed_list_js.js' %}"></script>
+<script type="text/javascript" src="{% static 'sns/js/feed_list_js.js' %}"></script>
 {% endblock %}
+
+
+            

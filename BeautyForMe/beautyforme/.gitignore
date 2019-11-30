@@ -25,3 +25,4 @@ beautyforme/settings.py
 # virtual environments
 myvenv
 venv
+../myvenv

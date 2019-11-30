@@ -1,15 +1,17 @@
 from urllib.parse import urlparse
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse
 from django.views.generic.base import View
 from django.shortcuts import render, redirect
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormMixin
 from django.views.generic.detail import DetailView
 from .models import Sns
+from django.template import loader
 
 from django.http import HttpResponseRedirect
 from comment.forms import CommentForm
 from django.contrib import messages
+from django.db.models import Count
 
 
 class SnsList(FormMixin, ListView):
@@ -24,27 +26,11 @@ class SnsList(FormMixin, ListView):
         context['comment_form'] = self.get_form()
         return context
 
-# class CommentCreateView(CreateView):
-#     model = Comment
-#     fields = ['content']
-#     # TODO: 템플릿 작성
-#     template_name = 'sns/zzz.html'
-#     print("dddsd")
 
-#     def form_valid(self, form):
-#         # 잠깐 db 저장을 멈춘다
-#         print(form)
-#         comment = form.save(commit=False)
-#         print("dd")
-#         # 현재 request를 요청한 user를 댓글의 작성자로 넣어준다
-#         comment.author = self.request.user
+def upload_file(request):
+    print("----------------------")
 
-#         # 현재 댓글이 달릴 sns 객체의 pk는 의 <int:feed_pk>로 넘어온다
-#         comment.sns = Sns.objects.get(
-#             pk=self.kwargs.get('feed_pk'))
-#         comment.save()
-#         # 댓글을 생성한 이후 댓글을 달고 있었던 request url로 리다이렉트한다.
-#         return HttpResponseRedirect(self.request.POST.get('next', '/'))
+    return redirect('/sns')
 
 
 class SnsCreate(CreateView):
@@ -59,7 +45,7 @@ class SnsCreate(CreateView):
             # 올바르다면
             # form : 모델폼
             form.instance.save()
-            return redirect('/')
+            return redirect('/sns')
         else:
             # 올바르지 않다면
             return self.render_to_response({'form': form})
@@ -100,7 +86,8 @@ class SnsDetail(DetailView):
 
 
 class SnsLike(View):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        print(kwargs)
         if not request.user.is_authenticated:  # 로그인확인
             return HttpResponseForbidden()
         else:
@@ -137,7 +124,7 @@ class SnsFavorite(View):
 
 class SnsLikeList(ListView):
     model = Sns
-    template_name = 'sns/sns_list.html'
+    template_name = 'sns/sns_ranking.html'
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:  # 로그인확인
@@ -146,9 +133,13 @@ class SnsLikeList(ListView):
         return super(SnsLikeList, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        # 내가 좋아요한 글을 보여주
-        user = self.request.user
-        queryset = user.like_post.all()
+        # user = self.request.user
+        # queryset = user.like_post.all().order_by("-like")[0:5]
+        queryset = Sns.objects.annotate(
+            q_count=Count('like')).order_by('-q_count')[0:5]
+        # print(queryset[0].like(user=self.request.user))
+        print(queryset)
+
         return queryset
 
 
@@ -163,9 +154,9 @@ class SnsFavoriteList(ListView):
         return super(SnsFavoriteList, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        # 내가 좋아요한 글을 보여주기
+        # 내가 좋아요한 글을 보여주
         user = self.request.user
-        queryset = user.favorite_post.all()
+        queryset = user.like_post.all()
         return queryset
 
 
@@ -177,4 +168,15 @@ class SnsMyList(ListView):
         if not request.user.is_authenticated:  # 로그인확인
             messages.warning(request, '로그인을 먼저하세요')
             return HttpResponseRedirect('/')
+
         return super(SnsMyList, self).dispatch(request, *args, **kwargs)
+
+
+def ranking(request):
+    snss = Sns.objects.all()
+    template = loader.get_template('sns/sns_rangkingmylist.html')
+    context = {
+        'object_list': snss,
+        'name': request.POST['next'],
+    }
+    return HttpResponse(template.render(context, request))

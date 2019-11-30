@@ -36,7 +36,7 @@ class CommentCreateAjaxView(LoginRequiredMixin, CreateView):
             .order_by('created')
         }
 
-        return redirect('/')
+        return redirect('/sns')
 
 
 class CommentUpdateView(UpdateView):

@@ -649,7 +649,7 @@
                                 this.useByDate = "";
                                 this.monthValue = "";
                                 this.alarmPeriod = "";
-                                alert("화장품이 등록되었습니다.")
+                                alert("화장품이 등록되었습니다.");
                             })
                             .catch(function (err) {
                                 console.log("GET FAIL", err);
@@ -797,7 +797,7 @@
                             responseCosmetics = res.data.cosmetics;
                             this.searchPages = [];
                             this.pageSize = res.data.cosmetics.length;
-                            for (var i = 1; i <= res.data.cosmetic_size / this.pageSize + 1; i++) {
+                            for (var i = 1; i <= (res.data.cosmetic_size - 1) / this.pageSize + 1; i++) {
                                 this.searchPages.push({
                                     num: i,
                                     class: "",
@@ -844,7 +844,7 @@
 
                         var responseCosmetics = res.data.cosmetics;
                         this.searchPages = [];
-                        for (var i = parseInt((pageNum - 1) / 10) * 10 + 1; i <= parseInt(res.data.cosmetic_size / this.pageSize) + 1; i++) {
+                        for (var i = parseInt((pageNum - 1) / 10) * 10 + 1; i <= parseInt((res.data.cosmetic_size - 1) / this.pageSize) + 1; i++) {
                             this.searchPages.push({
                                 num: i,
                                 class: "",

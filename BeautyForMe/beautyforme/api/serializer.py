@@ -97,3 +97,10 @@ class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
         fields = '__all__'
+
+class VideoBookmarkSerializer(serializers.ModelSerializer):
+    video = VideoSerializer()
+    
+    class Meta:
+        model = Video_Bookmark
+        fields = '__all__'

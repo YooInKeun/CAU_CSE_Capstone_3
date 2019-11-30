@@ -369,3 +369,21 @@ class FilteredVideoInfo(APIView):
         
             videos_info['video'][i]['cosmetics'] = cosmetics
         return Response(videos_info)
+
+class VideoBookmarkInfo(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        queryset = Video_Bookmark.objects.filter(video__title="Fuck You")
+        video_ids = request.data['video_ids']
+        for video_id in video_ids:
+            video_bookmark = Video_Bookmark()
+            video_bookmark.user = request.user
+            # video_bookmark.user = User.objects.get(pk=1)
+            video_bookmark.video = Video.objects.get(pk=video_id)
+            video_bookmark.save()
+            video_bookmark = Video_Bookmark.objects.filter(pk=video_bookmark.id)
+            queryset |= video_bookmark
+
+        serializer = VideoBookmarkSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

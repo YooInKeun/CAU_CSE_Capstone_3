@@ -24,6 +24,8 @@ urlpatterns = [
     url(r'^video/detail/(?P<pk>[\w:|-]+)/$', views.VideoDetailInfo.as_view()),
     url(r'^video/filter/$', views.FilteredVideoInfo.as_view()),
     url(r'^video/filter/(?P<pk>[\w:|-]+)/$', views.FilteredVideoInfo.as_view()),
+    url(r'^video/bookmark/$', views.VideoBookmarkInfo.as_view()),
+    url(r'^video/bookmark/(?P<pk>[\w:|-]+)/$', views.VideoBookmarkInfo.as_view()),
     url(r'^video/$', views.AllVideoInfo.as_view()),
     url(r'^video/(?P<pk>[\w:|-]+)/$', views.AllVideoInfo.as_view()),
 ]

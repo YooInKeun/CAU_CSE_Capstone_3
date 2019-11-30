@@ -600,7 +600,7 @@
                 var postData = {
                     params: {
                         page_num: 1,
-                        youtuber_ids: 1
+                        youtuber_ids: [3, 4] + ''
                     }
                 };
                 axios.get('/api/video/filter/', postData)

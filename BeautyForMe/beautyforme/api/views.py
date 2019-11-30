@@ -339,7 +339,8 @@ class FilteredVideoInfo(APIView):
         # page_num = int(request.data['page_num'])
         # youtuber_ids = request.data['youtuber_ids']
         page_num = int(request.query_params['page_num'])
-        youtuber_ids = request.query_params['youtuber_ids']
+        youtuber_ids = request.query_params['youtuber_ids'].split(',')
+        youtuber_ids = map(int, youtuber_ids)
         queryset = Video.objects.filter(youtuber__id__in=youtuber_ids).order_by('id')[10*(page_num-1):10*page_num]
         serializer = VideoSerializer(queryset, many=True)
 

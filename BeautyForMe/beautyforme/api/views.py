@@ -325,15 +325,32 @@ class VideoBookmarkInfo(APIView):
             queryset = Video_Bookmark.objects.filter(video__title="Fuck You")
             video_bookmarks = {}
             video_ids = request.data['video_ids']
-
+            user_video_ids = []
+            filtered_video_ids = []
+            user_video_bookmarks = Video_Bookmark.objects.filter(user=request.user)
+            # user_video_bookmarks = Video_Bookmark.objects.filter(user__pk=1)
+            
             for video_id in video_ids:
-                video_bookmark = Video_Bookmark()
-                video_bookmark.user = request.user
-                # video_bookmark.user = User.objects.get(pk=1)
-                video_bookmark.video = Video.objects.get(pk=video_id)
-                video_bookmark.save()
-                video_bookmark = Video_Bookmark.objects.filter(pk=video_bookmark.id)
-                queryset |= video_bookmark
+                for user_video_bookmark in user_video_bookmarks:
+                    if video_id == user_video_bookmark.video.id:
+                        user_video_ids.append(video_id)
+            
+            for video_id in video_ids:
+                if video_id not in user_video_ids:
+                    filtered_video_ids.append(video_id)
+
+            if not filtered_video_ids:
+                video_bookmarks['is_video_bookmarks_created'] = False
+            else:
+                video_bookmarks['is_video_bookmarks_created'] = True
+                for video_id in filtered_video_ids:
+                    video_bookmark = Video_Bookmark()
+                    video_bookmark.user = request.user
+                    # video_bookmark.user = User.objects.get(pk=1)
+                    video_bookmark.video = Video.objects.get(pk=video_id)
+                    video_bookmark.save()
+                    video_bookmark = Video_Bookmark.objects.filter(pk=video_bookmark.id)
+                    queryset |= video_bookmark
             
             serializer = VideoBookmarkSerializer(queryset, many=True)
             video_bookmarks['video_bookmarks'] = serializer.data

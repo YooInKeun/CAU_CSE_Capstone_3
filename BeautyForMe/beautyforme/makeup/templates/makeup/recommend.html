@@ -1019,21 +1019,30 @@
 
                     this.smallCategories = [];
                     for (var i in data) {
-                        const cosmetic = cosmeticInsert(data[i]);
-                        this.myCosmetics.push(cosmetic);
-                        this.displayCosmetics.push(cosmetic);
+                        var pass = true;
+                        for (var j in this.myCosmetics) {
+                            console.log(data[i].cosmetic.id, this.myCosmetics[j].id);
+                            if (data[i].cosmetic.id == this.myCosmetics[j].id) {
+                                pass = false;
+                            }
+                        }
+                        if (pass == true) {
+                            const cosmetic = cosmeticInsert(data[i]);
+                            this.myCosmetics.push(cosmetic);
+                            this.displayCosmetics.push(cosmetic);
 
-                        const category = {
-                            id: cosmetic.smallCategoryId,
-                            name: cosmetic.smallCategory
+                            const category = {
+                                id: cosmetic.smallCategoryId,
+                                name: cosmetic.smallCategory
+                            }
+                            var isContain = false;
+                            for (var i in this.smallCategories) {
+                                if (this.smallCategories[i].id == category.id)
+                                    isContain = true;
+                            }
+                            if (isContain == false)
+                                this.smallCategories.push(category);
                         }
-                        var isContain = false;
-                        for (var i in this.smallCategories) {
-                            if (this.smallCategories[i].id == category.id)
-                                isContain = true;
-                        }
-                        if (isContain == false)
-                            this.smallCategories.push(category);
                     }
                 })
                 .catch(function (err) {

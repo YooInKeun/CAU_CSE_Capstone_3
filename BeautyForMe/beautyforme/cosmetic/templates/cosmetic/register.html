@@ -444,7 +444,8 @@
                                 class="user-cosmetic-img">
                             <div class="search-result-wrapper">
                                 <div class="search-result-info d-flex flex-column justify-content-center mb-1">
-                                    <div class="user-cosmetic-item">[[ cosmetic.brandName ]] [[
+                                    <div class="user-cosmetic-item"><span class="text-primary">[[ cosmetic.brandName
+                                            ]]</span> [[
                                         cosmetic.productName ]] [[ cosmetic.typeName ]]</div>
                                     <div>
                                         <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
@@ -454,7 +455,7 @@
                                 </div>
                             </div>
                         </div>
-                        <hr />
+                        <hr class="mt-1 mb-1" />
                     </div>
                 </div>
                 <div v-else class="w-100 p-1">
@@ -464,7 +465,8 @@
                                 class="user-cosmetic-img">
                             <div class="search-result-wrapper">
                                 <div class="search-result-info d-flex flex-column justify-content-center mb-1">
-                                    <div class="user-cosmetic-item">[[ cosmetic.brandName ]] [[
+                                    <div class="user-cosmetic-item"><span class="text-primary">[[ cosmetic.brandName
+                                            ]]</span> [[
                                         cosmetic.productName ]] [[ cosmetic.typeName ]]</div>
                                     <div>
                                         <span v-for="tag in cosmetic.tagNames" class="justify-content-center">
@@ -474,7 +476,7 @@
                                 </div>
                             </div>
                         </div>
-                        <hr />
+                        <hr class="mt-1 mb-1" />
                     </div>
                 </div>
             </div>
@@ -879,8 +881,17 @@
                     console.log("GET SUCCESS", res);
                     const data = res.data;
 
-                    for (var i in data)
-                        this.myCosmetics.push(cosmeticInsert(data[i]))
+                    for (var i in data) {
+                        var pass = true;
+                        for (var j in this.myCosmetics) {
+                            console.log(data[i].cosmetic.id, this.myCosmetics[j].id);
+                            if (data[i].cosmetic.id == this.myCosmetics[j].id) {
+                                pass = false;
+                            }
+                        }
+                        if (pass == true)
+                            this.myCosmetics.push(cosmeticInsert(data[i]))
+                    }
                 })
                 .catch(function (err) {
                     console.log("GET FAIL", err);

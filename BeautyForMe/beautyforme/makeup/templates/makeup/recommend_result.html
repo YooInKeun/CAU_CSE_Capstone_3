@@ -250,7 +250,8 @@
                             <button @click="selectVideoAll"
                                 class="cosmetic-control-btn btn btn-outline-primary select-video-all-btn">모두
                                 선택</button>
-                            <button @click="" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩하기</button>
+                            <button @click="scrapVideos"
+                                class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩하기</button>
                         </div>
                         <div class="col-6 d-inline-flex justify-content-end">
                         </div>
@@ -352,6 +353,16 @@
             selectedVideos: [],
             isSelectAll: false,
             isSelectVideosAll: false,
+        },
+        computed: {
+            selectedVideoIds() {
+                var ids = [];
+
+                for (var i in this.selectedVideos) {
+                    ids.push(this.selectedVideos[i].videoId)
+                }
+                return ids;
+            }
         },
         methods: {
             btnOn(btnElement) {
@@ -493,6 +504,21 @@
                     this.btnOn(document.querySelector(".select-video-all-btn"));
                     this.isSelectVideoAll = true;
                 }
+            },
+            scrapVideos() {
+                var postData = {
+                    video_ids: this.selectedVideoIds,
+                };
+
+                console.log(postData);
+
+                axios.post('/api/video/bookmark/', postData)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+                    })
+                    .catch((err) => {
+                        console.log("GET FAIL", err);
+                    });
             },
         }
     })

@@ -364,7 +364,8 @@ class VideoBookmarkInfo(APIView):
 
     def get(self, request, format=None):
         try:
-            queryset = Video_Bookmark.objects.filter(user__pk=1)
+            # queryset = Video_Bookmark.objects.filter(user__pk=1)
+            queryset = Video_Bookmark.objects.filter(user=request.user)
             serializer = VideoBookmarkSerializer(queryset, many=True)
             video_bookmarks = {}
             video_bookmarks['video_bookmarks'] = serializer.data

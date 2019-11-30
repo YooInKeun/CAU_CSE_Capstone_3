@@ -336,16 +336,16 @@ class FilteredVideoInfo(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
-        # page_num = int(request.data['page_num'])
-        # youtuber_id = int(request.data['youtuber_id'])
-        page_num = int(request.query_params['page_num'])
-        youtuber_id = int(request.query_params['youtuber_id'])
-        queryset = Video.objects.filter(youtuber__id=youtuber_id).order_by('id')[10*(page_num-1):10*page_num]
+        page_num = int(request.data['page_num'])
+        youtuber_ids = request.data['youtuber_ids']
+        # page_num = int(request.query_params['page_num'])
+        # youtuber_ids = request.query_params['youtuber_ids']
+        queryset = Video.objects.filter(youtuber__id__in=youtuber_ids).order_by('id')[10*(page_num-1):10*page_num]
         serializer = VideoSerializer(queryset, many=True)
 
         videos_info = {}
         videos_info['video'] = serializer.data
-        videos_info['video_size'] = len(Video.objects.filter(youtuber__id=youtuber_id))
+        videos_info['video_size'] = len(Video.objects.filter(youtuber__id__in=youtuber_ids))
         for i in range(len(videos_info['video'])):
             raw = videos_info['video'][i]['cosmetics']
             raw = raw.replace("'", "\"")

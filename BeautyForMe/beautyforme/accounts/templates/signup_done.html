@@ -41,8 +41,8 @@
             </div>
 
             <div class="row d-flex justify-content-center">
-                <button type="submit" class="btn btn-outline-primary w-75"><a href="{% url 'accounts:login'%}">로그인
-                        하기</a></button>
+                <input type="button" class="btn btn-outline-primary w-100 m-1" value="로그인하기"
+                    onclick="location.href='{% url 'accounts:login' %}'">
             </div>
         </div>
     </div>

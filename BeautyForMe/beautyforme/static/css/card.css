@@ -4,11 +4,6 @@
 
 .main-cards .card {
   padding: 0 0;
-  height: 450px;
-}
-
-.main-cards .card .card-image {
-  height: 250px;
 }
 
 .main-cards .card .card-content .card-desc {
@@ -23,4 +18,14 @@
 
 .card:hover { 
   transform: scale(1.03); 
+  font-weight : bold;
+}
+
+.card a:hover {
+  text-decoration: none !important;
+}
+
+.card-title,
+.card-desc {
+  color : black;
 }

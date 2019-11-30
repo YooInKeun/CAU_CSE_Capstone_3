@@ -215,6 +215,11 @@
     .thumbnail img {
         clip-path: polygon(0 12.5%, 100% 12.5%, 100% 87.5%, 0% 87.5%);
     }
+
+    .video-btn {
+        font-size: 13px;
+        margin-top: -5px;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -229,17 +234,22 @@
     <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
     <div class="row">
         <div class="col-4">
-            <div class="row m-0" @click="selectVideo($event, index, video.id)">
+            <div class="row m-0">
                 <div class="thumbnail col-12 col-content d-flex justify-content-center align-items-center">
                     <img :src="[[video.thumbnail]]" alt="" @click="goToYoutube"
                         class="user-cosmetic justify-content-center">
+                </div>
+                <div class="col-12 d-flex justify-content-end">
+                    <button @click="goToYoutube" class="btn btn-outline-primary btn-sm video-btn">영상 보기</button>
                 </div>
                 <div class="col-12 col-content d-flex flex-column justify-content-center">
                     <div class="row youtuber-name">[[video.youtuber]]</div>
                     <div @click="goToYoutube" class="row youtube-title">[[video.title]]</div>
                 </div>
                 <div class="col-6 col-content d-flex flex-column justify-content-end p-0">
-                    <button class="to-youtube-btn btn btn-primary">동영상 스크랩</button>
+                    {% if user.is_authenticated %}
+                    <button @click="scrapVideos" class="to-youtube-btn btn btn-primary">동영상 스크랩</button>
+                    {% endif %}
                 </div>
                 <div class="col-6 col-content d-flex flex-column justify-content-center pr-4">
                     <div class="row youtube-upload-date">[[video.upload_date]]</div>
@@ -253,6 +263,7 @@
                     <div class="row black-line"></div>
 
                     <div class="row gray-line"></div>
+                    {% if user.is_authenticated %}
                     <div class="row mt-1 mb-1 pr-3 pl-3">
                         <div class="col-6 d-inline-flex">
                             <button @click="selectAll"
@@ -263,9 +274,9 @@
                         </div>
                     </div>
                     <div class="row gray-line"></div>
+                    {% endif %}
                     <div class="row ml-0 mr-0 mt-1 mb-1">
-                        <div class="col-2 col-title text-center">
-                        </div>
+                        <div class="col-2 col-title text-center"></div>
                         <div class="col-5 col-title p-0">제품</div>
                         <div class="col-2 col-title p-0 text-center">카테고리</div>
                         <div class="col-3 col-title p-0 text-center">태그</div>
@@ -416,6 +427,27 @@
                         }
                     }
                 )
+            },
+            scrapVideos() {
+                var postData = {
+                    video_ids: [this.video.id],
+                };
+
+                console.log(postData);
+
+                axios.post('/api/video/bookmark/', postData)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+                        if (res.data.is_video_bookmarks_created) {
+                            alert("동영상이 스크랩되었습니다.");
+                        }
+                        else {
+                            alert("이미 스크랩된 동영상입니다.");
+                        }
+                    })
+                    .catch((err) => {
+                        console.log("GET FAIL", err);
+                    });
             },
         },
         created() {

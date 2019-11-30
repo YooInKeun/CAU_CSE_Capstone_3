@@ -23,6 +23,7 @@
     .signup-content {
         background-color: white;
         box-shadow: 0 0 10px 5px pink;
+        transform: scale(0.85);
     }
 </style>
 {% endblock %}
@@ -68,7 +69,8 @@
                 <p>이미 계정이 있으신가요?</p>
             </div>
             <div class="row  d-flex justify-content-center">
-                <input type="button" class="btn btn-outline-primary w-100 m-1" value="로그인하기" onclick="location.href='{% url 'accounts:login' %}'">
+                <input type="button" class="btn btn-outline-primary w-100 m-1" value="로그인하기"
+                    onclick="location.href='{% url 'accounts:login' %}'">
             </div>
             <hr />
             <div class="row  d-flex justify-content-center">

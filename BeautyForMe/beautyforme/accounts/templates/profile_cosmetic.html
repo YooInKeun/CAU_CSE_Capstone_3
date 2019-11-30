@@ -113,7 +113,7 @@
           class="col-2 category-wrapper d-felx justify-content-center mt-1">
           <div v-html="smallCategory.name" class="category-title row text-center"></div>
           <div class="d-flex justify-content-center">
-            <input type="number" min=0 max=10 class="importance-input" :value="smallCategory.value"
+            <input type="number" min="0" max="10" class="importance-input" :value="smallCategory.value"
               v-model="smallCategory.value">
           </div>
         </div>
@@ -206,6 +206,20 @@
           console.log("GET FAIL", err);
         });
     },
+    updated() {
+      if (this.categories != []) {
+        for (var i in this.categories) {
+          for (var j in this.categories[i].smallCategories) {
+            const score = parseInt(this.categories[i].smallCategories[j].value);
+            console.log(score);
+            if (score < 0 || score > 10) {
+              alert("0에서 10까지 수만 입력가능합니다.");
+              this.categories[i].smallCategories[j].value = 5;
+            }
+          }
+        }
+      }
+    }
   });
 </script>
 {% endblock %}

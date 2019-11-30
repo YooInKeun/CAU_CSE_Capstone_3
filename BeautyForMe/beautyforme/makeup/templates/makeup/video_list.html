@@ -225,12 +225,23 @@
 
     .pagination a.active {
         background-color: pink;
+        color: white;
+    }
+
+    .pagination a:hover {
+        cursor: pointer;
     }
 
     .all-video-btn {
         position: absolute;
         bottom: 5px;
         right: 17px;
+    }
+
+    .empty-msg {
+        position: relative;
+        top: 30vh;
+        text-align: center;
     }
 </style>
 {% endblock extra-style %}
@@ -279,7 +290,9 @@
         <h5 class="m-0">뷰티 동영상 목록</h5>
         <div class="all-video-btn">
             <button v-if="showMy" @click="showAllVideos" class="btn btn-primary btn-sm">전체 동영상 보기</button>
+            {% if user.is_authenticated %}
             <button v-else @click="showMyVideos" class="btn btn-primary btn-sm">스크랩 목록 보기</button>
+            {% endif %}
             <a href="{% url 'makeup:recommend' %}"><button class="btn btn-primary btn-sm">동영상 추천 받기</button></a>
         </div>
     </div>
@@ -292,13 +305,19 @@
                     <div class="row gray-line"></div>
                     <div class="row mt-1 mb-1 pr-3 pl-3">
                         <div class="col-6 d-inline-flex">
+                            {% if user.is_authenticated %}
                             <button @click="selectVideoAll"
                                 class="cosmetic-control-btn btn btn-outline-primary select-video-all-btn">모두
                                 선택</button>
+                            {% endif %}
+
                             <button v-if="showMy" @click="deleteScrapVideos"
                                 class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩 취소</button>
+
+                            {% if user.is_authenticated %}
                             <button v-else @click="scrapVideos"
                                 class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩하기</button>
+                            {% endif %}
                         </div>
                         <div class="col-6 d-inline-flex justify-content-end">
                             <button @click="youtuberFilter"
@@ -313,6 +332,9 @@
                     </div>
                     <div class="row black-line"></div>
                 </div>
+            </div>
+            <div v-if="videos.length == 0" class="empty-msg">
+                표시할 동영상이 없습니다.
             </div>
             <div v-for="(video, index) in videos" :key="video.id"
                 class="container-fluid p-0 mt-1 mb-1 cosmetic-container video-row">
@@ -340,10 +362,10 @@
                 <div class="gray-line"></div>
             </div>
             <div v-show="showMy == false" class="pagination">
-                <a href="#" @click="searchOtherPage($event, searchPages[0].num - 1)">&laquo;</a>
-                <a v-for="page in searchPages" @click="searchOtherPage($event, page.num)" :class="page.class"
-                    href="#">[[page.num]]</a>
-                <a href="#" @click="searchOtherPage($event, searchPages[9].num + 1)">&raquo;</a>
+                <a @click="searchOtherPage($event, searchPages[0].num - 1)">&laquo;</a>
+                <a v-for="page in searchPages" @click="searchOtherPage($event, page.num)"
+                    :class="page.class">[[page.num]]</a>
+                <a @click="searchOtherPage($event, searchPages[9].num + 1)">&raquo;</a>
             </div>
         </div>
     </div>
@@ -489,7 +511,7 @@
                         this.selectedVideos.push({
                             arrayIndex: index,
                             videoId: this.videos[index].id,
-                            bookmarkId: this.videos[index].videoId,
+                            bookmarkId: this.videos[index].bookmarkId,
                         })
                     }
                     this.btnOn(document.querySelector(".select-video-all-btn"));
@@ -662,6 +684,10 @@
                 }
             },
             scrapVideos() {
+                if (this.selectedVideos.length == 0) {
+                    return;
+                }
+
                 var postData = {
                     video_ids: this.selectedVideoIds,
                 };
@@ -671,6 +697,12 @@
                 axios.post('/api/video/bookmark/', postData)
                     .then((res) => {
                         console.log("GET SUCCESS", res);
+                        if (res.data.is_video_bookmarks_created) {
+                            alert("동영상이 스크랩되었습니다.");
+                        }
+                        else {
+                            alert("이미 스크랩된 동영상입니다.");
+                        }
                     })
                     .catch((err) => {
                         console.log("GET FAIL", err);
@@ -763,7 +795,8 @@
                 this.btnOff(this.$el.querySelector(".select-video-all-btn"));
             },
             deleteScrapVideos() {
-                console.log(this.selectedVideoBookmarkIds)
+                if (this.selectedVideoBookmarkIds.length == 0)
+                    return;
                 axios.delete('/api/video/bookmark/', {
                     data: {
                         bookmark_ids: this.selectedVideoBookmarkIds
@@ -787,6 +820,8 @@
                             }
                         }
                         this.selectedVideos = [];
+
+                        alert("선택하신 동영상 스크랩이 취소되었습니다.");
                     })
                     .catch(function (err) {
                         console.log("GET FAIL", err);

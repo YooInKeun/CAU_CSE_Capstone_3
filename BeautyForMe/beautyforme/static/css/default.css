@@ -57,7 +57,8 @@ nav {
 }
 
 .navbar{
-    height: 60px;
+    min-height: 60px;
+    z-index: 9999 !important;
 }
 
 .navbar-service{

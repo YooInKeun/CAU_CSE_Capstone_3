@@ -374,16 +374,44 @@ class VideoBookmarkInfo(APIView):
     # permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        queryset = Video_Bookmark.objects.filter(video__title="Fuck You")
-        video_ids = request.data['video_ids']
-        for video_id in video_ids:
-            video_bookmark = Video_Bookmark()
-            video_bookmark.user = request.user
-            # video_bookmark.user = User.objects.get(pk=1)
-            video_bookmark.video = Video.objects.get(pk=video_id)
-            video_bookmark.save()
-            video_bookmark = Video_Bookmark.objects.filter(pk=video_bookmark.id)
-            queryset |= video_bookmark
+        try:
+            queryset = Video_Bookmark.objects.filter(video__title="Fuck You")
+            video_bookmarks = {}
+            video_ids = request.data['video_ids']
+            for video_id in video_ids:
+                video_bookmark = Video_Bookmark()
+                video_bookmark.user = request.user
+                # video_bookmark.user = User.objects.get(pk=1)
+                video_bookmark.video = Video.objects.get(pk=video_id)
+                video_bookmark.save()
+                video_bookmark = Video_Bookmark.objects.filter(pk=video_bookmark.id)
+                queryset |= video_bookmark
+            
+            serializer = VideoBookmarkSerializer(queryset, many=True)
+            video_bookmarks['video_bookmarks'] = serializer.data
 
-        serializer = VideoBookmarkSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            for i in range(len(video_bookmarks['video_bookmarks'])):
+                raw = video_bookmarks['video_bookmarks'][i]['video']['cosmetics']
+                raw = raw.replace("'", "\"")
+    
+                cosmetic_ids = json.loads(raw)
+                cosmetics = []
+                for key in cosmetic_ids.keys():
+                    cosmetic_info = {}
+                    cosmetic = Cosmetic.objects.get(id=cosmetic_ids[key])
+                    cosmetic_info['id'] = cosmetic_ids[key]
+                    cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
+                    cosmetic_info['productName'] = cosmetic.product.product_name
+                    cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
+                    cosmetic_info['bigCategory'] = cosmetic.product.category.big_category.big_category
+                    cosmetic_info['smallCategory'] = cosmetic.product.category.small_category 
+                    cosmetic_info['imageLink'] = cosmetic.image_link
+                    cosmetic_info['rgbValue'] = cosmetic.rgb_value
+                    tag_names = json.loads(serializers.serialize('json', cosmetic.product.tag_names.all()))
+                    cosmetic_info['tagNames'] = tag_names
+                    cosmetics.append(cosmetic_info)
+
+                video_bookmarks['video_bookmarks'][i]['video']['cosmetics'] = cosmetics
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(video_bookmarks, status=status.HTTP_201_CREATED)

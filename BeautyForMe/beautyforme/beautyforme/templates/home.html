@@ -168,18 +168,19 @@
             </div>
             <div class="modal-body">
                 <div class="row m-0 control-bar">
-                    <div class="col-5 col-title p-0">제품</div>
+                    <div class="col-5 col-title text-center">제품</div>
                     <div class="col-3 col-title text-center">카테고리</div>
                     <div class="col-4 col-title text-center">유통기한</div>
                     <div class="row black-line"></div>
                 </div>
                 {% for alarm_cosmetic in alarm_cosmetics %}
                 <div class="row m-0">
-                    <div class="col-5 col-content d-flex flex-column justify-content-center">
-                        <div class="row content-cosmetic">{{alarm_cosmetic.cosmetic.product.product_name}}
+                    <div class="col-5 d-flex flex-column justify-content-center">
+                        <div class="row justify-content-center content-cosmetic">
+                            {{alarm_cosmetic.cosmetic.product.product_name}}
                         </div>
                     </div>
-                    <div class="col-3 col-content d-flex flex-column justify-content-center">
+                    <div class="col-3 d-flex flex-column justify-content-center">
                         <div class="row justify-content-center content-category">
                             {{alarm_cosmetic.cosmetic.product.category.small_category}}
                         </div>

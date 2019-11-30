@@ -18,6 +18,8 @@ urlpatterns = [
     url(r'^cosmetic/bigcategory/(?P<pk>[\w:|-]+)/$', views.BigCategoryInfo.as_view()),
     url(r'^cosmetic/smallcategory/$', views.SmallCategoryInfo.as_view()),
     url(r'^cosmetic/smallcategory/(?P<pk>[\w:|-]+)/$', views.SmallCategoryInfo.as_view()),
+    url(r'^cosmetic/similar/$', views.SimilarCosmeticInfo.as_view()),
+    url(r'^cosmetic/similar/(?P<pk>[\w:|-]+)/$', views.SimilarCosmeticInfo.as_view()),
     url(r'^cosmetic/$', views.CosmeticInfo.as_view()),
     url(r'^cosmetic/(?P<pk>[\w:|-]+)/$', views.CosmeticInfo.as_view()),
     url(r'^video/detail/$', views.VideoDetailInfo.as_view()),

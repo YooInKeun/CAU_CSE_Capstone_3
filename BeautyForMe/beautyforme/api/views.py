@@ -16,6 +16,7 @@ from django.db.models import Q
 import difflib
 import json
 
+
 class UserInfo(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -214,12 +215,14 @@ class UserInterestedCosmeticInfo(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_id)
 
+
 class BigCategoryInfo(APIView):
 
     def get(self, request, format=None):
         queryset = Big_Category.objects.all()
         serializer = BigCategorySerializer(queryset, many=True)
         return Response(serializer.data)
+
 
 class SmallCategoryInfo(APIView):
 
@@ -229,6 +232,7 @@ class SmallCategoryInfo(APIView):
         queryset = Small_Category.objects.filter(big_category__pk=big_category_id)
         serializer = SmallCategorySerializer(queryset, many=True)
         return Response(serializer.data)
+
 
 class CosmeticImportanceInfo(APIView):
     permission_classes = [IsAuthenticated]
@@ -266,6 +270,7 @@ class CosmeticImportanceInfo(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(cosmetic_importance)
 
+
 class AllVideoInfo(APIView):
 
     def get(self, request, format=None):
@@ -287,6 +292,7 @@ class AllVideoInfo(APIView):
         videos_info['youtuber_list'] = serializer.data
         return Response(videos_info)
 
+
 class VideoDetailInfo(APIView):
 
     def get(self, request, pk, format=None):
@@ -298,6 +304,7 @@ class VideoDetailInfo(APIView):
         raw = video_info['video']['cosmetics']        
         video_info['video']['cosmetics'] = parse_cosmetic_ids(raw)
         return Response(video_info)
+
 
 class FilteredVideoInfo(APIView):
 
@@ -317,6 +324,7 @@ class FilteredVideoInfo(APIView):
             raw = videos_info['video'][i]['cosmetics']        
             videos_info['video'][i]['cosmetics'] = parse_cosmetic_ids(raw)
         return Response(videos_info)
+
 
 class VideoBookmarkInfo(APIView):
     permission_classes = [IsAuthenticated]
@@ -390,6 +398,17 @@ class VideoBookmarkInfo(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(bookmark_ids)
+
+
+class SimilarCosmeticInfo(APIView):
+
+    def get(self, request, pk, format=None):
+        raw = Cosmetic.objects.get(pk=pk).similar_cosmetics
+        queryset = Cosmetic.objects.filter(type_name="Fuck You")
+        for key in raw.keys():
+            queryset |= Cosmetic.objects.filter(pk=raw[key])
+        serializer = CosmeticSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 # 화장품 JsonField -> 화장품 정보 추출 

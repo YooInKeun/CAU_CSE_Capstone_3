@@ -583,7 +583,7 @@
                 this.cosmeticID = searchResult.id;
                 this.productName = searchResult.productName;
                 this.brandName = searchResult.brandName;
-                this.categoryName = searchResult.smallCategory;
+                this.categoryName = searchResult.smallCategory.replace("<br/>", " ");
                 this.tags = searchResult.tagNames;
                 this.imageLink = searchResult.imageLink;
                 this.typeName = searchResult.typeName;
@@ -667,6 +667,12 @@
                     }
                 }
                 else {
+                    for (var i in this.interestedCosmetics) {
+                        if (this.interestedCosmetics[i].id == this.cosmeticID) {
+                            alert("이미 관심 화장품으로 등록되어 있습니다.");
+                            return;
+                        }
+                    }
                     if (this.cosmeticID) {
                         console.log("폼 진행");
 

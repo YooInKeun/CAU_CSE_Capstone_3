@@ -208,6 +208,7 @@
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>
                     <div class="row gray-line"></div>
+                    {% if user.is_authenticated %}
                     <div class="row mt-1 mb-1 pr-3 pl-3">
                         <div class="col-6 d-inline-flex">
                             <button @click="selectAll"
@@ -218,6 +219,7 @@
                         </div>
                     </div>
                     <div class="row gray-line"></div>
+                    {% endif %}
                     <div class="row ml-0 mr-0 mt-1 mb-1">
                         <div class="col-12 col-title  text-center">제품</div>
                     </div>
@@ -245,6 +247,7 @@
                 <div class="col-12 p-0">
                     <div class="row black-line"></div>
                     <div class="row gray-line"></div>
+                    {% if user.is_authenticated %}
                     <div class="row mt-1 mb-1 pr-3 pl-3">
                         <div class="col-6 d-inline-flex">
                             <button @click="selectVideoAll"
@@ -257,6 +260,7 @@
                         </div>
                     </div>
                     <div class="row gray-line"></div>
+                    {% endif %}
                     <div class="row ml-0 mr-0 mt-1 mb-1">
                         <div class="col-7 col-md-12 col-lg-7 col-title pl-3">추천 영상</div>
                         <div class="col-5 d-md-none col-lg-5 col-title pl-3">포함 제품</div>
@@ -515,6 +519,12 @@
                 axios.post('/api/video/bookmark/', postData)
                     .then((res) => {
                         console.log("GET SUCCESS", res);
+                        if (res.data.is_video_bookmarks_created) {
+                            alert("동영상이 스크랩되었습니다.");
+                        }
+                        else {
+                            alert("이미 스크랩된 동영상입니다.");
+                        }
                     })
                     .catch((err) => {
                         console.log("GET FAIL", err);

@@ -111,6 +111,19 @@
     nav ul a:hover {
         background-color: unset;
     }
+
+    .left-btn,
+    .right-btn {
+        color: rgb(255, 155, 172);
+        font-weight: bold;
+        margin-top: 15px;
+        width: 115px;
+    }
+
+    .left-btn:hover,
+    .right-btn:hover {
+        color: black;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -220,38 +233,56 @@
             <div class="row container main-cards section">
                 <div class="col l4">
                     <div class="card">
-                        <a href="{% url 'cosmetic:registered' %}">
-                            <div class="card-image"><img src="{% static 'img/card1.jpg' %}" alt=" image-2"></div>
-                            <div class="card-content black-text">
-                                <span class="card-title center">화장품 관리하기</span>
-                                <p class="card-desc">당신의 화장대에서 기억에서 잊혀진 화장품을 찾아보세요. 잊고 있던 화장품이 당신을 더욱 아름답게 해줄 거예요!</p>
+                        <div class="card-image"><img src="{% static 'img/card1.jpg' %}" alt=" image-2"></div>
+                        <div class="card-content black-text">
+                            <span class="card-title center">화장품 관리하기</span>
+                            <p class="card-desc">당신의 화장대에서 기억에서 잊혀진 화장품을 찾아보세요. 잊고 있던 화장품이 당신을 더욱 아름답게 해줄 거예요!</p>
+                            <div class="d-flex justify-content-center">
+                                <a href="{% url 'cosmetic:register' %}">
+                                    <div class="btn white btn-outline-primary left-btn">화장품 등록</div>
+                                </a>
+                                <a href="{% url 'cosmetic:registered' %}">
+                                    <div class="btn white btn-outline-primary right-btn ml-3">화장품 관리</div>
+                                </a>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
                 <div class="col l4">
                     <div class="card">
-                        <a href="{% url 'makeup:recommend' %}">
-                            <div class="card-image"><img src="{% static 'img/card2.jpg' %}" alt=" image-2">
+                        <div class="card-image"><img src="{% static 'img/card2.jpg' %}" alt=" image-2">
+                        </div>
+                        <div class="card-content black-text">
+                            <span class="card-title center">뷰티 유튜브 추천받기</span>
+                            <p class="card-desc">당신이 가지고 있는 화장품을 사용한 메이크업 영상을 확인해보세요. 뷰티 유튜버들의 화장 노하우와 꿀팁을 만나보세요!
+                            </p>
+                            <div class="d-flex justify-content-center">
+                                <a href="{% url 'makeup:video' %}">
+                                    <div class="btn white btn-outline-primary left-btn">전체 동영상</div>
+                                </a>
+                                <a href="{% url 'makeup:recommend' %}">
+                                    <div class="btn white btn-outline-primary right-btn ml-3">화장품 조합</div>
+                                </a>
                             </div>
-                            <div class="card-content black-text">
-                                <span class="card-title center">뷰티 유튜브 추천받기</span>
-                                <p class="card-desc">당신이 가지고 있는 화장품을 사용한 메이크업 영상을 확인해보세요. 뷰티 유튜버들의 화장 노하우와 꿀팁을 만나보세요!
-                                </p>
-                            </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
                 <div class="col l4">
                     <div class="card">
-                        <a href="{% url 'sns:index' %}">
-                            <div class="card-image"><img src="{% static 'img/card3.jpg' %}" alt=" image-2">
+                        <div class="card-image"><img src="{% static 'img/card3.jpg' %}" alt=" image-2">
+                        </div>
+                        <div class="card-content black-text">
+                            <span class="card-title center">메이크업 후기 공유</span>
+                            <p class="card-desc">뷰티폴미를 통해 한층 더 아름다워진 사람들을 확인해보세요. 다른 사람들과 뷰티를 공유하고 자신을 뽐내보세요!</p>
+                            <div class="d-flex justify-content-center">
+                                <a href="{% url 'sns:index' %}">
+                                    <div class="btn white btn-outline-primary left-btn">SNS 피드 보기</div>
+                                </a>
+                                <a href="{% url 'cosmetic:registered' %}">
+                                    <div class="btn white btn-outline-primary right-btn ml-3">랭킹 확인하기</div>
+                                </a>
                             </div>
-                            <div class="card-content black-text">
-                                <span class="card-title center">메이크업 후기 공유</span>
-                                <p class="card-desc">뷰티폴미를 통해 한층 더 아름다워진 사람들을 확인해보세요. 다른 사람들과 뷰티를 공유하고 자신을 뽐내보세요!</p>
-                            </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -267,16 +298,16 @@
             <div class="row container bottom">
                 <hr class="divider" />
                 <div class="col l7">
-                    <h4 class="center bottom-header">화장품을 등록하고<br />관리 받아보세요</h4>
+                    <h4 class="center bottom-header">뷰티폴미에 가입하고<br />화장품 관리 서비스를 받아보세요</h4>
                     <p>뷰티폴미 서비스는 등록된 화장품의 유통기한 알람 서비스를 제공해드립니다. 저희 뷰티폴미에 저장된 10만 여개의 화장품이 서포트합니다. 그리고 가지고 계신 화장품이 사용된 뷰티
                         유튜브 영상을 추천해드립니다.
                         평소 관심 있던 유튜버가 사용하는 나의 화장품을 만나보세요!
                     </p>
                     <div class="center bottom-button">
-                        <a href="{% url 'cosmetic:register' %}">
+                        <a href="{% url 'accounts:signup' %}">
                             <button class="btn z-depth-0 pink lighten-2 waves-effect waves-red modal-trigger"
-                                data-target="modal1" style="font-family: 'LotteMartDream', sans-serif !important;">화장품
-                                등록</button>
+                                data-target="modal1" style="font-family: 'LotteMartDream', sans-serif !important;">회원가입
+                                하기</button>
                         </a>
                     </div>
                 </div>

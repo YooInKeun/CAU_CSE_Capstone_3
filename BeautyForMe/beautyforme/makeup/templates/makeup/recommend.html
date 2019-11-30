@@ -391,7 +391,7 @@
                         </div>
                     </div>
                     <div class="col-1 col-content d-inline-flex justify-content-center align-items-center">
-                        <button class="btn btn-primary tag-btn similar-btn"
+                        <button v-if="cosmetic.similarCosmetics" class="btn btn-primary tag-btn similar-btn"
                             @click="showSilmilarCosmetic(cosmetic)">보기</button>
                     </div>
                 </div>
@@ -467,8 +467,8 @@
             similarCosmetics: data.cosmetic.similar_cosmetics,
             selectedCosmetics: [],
             showSimilar: false,
-            similarCosmetics: [],
         };
+        console.log(data.cosmetic.similar_cosmetics);
         return cosmetic;
     }
 
@@ -917,11 +917,15 @@
                 }
                 cosmetic.showSimilar = !cosmetic.showSimilar;
 
-                console.log("axios 연결");
                 this.similarCosmetics = [];
-                for (var i in this.myCosmetics) {
-                    this.similarCosmetics.push(this.myCosmetics[i]);
-                }
+                axios.get(`/api/cosmetic/similar/${cosmetic.id}/`)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+                        const data = res.data;
+                    })
+                    .catch(function (err) {
+                        console.log("GET FAIL", err);
+                    });
             },
             searchOtherPage(event, pageNum) {
                 window.scrollTo(0, 0);

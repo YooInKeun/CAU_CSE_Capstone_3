@@ -194,7 +194,8 @@
 
     .modal-dialog {
         position: relative;
-        top: 30vh;
+        top: 50vh;
+        margin-top: -25vh;
     }
 
     .modal-header {
@@ -572,6 +573,7 @@
                     if (this.interestedCosmetics != undefined) {
                         for (var i in this.interestedCosmetics) {
                             category = this.interestedCosmetics[i].smallCategory;
+                            category = category.replace("<br/>", "-");
                             if (categoryList.includes(category) == false) {
                                 categoryList.push(category)
                             }

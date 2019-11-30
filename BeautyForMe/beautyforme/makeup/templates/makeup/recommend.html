@@ -922,6 +922,10 @@
                     .then((res) => {
                         console.log("GET SUCCESS", res);
                         const data = res.data;
+
+                        for (var i in data) {
+                            this.similarCosmetics.push(this.parsingCosmetics(data[i]));
+                        }
                     })
                     .catch(function (err) {
                         console.log("GET FAIL", err);
@@ -985,7 +989,8 @@
                     productName: data.product.product_name,
                     typeName: data.type_name,
                     imageLink: imageLink,
-                    tagNames: tagNames
+                    tagNames: tagNames,
+                    selectedCosmetics: data.similar_cosmetics,
                 }
 
                 return result;

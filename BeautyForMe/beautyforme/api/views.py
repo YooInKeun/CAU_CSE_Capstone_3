@@ -274,26 +274,8 @@ class AllVideoInfo(APIView):
         videos_info['video'] = serializer.data
         videos_info['video_size'] = len(Video.objects.all())
         for i in range(len(videos_info['video'])):
-            raw = videos_info['video'][i]['cosmetics']
-            raw = raw.replace("'", "\"")
-            cosmetic_ids = json.loads(raw)
-            cosmetics = []
-            for key in cosmetic_ids.keys():
-                cosmetic_info = {}
-                cosmetic = Cosmetic.objects.get(id=cosmetic_ids[key])
-                cosmetic_info['id'] = cosmetic_ids[key]
-                cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
-                cosmetic_info['productName'] = cosmetic.product.product_name
-                cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
-                cosmetic_info['bigCategory'] = cosmetic.product.category.big_category.big_category
-                cosmetic_info['smallCategory'] = cosmetic.product.category.small_category 
-                cosmetic_info['imageLink'] = cosmetic.image_link
-                cosmetic_info['rgbValue'] = cosmetic.rgb_value
-                tag_names = json.loads(serializers.serialize('json', cosmetic.product.tag_names.all()))
-                cosmetic_info['tagNames'] = tag_names
-                cosmetics.append(cosmetic_info)
-        
-            videos_info['video'][i]['cosmetics'] = cosmetics
+            raw = videos_info['video'][i]['cosmetics']        
+            videos_info['video'][i]['cosmetics'] = parse_cosmetic_ids(raw)
 
         youtuber_list = Youtuber.objects.all()
         serializer = YoutuberSerializer(youtuber_list, many=True)
@@ -309,27 +291,8 @@ class VideoDetailInfo(APIView):
 
         video_info = {}
         video_info['video'] = serializer.data[0]
-
-        raw = video_info['video']['cosmetics']
-        raw = raw.replace("'", "\"")
-        cosmetic_ids = json.loads(raw)
-        cosmetics = []
-        for key in cosmetic_ids.keys():
-            cosmetic_info = {}
-            cosmetic = Cosmetic.objects.get(id=cosmetic_ids[key])
-            cosmetic_info['id'] = cosmetic_ids[key]
-            cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
-            cosmetic_info['productName'] = cosmetic.product.product_name
-            cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
-            cosmetic_info['bigCategory'] = cosmetic.product.category.big_category.big_category
-            cosmetic_info['smallCategory'] = cosmetic.product.category.small_category 
-            cosmetic_info['imageLink'] = cosmetic.image_link
-            cosmetic_info['rgbValue'] = cosmetic.rgb_value
-            tag_names = json.loads(serializers.serialize('json', cosmetic.product.tag_names.all()))
-            cosmetic_info['tagNames'] = tag_names
-            cosmetics.append(cosmetic_info)
-        
-        video_info['video']['cosmetics'] = cosmetics
+        raw = video_info['video']['cosmetics']        
+        video_info['video']['cosmetics'] = parse_cosmetic_ids(raw)
         return Response(video_info)
 
 class FilteredVideoInfo(APIView):
@@ -348,26 +311,8 @@ class FilteredVideoInfo(APIView):
         videos_info['video'] = serializer.data
         videos_info['video_size'] = Video.objects.filter(youtuber__id__in=youtuber_ids).count()
         for i in range(len(videos_info['video'])):
-            raw = videos_info['video'][i]['cosmetics']
-            raw = raw.replace("'", "\"")
-            cosmetic_ids = json.loads(raw)
-            cosmetics = []
-            for key in cosmetic_ids.keys():
-                cosmetic_info = {}
-                cosmetic = Cosmetic.objects.get(id=cosmetic_ids[key])
-                cosmetic_info['id'] = cosmetic_ids[key]
-                cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
-                cosmetic_info['productName'] = cosmetic.product.product_name
-                cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
-                cosmetic_info['bigCategory'] = cosmetic.product.category.big_category.big_category
-                cosmetic_info['smallCategory'] = cosmetic.product.category.small_category 
-                cosmetic_info['imageLink'] = cosmetic.image_link
-                cosmetic_info['rgbValue'] = cosmetic.rgb_value
-                tag_names = json.loads(serializers.serialize('json', cosmetic.product.tag_names.all()))
-                cosmetic_info['tagNames'] = tag_names
-                cosmetics.append(cosmetic_info)
-        
-            videos_info['video'][i]['cosmetics'] = cosmetics
+            raw = videos_info['video'][i]['cosmetics']        
+            videos_info['video'][i]['cosmetics'] = parse_cosmetic_ids(raw)
         return Response(videos_info)
 
 class VideoBookmarkInfo(APIView):
@@ -392,26 +337,31 @@ class VideoBookmarkInfo(APIView):
 
             for i in range(len(video_bookmarks['video_bookmarks'])):
                 raw = video_bookmarks['video_bookmarks'][i]['video']['cosmetics']
-                raw = raw.replace("'", "\"")
-    
-                cosmetic_ids = json.loads(raw)
-                cosmetics = []
-                for key in cosmetic_ids.keys():
-                    cosmetic_info = {}
-                    cosmetic = Cosmetic.objects.get(id=cosmetic_ids[key])
-                    cosmetic_info['id'] = cosmetic_ids[key]
-                    cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
-                    cosmetic_info['productName'] = cosmetic.product.product_name
-                    cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
-                    cosmetic_info['bigCategory'] = cosmetic.product.category.big_category.big_category
-                    cosmetic_info['smallCategory'] = cosmetic.product.category.small_category 
-                    cosmetic_info['imageLink'] = cosmetic.image_link
-                    cosmetic_info['rgbValue'] = cosmetic.rgb_value
-                    tag_names = json.loads(serializers.serialize('json', cosmetic.product.tag_names.all()))
-                    cosmetic_info['tagNames'] = tag_names
-                    cosmetics.append(cosmetic_info)
-
-                video_bookmarks['video_bookmarks'][i]['video']['cosmetics'] = cosmetics
+                video_bookmarks['video_bookmarks'][i]['video']['cosmetics'] = parse_cosmetic_ids(raw)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(video_bookmarks, status=status.HTTP_201_CREATED)
+
+
+# 화장품 JsonField -> 화장품 정보 추출 
+def parse_cosmetic_ids(raw):
+    raw = raw.replace("'", "\"")
+
+    cosmetic_ids = json.loads(raw)
+    cosmetics = []
+    for key in cosmetic_ids.keys():
+        cosmetic_info = {}
+        cosmetic = Cosmetic.objects.get(id=cosmetic_ids[key])
+        cosmetic_info['id'] = cosmetic_ids[key]
+        cosmetic_info['brandName'] = cosmetic.product.brand.brand_name
+        cosmetic_info['productName'] = cosmetic.product.product_name
+        cosmetic_info['typeName'] = str(cosmetic.type_name).strip()
+        cosmetic_info['bigCategory'] = cosmetic.product.category.big_category.big_category
+        cosmetic_info['smallCategory'] = cosmetic.product.category.small_category 
+        cosmetic_info['imageLink'] = cosmetic.image_link
+        cosmetic_info['rgbValue'] = cosmetic.rgb_value
+        tag_names = json.loads(serializers.serialize('json', cosmetic.product.tag_names.all()))
+        cosmetic_info['tagNames'] = tag_names
+        cosmetics.append(cosmetic_info)
+
+    return cosmetics

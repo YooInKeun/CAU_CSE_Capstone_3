@@ -340,13 +340,13 @@ class FilteredVideoInfo(APIView):
         # youtuber_ids = request.data['youtuber_ids']
         page_num = int(request.query_params['page_num'])
         youtuber_ids = request.query_params['youtuber_ids'].split(',')
-        youtuber_ids = map(int, youtuber_ids)
+        youtuber_ids = [int (i) for i in youtuber_ids]
         queryset = Video.objects.filter(youtuber__id__in=youtuber_ids).order_by('id')[10*(page_num-1):10*page_num]
         serializer = VideoSerializer(queryset, many=True)
 
         videos_info = {}
         videos_info['video'] = serializer.data
-        videos_info['video_size'] = len(Video.objects.filter(youtuber__id__in=youtuber_ids))
+        videos_info['video_size'] = Video.objects.filter(youtuber__id__in=youtuber_ids).count()
         for i in range(len(videos_info['video'])):
             raw = videos_info['video'][i]['cosmetics']
             raw = raw.replace("'", "\"")

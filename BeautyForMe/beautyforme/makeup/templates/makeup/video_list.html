@@ -596,6 +596,49 @@
                 else {
                     this.btnOff(filterBtn);
                 }
+
+                var postData = {
+                    params: {
+                        page_num: 1,
+                        youtuber_ids: 1
+                    }
+                };
+                axios.get('/api/video/filter/', postData)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+                        const videos = res.data.video;
+
+                        this.videos = [];
+
+                        for (var i in videos) {
+                            this.videos.push({
+                                id: videos[i].id,
+                                hits: videos[i].hits,
+                                thumbnail: videos[i].thumbnail,
+                                youtuber: videos[i].youtuber.name,
+                                upload_date: videos[i].upload_date,
+                                title: videos[i].title,
+                                cosmetics: videos[i].cosmetics.splice(0, 5),
+                            });
+                        }
+
+                        this.searchPages = [];
+                        for (var i = 1; i <= parseInt((res.data.video_size - 1) / this.pageSize) + 1; i++) {
+                            this.searchPages.push({
+                                num: i,
+                                class: "",
+                            });
+                            if (this.searchPages.length == 10)
+                                break;
+                        }
+                        this.searchPages[0].class = "active";
+
+                        this.youtubers = res.data.youtuber_list;
+                    })
+                    .catch(function (err) {
+                        console.log("GET FAIL", err);
+                    });
+
             },
         },
         created() {

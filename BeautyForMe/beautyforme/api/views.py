@@ -359,6 +359,19 @@ class VideoBookmarkInfo(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(video_bookmarks)
 
+    def delete(self, request, format=None):
+        queryset = request.data
+        bookmark_ids_data = queryset['bookmark_ids']
+        try:
+            for bookmark_id in bookmark_ids_data:
+                bookmark = Video_Bookmark.objects.get(pk=bookmark_id)
+                bookmark.delete()
+            bookmark_ids = {}
+            bookmark_ids['bookmark_ids'] = bookmark_ids_data
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(bookmark_ids)
+
 
 # 화장품 JsonField -> 화장품 정보 추출 
 def parse_cosmetic_ids(raw):

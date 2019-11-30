@@ -4,3 +4,4 @@ from .models import *
 # Register your models here.
 admin.site.register(Youtuber)
 admin.site.register(Video)
+admin.site.register(Video_Bookmark)

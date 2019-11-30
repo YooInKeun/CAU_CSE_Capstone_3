@@ -437,6 +437,7 @@
 
                     const cosmetics = res.data.video.cosmetics;
                     this.video.cosmetics = [];
+<<<<<<< Updated upstream
                     for (var i in cosmetics) {
                         var tagNames = [];
                         for (var tag_index in cosmetics[i].tagNames) {
@@ -456,6 +457,10 @@
                         };
                         this.video.cosmetics.push(cosmetic);
                     }
+=======
+                    for (var i in cosmetics)
+                        this.video.cosmetics.push(cosmeticInsert(cosmetics[i]))
+>>>>>>> Stashed changes
                 })
                 .catch(function (err) {
                     console.log("GET FAIL", err);

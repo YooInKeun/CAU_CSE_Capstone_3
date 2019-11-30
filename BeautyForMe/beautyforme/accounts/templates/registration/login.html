@@ -59,9 +59,7 @@
                 <p>계정이 없으신가요?</p>
             </div>
             <div class="row d-flex justify-content-center">
-                <button type="submit" class="btn btn-outline-primary w-100 m-1">
-                    <a href="{% url 'accounts:signup' %}">회원가입</a>
-                </button>
+                <input type="button" class="btn btn-outline-primary w-100 m-1" value="회원가입" onclick="location.href='{% url 'accounts:signup' %}'">
             </div>
             <hr />
             <div class="row d-flex justify-content-center">

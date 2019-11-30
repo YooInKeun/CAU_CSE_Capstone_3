@@ -8,6 +8,7 @@
         height: 98%;
     }
 
+
     .container-fluid * {
         margin: 0px;
         padding: 0px;
@@ -119,10 +120,6 @@
         border-radius: 0px 0px 5px 5px;
         border-top: 0px;
         overflow-y: scroll;
-    }
-
-    .main-row {
-        max-height: 100vh;
     }
 
     .left-col {
@@ -248,7 +245,7 @@
 {% block content %}
 <div class="container" id="app">
     <div class="row main-row">
-        <div class="col-8 mt-5 mb-5 pt-1">
+        <div class="col-12 col-lg-8 mt-5 mb-5 pt-1">
             <div class="search-wrapper d-flex justify-content-center align-items-center pb-1">
                 <input @keyup="searchCosmetic($event, true)" v-model="queryCosmetic" placeholder="화장품의 제품명을 검색해주세요"
                     class="form-control search-input pl-2" />
@@ -425,7 +422,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-4 mt-5 mb-5 pt-1 pl-2 right-row">
+        <div class="col-12 col-lg-4 mt-5 mb-5 pt-1 pl-2 right-row">
             <div class="row">
                 <div @click="showMyCosmetic()" class="col-4 my-cosmetic-tap kind-tap selected-kind-tap">
                     내 화장품

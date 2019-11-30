@@ -39,7 +39,7 @@
 
   .save-btn {
     font-size: 15px;
-    padding: 5px 15px;
+    padding: 5px 25px;
   }
 
   .category-title {
@@ -56,14 +56,14 @@
     font-weight: bold;
     border: 2px solid pink;
     border-radius: 8px;
-    padding: 2px 6px;
+    padding: 5px 10px;
     margin: 0 8px;
   }
 
   .importance-input {
     text-align: center;
     font-size: 14px;
-    padding: 5px;
+    padding: 7px;
     border: 0px;
     border: 1.5px solid pink;
     border-radius: 5px;
@@ -92,15 +92,15 @@
 {% block content %}
 <div id="app">
   <div class="container">
-    <div class="row">
-      <h4 class="page-title">화장품의 중요도를 설정해주세요.</h4>
+    <div class="row justify-content-center">
+      <h4 class="col-10 col-sm-10 col-md-12 page-title">화장품의 중요도를 설정해주세요.</h4>
     </div>
-    <div class="row description-row">
-      <div class="col-12 m-0 p-0">중요한 화장품에 높은 점수를 주세요.</div>
-      <div class="col-12 m-0 p-0">최대 10점까지 점수를 줄 수 있습니다.</div>
-      <div class="col-12 m-0 p-0 importance-description mt-3">중요도 낮음 : 0 ~ 3</div>
-      <div class="col-12 m-0 p-0 importance-description">중요도 중간 : 3 ~ 7</div>
-      <div class="col-12 m-0 p-0 importance-description">중요도 높음 : 8 ~ 10</div>
+    <div class="row description-row justify-content-center">
+      <div class="col-10 col-sm-10 col-md-12 m-0 p-0">중요한 화장품에 높은 점수를 주세요.</div>
+      <div class="col-10 col-sm-10 col-md-12 m-0 p-0">최대 10점까지 점수를 줄 수 있습니다.</div>
+      <div class="col-10 col-sm-10 col-md-12 m-0 p-0 importance-description mt-3">중요도 낮음 : 0 ~ 3</div>
+      <div class="col-10 col-sm-10 col-md-12 m-0 p-0 importance-description">중요도 중간 : 3 ~ 7</div>
+      <div class="col-10 col-sm-10 col-md-12 m-0 p-0 importance-description">중요도 높음 : 8 ~ 10</div>
     </div>
     <div v-for="(category, index) in categories">
       <div class="row ">
@@ -110,7 +110,7 @@
       </div>
       <div class="row category-section">
         <div v-for="smallCategory in category.smallCategories"
-          class="col-2 category-wrapper d-felx justify-content-center mt-1">
+          class="col-4 col-md-3 col-lg-2 category-wrapper d-felx justify-content-center mt-1">
           <div v-html="smallCategory.name" class="category-title row text-center"></div>
           <div class="d-flex justify-content-center">
             <input type="number" min="0" max="10" class="importance-input" :value="smallCategory.value"

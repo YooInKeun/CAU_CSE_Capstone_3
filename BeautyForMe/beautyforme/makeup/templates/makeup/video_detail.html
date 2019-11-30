@@ -218,7 +218,7 @@
 
     .video-btn {
         font-size: 13px;
-        margin-top: -5px;
+        margin-top: -5%;
     }
 </style>
 {% endblock extra-style %}
@@ -246,7 +246,7 @@
                     <div class="row youtuber-name">[[video.youtuber]]</div>
                     <div @click="goToYoutube" class="row youtube-title">[[video.title]]</div>
                 </div>
-                <div class="col-6 col-content d-flex flex-column justify-content-end p-0">
+                <div class="col-6 col-content d-flex flex-column justify-content-center p-0">
                     {% if user.is_authenticated %}
                     <button @click="scrapVideos" class="to-youtube-btn btn btn-primary">동영상 스크랩</button>
                     {% endif %}

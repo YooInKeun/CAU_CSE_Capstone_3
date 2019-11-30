@@ -17,7 +17,7 @@ import difflib
 import json
 
 class UserInfo(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         queryset = User.objects.filter(pk=request.user.pk)
@@ -34,7 +34,7 @@ class UserInfo(APIView):
 
 
 class ProfileInfo(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         queryset = Profile.objects.filter(user=request.user)
@@ -51,7 +51,6 @@ class ProfileInfo(APIView):
 
 
 class CosmeticInfo(APIView):
-    # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
         # queryset = Cosmetic.objects.filter(product__category__small_category="픽서/영양제")
@@ -110,7 +109,7 @@ class CosmeticInfo(APIView):
 
 
 class UserCosmeticInfo(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         try:
@@ -129,8 +128,11 @@ class UserCosmeticInfo(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, format=None):
-        queryset = User_Cosmetic.objects.filter(user=request.user)
-        serializer = UserCosmeticSerializer(queryset, many=True)
+        try:
+            queryset = User_Cosmetic.objects.filter(user=request.user)
+            serializer = UserCosmeticSerializer(queryset, many=True)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
 
     def put(self, request, format=None):
@@ -160,7 +162,7 @@ class UserCosmeticInfo(APIView):
 
 
 class UserInterestedCosmeticInfo(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         queryset = User_Interested_Cosmetic.objects.filter(cosmetic=9999999999999)
@@ -192,8 +194,11 @@ class UserInterestedCosmeticInfo(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, format=None):
-        queryset = User_Interested_Cosmetic.objects.filter(user=request.user)
-        serializer = UserInterestedCosmeticSerializer(queryset, many=True)
+        try:
+            queryset = User_Interested_Cosmetic.objects.filter(user=request.user)
+            serializer = UserInterestedCosmeticSerializer(queryset, many=True)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
 
     def delete(self, request, format=None):
@@ -210,7 +215,6 @@ class UserInterestedCosmeticInfo(APIView):
         return Response(cosmetic_id)
 
 class BigCategoryInfo(APIView):
-    # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
         queryset = Big_Category.objects.all()
@@ -218,7 +222,6 @@ class BigCategoryInfo(APIView):
         return Response(serializer.data)
 
 class SmallCategoryInfo(APIView):
-    # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
         # big_category_id = request.data['big_category_id']
@@ -228,6 +231,7 @@ class SmallCategoryInfo(APIView):
         return Response(serializer.data)
 
 class CosmeticImportanceInfo(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         cosmetic_importance = {}
@@ -263,7 +267,6 @@ class CosmeticImportanceInfo(APIView):
         return Response(cosmetic_importance)
 
 class AllVideoInfo(APIView):
-    # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
         # page_num = request.data['page_num']
@@ -285,7 +288,6 @@ class AllVideoInfo(APIView):
         return Response(videos_info)
 
 class VideoDetailInfo(APIView):
-    # permission_classes = [IsAdminUser]
 
     def get(self, request, pk, format=None):
         queryset = Video.objects.filter(pk=pk)
@@ -298,7 +300,6 @@ class VideoDetailInfo(APIView):
         return Response(video_info)
 
 class FilteredVideoInfo(APIView):
-    # permission_classes = [IsAdminUser]
 
     def get(self, request, format=None):
         # page_num = int(request.data['page_num'])
@@ -318,7 +319,7 @@ class FilteredVideoInfo(APIView):
         return Response(videos_info)
 
 class VideoBookmarkInfo(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         try:

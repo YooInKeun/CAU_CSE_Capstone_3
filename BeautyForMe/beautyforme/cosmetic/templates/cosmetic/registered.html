@@ -503,7 +503,7 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-            showMyCosmetic: false,
+            showMyCosmetic: true,
             isSelectMyAll: false,
             isSelectInterestedAll: false,
             myCosmetics: [],
@@ -1069,7 +1069,9 @@
         },
         updated() {
             if (this.onceChange) {
-                this.showMyCosmetic = true;
+                if(this.myCosmetics[0] == undefined)
+                    return;
+                this.changeToMy();
                 this.onceChange = false;
             }
             if (this.allowSwitching) {

@@ -137,7 +137,8 @@
 
     .modal-dialog {
         position: relative;
-        top: 30vh;
+        top: 50vh;
+        margin-top: -25vh;
     }
 
     .modal-header {
@@ -405,6 +406,17 @@
             modalYoutubers: [],
             selectedYoutubers: [],
         },
+        computed: {
+            selectedYoutuberIds() {
+                var ids = [];
+
+                for (var i in this.selectedYoutubers) {
+                    ids.push(this.selectedYoutubers[i].id);
+                }
+
+                return ids;
+            }
+        },
         methods: {
             btnOn(btnElement) {
                 btnElement.classList.remove("btn-outline-primary");
@@ -517,12 +529,27 @@
                 window.location = window.location.href + `detail/${videoId}/`;
             },
             searchOtherPage(event, pageNum) {
-                var postData = {
-                    params: {
-                        page_num: pageNum
+                var apiUrl;
+                var postData;
+                if (this.selectedYoutubers) {
+                    apiUrl = "/api/video/filter/";
+                    postData = {
+                        params: {
+                            page_num: pageNum,
+                            youtuber_ids: this.selectedYoutuberIds + '',
+                        }
                     }
-                };
-                axios.get('/api/video/', postData)
+                }
+                else {
+                    apiUrl = "/api/video/";
+                    postData = {
+                        params: {
+                            page_num: pageNum
+                        }
+                    };
+                }
+
+                axios.get(apiUrl, postData)
                     .then((res) => {
                         console.log("GET SUCCESS", res);
                         window.scrollTo(0, 0);
@@ -595,12 +622,13 @@
                 }
                 else {
                     this.btnOff(filterBtn);
+                    return;
                 }
 
                 var postData = {
                     params: {
                         page_num: 1,
-                        youtuber_ids: [3, 4] + ''
+                        youtuber_ids: this.selectedYoutuberIds + '',
                     }
                 };
                 axios.get('/api/video/filter/', postData)
@@ -632,8 +660,6 @@
                                 break;
                         }
                         this.searchPages[0].class = "active";
-
-                        this.youtubers = res.data.youtuber_list;
                     })
                     .catch(function (err) {
                         console.log("GET FAIL", err);

@@ -352,7 +352,7 @@
             <div class="row black-line"></div>
             <div class="row mt-1 mb-1 pr-3 pl-3">
                 <div class="col-12 d-flex justify-content-between">
-                    <button class="cosmetic-control-btn btn btn-outline-primary"
+                    <button class="cosmetic-control-btn btn btn-primary"
                         @click="location.href='{% url 'cosmetic:register' %}'">화장품 등록하기</button>
                     <button class="cosmetic-control-btn btn btn-outline-primary detail-search-btn"
                         @click="detailSearch">상세 검색</button>
@@ -561,6 +561,7 @@
                     if (this.myCosmetics != undefined) {
                         for (var i in this.myCosmetics) {
                             category = this.myCosmetics[i].smallCategory;
+                            category = category.replace("<br/>", "-");
                             if (categoryList.includes(category) == false) {
                                 categoryList.push(category)
                             }

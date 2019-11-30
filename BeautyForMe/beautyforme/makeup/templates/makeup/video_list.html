@@ -98,9 +98,6 @@
     }
 
     .cosmetic-section {
-        height: 75vh;
-        overflow-y: scroll;
-        overflow-x: hidden;
         margin-bottom: 8px;
     }
 
@@ -124,6 +121,47 @@
         height: 30px;
         font-size: 13px;
         padding: 5px;
+    }
+
+    .control-bar {
+        background-color: white;
+        position: sticky;
+        top: 60px;
+    }
+
+    /* modal */
+    .modal {
+        position: fixed !important;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-dialog {
+        position: relative;
+        top: 30vh;
+    }
+
+    .modal-header {
+        border-bottom: 0px !important;
+    }
+
+    .modal-header h3 {
+        font-size: 20px;
+        margin: 0px;
+    }
+
+    .modal-footer {
+        border-top: 0px !important;
+    }
+
+    .modal-footer button {
+        font-size: 15px;
+    }
+
+    .tag-btn {
+        font-size: 13px;
+        padding: 4px 8px;
+        margin: 2px;
+        font-weight: bold;
     }
 
     /* transition */
@@ -174,6 +212,21 @@
         border-left: 0.5px solid lightgray;
         margin-bottom: 2px;
     }
+
+    .pagination {
+        background-color: white;
+        justify-content: center;
+    }
+
+    .pagination a.active {
+        background-color: pink;
+    }
+
+    .all-video-btn {
+        position: absolute;
+        bottom: 5px;
+        right: 17px;
+    }
 </style>
 {% endblock extra-style %}
 
@@ -183,11 +236,49 @@
 
 {% block content %}
 <div class="container-fuild" id="app" style="padding: 0 80px;">
-    <div class="row d-flex align-items-center" style="height:80px;">
+    <div v-if="showModal" @mouseover.once="hightingBtn" class="modal d-block position-relative" tabindex="-1"
+        role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>유튜버 필터</h3>
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true"
+                        @click="closeModal">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-4 mt-2 mb-2">
+                                유튜버
+                            </div>
+                            <div
+                                class="col-8 mt-2 mb-2 col-content d-inline-block-flex justify-content-start align-items-center">
+                                <span v-for="youtuber in youtubers">
+                                    <button class="btn btn-outline-primary tag-btn detail-youtuber"
+                                        @click="selectYoutuber($event, youtuber)">[[youtuber.name]]</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class=" modal-footer">
+                    <button @click="submitDetail" class="btn btn-outline-dark" data-dismiss="alert"
+                        aria-hidden="true">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row d-flex align-items-center position-relative" style="height:120px;">
         <h5 class="m-0">뷰티 동영상 목록</h5>
+        <div class="all-video-btn">
+            <a v-if="showMy" href="{% url 'makeup:recommend' %}"><button class="btn btn-primary btn-sm">전체 영상
+                    보기</button></a>
+            <a v-else href="{% url 'makeup:recommend' %}"><button class="btn btn-primary btn-sm">스크랩 목록 보기</button></a>
+            <a href="{% url 'makeup:recommend' %}"><button class="btn btn-primary btn-sm">동영상 추천 받기</button></a>
+        </div>
     </div>
     <div class="row" style="border:1px solid rgb(82, 82, 82);"></div>
-    <div class="row">
+    <div class="row control-bar">
         <div class="col-12 p-0 cosmetic-section scrollbar-lady-lips thin square mt-1">
             <div class="row sticky-top row control-bar m-0 p-0">
                 <div class="col-12 p-0">
@@ -198,10 +289,15 @@
                             <button @click="selectVideoAll"
                                 class="cosmetic-control-btn btn btn-outline-primary select-video-all-btn">모두
                                 선택</button>
-                            <button @click="" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩하기</button>
+                            <button v-if="showMy" @click=""
+                                class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩 취소</button>
+                            <button v-else @click=""
+                                class=" ml-1 cosmetic-control-btn btn btn-outline-primary">스크랩하기</button>
                         </div>
                         <div class="col-6 d-inline-flex justify-content-end">
-                            <button @click="" class=" ml-1 cosmetic-control-btn btn btn-outline-primary">유튜버 필터</button>
+                            <button @click="youtuberFilter"
+                                class=" ml-1 cosmetic-control-btn btn btn-outline-primary youtuber-filter-btn">유튜버
+                                필터</button>
                         </div>
                     </div>
                     <div class="row gray-line"></div>
@@ -223,7 +319,8 @@
                         <div class="row content-cosmetic">[[video.title]]</div>
                         <div class="row content-cosmetic">[[video.upload_date]] / Views. [[video.hits]]
                         </div>
-                        <div class="ml-3 btn btn-outline-primary cosmetic-control-btn video-detail-btn">
+                        <div @click="moveToDetail(video.id)"
+                            class="ml-3 btn btn-outline-primary cosmetic-control-btn video-detail-btn">
                             자세히
                         </div>
                     </div>
@@ -235,6 +332,12 @@
                     </div>
                 </div>
                 <div class="gray-line"></div>
+            </div>
+            <div class="pagination">
+                <a href="#" @click="searchOtherPage($event, searchPages[0].num - 1)">&laquo;</a>
+                <a v-for="page in searchPages" @click="searchOtherPage($event, page.num)" :class="page.class"
+                    href="#">[[page.num]]</a>
+                <a href="#" @click="searchOtherPage($event, searchPages[9].num + 1)">&raquo;</a>
             </div>
         </div>
     </div>
@@ -279,6 +382,7 @@
             selectedCosmetics: [],
             showSimilar: false,
             similarCosmetics: [],
+            showModal: false,
         };
         return cosmetic;
     }
@@ -287,12 +391,19 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
-            cosmetics: [],
+            showMy: false,
             videos: [],
             selectedCosmetics: [],
             selectedVideos: [],
             isSelectAll: false,
             isSelectVideosAll: false,
+            searchPages: [],
+            searchResultLength: 0,
+            pageSize: 10,
+            showModal: false,
+            youtubers: [],
+            modalYoutubers: [],
+            selectedYoutubers: [],
         },
         methods: {
             btnOn(btnElement) {
@@ -401,192 +512,129 @@
                     this.isSelectVideoAll = true;
                 }
             },
+            moveToDetail(videoId) {
+                window.scrollTo(0, 0);
+                window.location = window.location.href + `detail/${videoId}/`;
+            },
+            searchOtherPage(event, pageNum) {
+                var postData = {
+                    params: {
+                        page_num: pageNum
+                    }
+                };
+                axios.get('/api/video/', postData)
+                    .then((res) => {
+                        console.log("GET SUCCESS", res);
+                        window.scrollTo(0, 0);
+                        this.$el.querySelector(".cosmetic-section").scrollTo(0, 0);
+                        const videos = res.data.video;
+
+                        this.videos = [];
+
+                        for (var i in videos) {
+                            this.videos.push({
+                                id: videos[i].id,
+                                hits: videos[i].hits,
+                                thumbnail: videos[i].thumbnail,
+                                youtuber: videos[i].youtuber.name,
+                                upload_date: videos[i].upload_date,
+                                title: videos[i].title,
+                                cosmetics: videos[i].cosmetics.splice(0, 5),
+                            });
+                        }
+
+                        this.searchPages = [];
+                        for (var i = parseInt((pageNum - 1) / 10) * 10 + 1; i <= parseInt((res.data.video_size - 1) / this.pageSize) + 1; i++) {
+                            this.searchPages.push({
+                                num: i,
+                                class: "",
+                            });
+                            if (this.searchPages.length == 10)
+                                break;
+                        }
+                        this.searchPages[((pageNum % 10 - 1) + 10) % 10].class = "active";
+                    })
+                    .catch(function (err) {
+                        console.log("GET FAIL", err);
+                    });
+            },
+            hightingBtn() {
+                const youtubers = document.querySelectorAll(".detail-youtuber");
+
+                for (var i in youtubers) {
+                    for (var j in this.selectedYoutubers) {
+                        if (this.selectedYoutubers[j].name == youtubers[i].innerText) {
+                            this.btnOn(youtubers[i]);
+                        }
+                    }
+                }
+            },
+            youtuberFilter() {
+                this.showModal = true;
+                this.modalYoutubers = this.selectedYoutubers;
+            },
+            closeModal() {
+                this.showModal = false;
+            },
+            selectYoutuber(event, youtuber) {
+                if (this.modalYoutubers.includes(youtuber)) {
+                    this.modalYoutubers.splice(this.modalYoutubers.indexOf(youtuber), 1);
+                    this.btnOff(event.target);
+                } else {
+                    this.modalYoutubers.push(youtuber)
+                    this.btnOn(event.target);
+                }
+            },
+            submitDetail() {
+                this.showModal = false;
+
+                this.selectedYoutubers = this.modalYoutubers;
+                const filterBtn = this.$el.querySelector(".youtuber-filter-btn");
+                if (this.selectedYoutubers.length > 0) {
+                    this.btnOn(filterBtn);
+                }
+                else {
+                    this.btnOff(filterBtn);
+                }
+            },
         },
         created() {
-            axios.get('/api/user/cosmetic/interested/')
+            var postData = {
+                params: {
+                    page_num: 1
+                }
+            };
+            axios.get('/api/video/', postData)
                 .then((res) => {
                     console.log("GET SUCCESS", res);
-                    const data = res.data;
+                    const videos = res.data.video;
 
-                    for (var i in data)
-                        this.cosmetics.push(cosmeticInsert(data[i]));
+                    this.videos = [];
 
-                    this.videos = [
-                        {
-                            id: 1,
-                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
-                            link: "https://youtu.be/zRfSYDLZMPk",
-                            upload_date: "2016. 11. 4.",
-                            hits: "858875",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 1,
-                                    brandName: "바비브라운",
-                                    productName: "크러쉬드 리퀴드 립",
-                                    typeName: "피치 앤 콰이엇",
-                                },
-                                {
-                                    id: 2,
-                                    brandName: "공칠이공(0720)",
-                                    productName: "레알틴트",
-                                    typeName: "레알핑크",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "겔랑",
-                                    productName: "루즈 오토마띠끄",
-                                    typeName: "102",
-                                },
-                            ]
-                        },
-                        {
-                            id: 2,
-                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
-                            link: "https://youtu.be/zRfSYDLZMPk",
-                            upload_date: "2016. 11. 4.",
-                            hits: "858875",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 1,
-                                    brandName: "바비브라운",
-                                    productName: "크러쉬드 리퀴드 립",
-                                    typeName: "피치 앤 콰이엇",
-                                },
-                                {
-                                    id: 2,
-                                    brandName: "공칠이공(0720)",
-                                    productName: "레알틴트",
-                                    typeName: "레알핑크",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "겔랑",
-                                    productName: "루즈 오토마띠끄",
-                                    typeName: "102",
-                                },
-                            ]
-                        },
-                        {
-                            id: 3,
-                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
-                            link: "https://youtu.be/zRfSYDLZMPk",
-                            upload_date: "2016. 11. 4.",
-                            hits: "858875",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 1,
-                                    brandName: "바비브라운",
-                                    productName: "크러쉬드 리퀴드 립",
-                                    typeName: "피치 앤 콰이엇",
-                                },
-                                {
-                                    id: 2,
-                                    brandName: "공칠이공(0720)",
-                                    productName: "레알틴트",
-                                    typeName: "레알핑크",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "겔랑",
-                                    productName: "루즈 오토마띠끄",
-                                    typeName: "102",
-                                },
-                            ]
-                        },
-                        {
-                            id: 4,
-                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
-                            link: "https://youtu.be/zRfSYDLZMPk",
-                            upload_date: "2016. 11. 4.",
-                            hits: "858875",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 1,
-                                    brandName: "바비브라운",
-                                    productName: "크러쉬드 리퀴드 립",
-                                    typeName: "피치 앤 콰이엇",
-                                },
-                                {
-                                    id: 2,
-                                    brandName: "공칠이공(0720)",
-                                    productName: "레알틴트",
-                                    typeName: "레알핑크",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "겔랑",
-                                    productName: "루즈 오토마띠끄",
-                                    typeName: "102",
-                                },
-                            ]
-                        },
-                        {
-                            id: 5,
-                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
-                            link: "https://youtu.be/zRfSYDLZMPk",
-                            upload_date: "2016. 11. 4.",
-                            hits: "858875",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 1,
-                                    brandName: "바비브라운",
-                                    productName: "크러쉬드 리퀴드 립",
-                                    typeName: "피치 앤 콰이엇",
-                                },
-                                {
-                                    id: 2,
-                                    brandName: "공칠이공(0720)",
-                                    productName: "레알틴트",
-                                    typeName: "레알핑크",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "겔랑",
-                                    productName: "루즈 오토마띠끄",
-                                    typeName: "102",
-                                },
-                            ]
-                        },
-                        {
-                            id: 6,
-                            title: "데일리 메이크업 ~ l 이사배(Risabae Makeup)",
-                            thumbnail: "https://img.youtube.com/vi/zRfSYDLZMPk/0.jpg",
-                            link: "https://youtu.be/zRfSYDLZMPk",
-                            upload_date: "2016. 11. 4.",
-                            hits: "858875",
-                            youtuber: "Risabae",
-                            cosmetics: [
-                                {
-                                    id: 1,
-                                    brandName: "바비브라운",
-                                    productName: "크러쉬드 리퀴드 립",
-                                    typeName: "피치 앤 콰이엇",
-                                },
-                                {
-                                    id: 2,
-                                    brandName: "공칠이공(0720)",
-                                    productName: "레알틴트",
-                                    typeName: "레알핑크",
-                                },
-                                {
-                                    id: 3,
-                                    brandName: "겔랑",
-                                    productName: "루즈 오토마띠끄",
-                                    typeName: "102",
-                                },
-                            ]
-                        },
-                    ];
+                    for (var i in videos) {
+                        this.videos.push({
+                            id: videos[i].id,
+                            hits: videos[i].hits,
+                            thumbnail: videos[i].thumbnail,
+                            youtuber: videos[i].youtuber.name,
+                            upload_date: videos[i].upload_date,
+                            title: videos[i].title,
+                            cosmetics: videos[i].cosmetics.splice(0, 5),
+                        });
+                    }
+
+                    this.searchPages = [];
+                    for (var i = 1; i <= parseInt((res.data.video_size - 1) / this.pageSize) + 1; i++) {
+                        this.searchPages.push({
+                            num: i,
+                            class: "",
+                        });
+                        if (this.searchPages.length == 10)
+                            break;
+                    }
+                    this.searchPages[0].class = "active";
+
+                    this.youtubers = res.data.youtuber_list;
                 })
                 .catch(function (err) {
                     console.log("GET FAIL", err);

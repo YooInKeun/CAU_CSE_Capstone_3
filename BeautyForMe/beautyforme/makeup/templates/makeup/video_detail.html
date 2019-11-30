@@ -311,39 +311,6 @@
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-    function cosmeticInsert(data) {
-        var imageLink;
-
-        if (data.cosmetic.product.image_link)
-            imageLink = data.cosmetic.product.image_link;
-        else
-            imageLink = data.cosmetic.image_link;
-
-        var tagNames = [];
-        for (var tag_index in data.cosmetic.product.tag_names) {
-            if (tagNames.length < 3)
-                tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
-        }
-        const smallCategory = data.cosmetic.product.category.small_category.replace("-", "<br/>");
-
-        var cosmetic = {
-            id: data.cosmetic.id,
-            brandName: data.cosmetic.product.brand.brand_name,
-            productName: data.cosmetic.product.product_name,
-            typeName: data.cosmetic.type_name,
-            imageLink: imageLink,
-            tagNames: tagNames,
-            smallCategory: smallCategory,
-            smallCategoryId: data.cosmetic.product.category.id,
-            rgbValue: data.cosmetic.rgb_value,
-            similarCosmetics: data.cosmetic.similar_cosmetics,
-            selectedCosmetics: [],
-            showSimilar: false,
-            similarCosmetics: [],
-        };
-        return cosmetic;
-    }
-
     var vm = new Vue({
         delimiters: ['[[', ']]'],
         el: '#app',
@@ -418,46 +385,81 @@
             },
             addInterested() {
                 console.log(this.selectedCosmetics);
-                for (var i in this.selectedCosmetics) {
-                    var postData = {
-                        cosmetic_id: this.selectedCosmetics[i].cosmeticId,
-                    };
+                var successCount = 0;
+                var failCount = 0;
+                const saveInterested = async () => {
+                    for (var i in this.selectedCosmetics) {
+                        var postData = {
+                            cosmetic_id: this.selectedCosmetics[i].cosmeticId,
+                        };
 
-                    console.log(postData);
+                        console.log(postData);
 
-                    axios.post('/api/user/cosmetic/interested/', postData)
-                        .then((res) => {
-                            console.log("GET SUCCESS", res);
-                        })
-                        .catch(function (err) {
-                            console.log("GET FAIL", err);
-                        });
+                        await axios.post('/api/user/cosmetic/interested/', postData)
+                            .then((res) => {
+                                console.log("GET SUCCESS", res);
+                                successCount += 1;
+                            })
+                            .catch((err) => {
+                                console.log("GET FAIL", err);
+                                failCount += 1;
+                            });
+                    }
                 }
+                saveInterested().then(
+                    () => {
+                        if (successCount > 0) {
+                            alert("관심 화장품으로 등록되었습니다.");
+                        }
+                        else if (successCount == 0 && failCount > 0) {
+                            alert("이미 등록된 화장품입니다.");
+                        }
+                    }
+                )
             },
         },
         created() {
-            axios.get('/api/user/cosmetic/')
+            const urlPathList = window.location.pathname.split("/");
+            const videoId = urlPathList[urlPathList.length - 2];
+            axios.get(`/api/video/detail/${videoId}/`)
                 .then((res) => {
                     console.log("GET SUCCESS", res);
-                    const data = res.data;
+                    const video = res.data.video;
                     this.video = {
-                        id: 2,
-                        title: "원더걸스 선미 메이크업 WonderGirls Sunmi Why so lonely makeup l 이사배(Risabae Makeup)",
-                        thumbnail: "https://img.youtube.com/vi/WYNt6Ybpa8s/0.jpg",
-                        link: "https://youtu.be/WYNt6Ybpa8s",
-                        upload_date: "2016. 8. 1.",
-                        hits: "1245284",
-                        youtuber: "Risabae",
+                        id: video.id,
+                        title: video.title,
+                        thumbnail: video.thumbnail,
+                        link: video.link,
+                        upload_date: video.upload_date,
+                        hits: video.hits,
+                        youtuber: video.youtuber.name,
                     };
+
+                    const cosmetics = res.data.video.cosmetics;
                     this.video.cosmetics = [];
-                    for (var i in data)
-                        this.video.cosmetics.push(cosmeticInsert(data[i]))
+                    for (var i in cosmetics) {
+                        var tagNames = [];
+                        for (var tag_index in cosmetics[i].tagNames) {
+                            if (tagNames.length < 2)
+                                tagNames.push(cosmetics[i].tagNames[tag_index].fields.tag_name);
+                        }
+                        const smallCategory = cosmetics[i].smallCategory.replace("-", "<br/>");
+
+                        var cosmetic = {
+                            id: cosmetics[i].id,
+                            brandName: cosmetics[i].brandName,
+                            productName: cosmetics[i].productName,
+                            typeName: cosmetics[i].typeName,
+                            imageLink: cosmetics[i].imageLink,
+                            tagNames: tagNames,
+                            smallCategory: smallCategory,
+                        };
+                        this.video.cosmetics.push(cosmetic);
+                    }
                 })
                 .catch(function (err) {
                     console.log("GET FAIL", err);
                 });
-
-
         },
     })
 </script>

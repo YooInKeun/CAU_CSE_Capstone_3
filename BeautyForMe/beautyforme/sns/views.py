@@ -8,6 +8,7 @@ from django.views.generic.detail import DetailView
 from .models import Sns
 from django.template import loader
 from django.contrib.auth.models import User
+from accounts.models import *
 
 from django.http import HttpResponseRedirect
 from comment.forms import CommentForm
@@ -50,10 +51,12 @@ class SnsList(FormMixin, ListView):
 
 
 def upload_file(request):
-    print("----------------------")
-
+    if request.method == 'POST':
+        if request.FILES:
+            instance = Profile.objects.get(user=request.user)
+            instance.profile_photo=request.FILES['file']
+            instance.save()
     return redirect('/sns')
-
 
 class SnsCreate(CreateView):
     model = Sns

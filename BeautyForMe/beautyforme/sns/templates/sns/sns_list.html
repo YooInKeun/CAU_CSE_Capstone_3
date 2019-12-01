@@ -24,6 +24,24 @@
      width: 350px;
      height: 420px;
  }
+ .col-5{
+    position: absolute;
+    top: 90px;
+    left: 80%;
+    width: 100px;
+    height: 100px;
+}
+.card-profile{
+    position: absolute;
+    top: 50%;
+    left: 30px;
+    border:1px solid;
+    padding:10px;
+    background-color: white;
+    box-shadow: 0 0 10px 5px pink;
+    transform: scale(0.85);
+    border-color:pink;
+}
 </style> 
 {% endblock extra-style %}
 
@@ -65,14 +83,12 @@
 
                 
                 <img src=" {{ object.image.url }}" class="card-img-top" alt="...">
-                <li>
                <div class="card-body">
                     
                     <div class="uploader col-3"><b>{{ object.author }}</b></div>
                     <div class="content col-9">{{ object.text }}</div>
                     
                 </div>
-                </li>
                 <ul class="list-group list-group-flush">
 
                    <li class="list-group-item">
@@ -94,7 +110,7 @@
                         {% endif %}
                         <a href="{% url 'sns:favorite' object.id %}" class="float-right btn-favorite {%if user in object.favorite.all %}active{%endif%}"></a>
                     </li>
-                    <li class="list-group-item">생성일 : {{ object.created }}</li>
+                    <li class="list-group-item">게시일 : {{ object.created|date:'Y년 m월 d일' }}</li>
     
                 </ul>
                 <div v-if="showComments" class="card-body row">
@@ -120,11 +136,11 @@
                             </div>
                         {% endif %}
                     {% endfor %}
-        
                     <span>
-                    <button v-if="{{object.comment.all.count}} > commentCount[{{object.id}}] "@click="addCount({{object.id}})" class="btn btn-outline-primary"> 더보기 </button>
+                    <button v-if="{{object.comment.all.count}} > commentCount[{{object.id}}] "@click="addCount({{object.id}})" class="btn btn-outline-primary">더 보기 </button>
+                    <br/>
                     </span>
-                    <br>
+
                     
                     <div class="comment-creator-div row" >
                         <div class="comment-form col-12">
@@ -142,30 +158,24 @@
         <div v-if="isprofile" class="wrapper">
                 <div class="left" id="sidebar">
                     {% load static %}
-                    <div class="card_profile">
-                        <h5 class="card-title">{{user.username}}님의 프로필</h5>
-                        <button type="button" class="btn btn-success" v-on:click="isprofile=false">프로필 숨기기</button>
-                        {% if user.profile.profile_photo %}
-        
-                        <img @click="changeImage" class="card-img-profile" src="{{user.profile.profile_photo.url}}" width="200"> <br>
-                        {% else %}
-                        <img @click="changeImage" src="{% static 'img/123123123123.png' %}" class="noProfile" width="350px" height="350px"> <br>
-                        
-                        {% endif %}
-                        
-                        <div class="card-body">
-                            <p class="card-text">회원님의 스토리를 확인해보세요!</p>
-                            <img @click="changeImage" src="{% static 'img/312312312312312.png' %}" class="noProfile" width="50px" height="50px">
-                            <input type="submit" value="사진저장" class="btn btn-primary">
-                            <a href="{% url 'sns:mylist' %}" class="btn btn-primary">회원님의 스토리 이동 </a>
-                            <form action="{% url 'sns:imageindex' %}" method="post"enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="file"style="visibility:hidden;" class="image-change-btn" name="file"/>
-                                
-                            </form>
-                                <br>
-                            
-                        </div>
+                    <div class="card-profile">
+                        <h5 class="card-title" style="text-align: center;">{{user.username}}님의 프로필</h5>
+                        <form action="{% url 'sns:imageindex' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% ifequal user.profile.profile_photo "" %}
+                                <img @click="changeImage" id="foo" name="profile_photo" src="{% static 'img/123123123123.png' %}" class="noProfile" width="350px" height="350px">
+                            {% endifequal %}
+                            {% ifnotequal user.profile.profile_photo "" %}
+                                <img src="{{user.profile.profile_photo.url}}" @click="changeImage" id="foo" name="profile_photo" width="350px" height="350px">
+                            {% endifnotequal %}
+                            <div class="card-body" style="text-align: center;">
+                                <p class="card-text">회원님의 스토리를 확인해보세요!</p>
+                                <img @click="changeImage" src="{% static 'img/312312312312312.png' %}" class="noProfile" width="50px" height="50px">
+                                <a href="{% url 'sns:mylist' %}" class="btn btn-primary">스토리 이동 </a>
+                                <input id="imgInp" type="file" style="display:none;" name="file" class="image-change-btn"/>
+                                <input type="submit" value="저장완료" class="btn btn-primary">
+                            </div>
+                        </form>
                     </div>
                 </div>
         </div>
@@ -293,7 +303,20 @@
     })
 
 </script>
-
+<script>
+   function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#foo').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $("#imgInp").change(function() {
+        readURL(this);
+    });
+</script>
 {% endblock extra-script %}
 {% block javascript %}
 <script type="text/javascript" src="{% static 'sns/js/feed_list_js.js' %}"></script>

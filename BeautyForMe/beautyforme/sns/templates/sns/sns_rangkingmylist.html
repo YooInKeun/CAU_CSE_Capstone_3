@@ -16,10 +16,11 @@
         <div id = "mdb-lightbox no-margin">
             <div class = "row">
                 {% for object in object_list%}
+                &nbsp;
                 {% if object.author.username == name %}
-                <figure class="col-md-4">
+                <figure class="col-md-3">
                     <div style="width:18rem;">
-                        {{object.author}}
+                        {{object.author}}님의 게시물
                         <img src = {{object.image.url}} class="card-img-top" alt="...">
                     </div>
                 </figure>

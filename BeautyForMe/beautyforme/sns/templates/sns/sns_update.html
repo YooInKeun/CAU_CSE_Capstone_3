@@ -7,6 +7,12 @@
         <form action="" method="post"enctype="multipart/form-data">
             {% csrf_token %}
             {{form.as_p}}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
+            <input type="button" class="btn btn-success" value="SNS 홈으로" onclick="location.href='{% url 'sns:index' %}'">
             <input type="submit" value="Upload" class="btn btn-primary">
         </form>
     </div>

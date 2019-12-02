@@ -14,4 +14,5 @@ class CommentForm(ModelForm):
         # 최대한 Instagram과 비슷하게 스타일링한다
         self.fields['content'].widget.attrs['class'] = 'textfield-comment'
         self.fields['content'].widget.attrs['placeholder'] = '댓글 달기...'
+        self.fields['content'].widget.attrs['style'] = 'height:50px; width : 100%;'
         self.fields['content'].label = ''

@@ -1,38 +1,93 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
- 
+
 {% block extra-style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/sns.css' %}" />
+<style>
+    .profile-img {
+        width: 200px;
+        height: 200px;
+        border: 1px solid lightgray;
+        border-radius: 100%;
+    }
+
+    .thumblist {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .thumblist li {
+        float: left;
+        height: 200px;
+        width: 200px;
+        margin: 5px;
+        overflow: hidden;
+    }
+
+    .thumblist img {
+        display: inline-block;
+        min-width: 100%;
+        min-height: 100%;
+        -ms-interpolation-mode: bicubic;
+    }
+
+    .width-100 {
+        width: 100%;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .height-100 {
+        height: 100%;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>
 {% endblock extra-style %}
 
 {% block navbar%}
 {% include 'navbar.html' %}
 {% endblock %}
 
-{% block content %}
+<div id="mdb-lightbox no-margin">
+    <div class="row">
 
-<div class="row">
-    <div class="col-md-12" >
-        <div id = "mdb-lightbox no-margin">
-            <div class = "row">
-                {% for object in object_list%}
-                {% if object.author == request.user%}
-                <figure class="col-md-4">
-                    <div style="width:18rem;">
-                        {{object.author}}
-                        <img src = {{object.image.url}} class="card-img-top" alt="...">
-                    </div>
-                </figure>
-                {% endif %}
-                {% endfor%}
-            </div>
-        </div>
-        <div class="col"></div>
     </div>
 </div>
-<!-- 사진 -->
-{% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/sns.css' %}" />
+<div class="col"></div>
+
+{% block content %}
+<div id="app" class="container">
+    <div class="row">
+        <div class="col-6 mt-5 mb-5 pr-5 d-flex justify-content-end">
+            <img src="{{user.profile.profile_photo.url}}" class="profile-img">
+        </div>
+        <div class="col-6 mt-5 mb-5 pl-5 d-flex flex-column justofy-contents-center">
+            <div class="profile-name">{{user.username}}</div>
+            {% for object in object_list %}
+            {% if object.author == request.user %}
+            <input type="hidden" class="hidden-object">
+            <input type="hidden" class="hidden-like" value="{{object.like.all.count}}">
+            {% endif %}
+            {% endfor %}
+            <div class="post-count">[[ userPostCount ]]</div>
+            <div class="like-count">[[ userLikeCount ]]</div>
+        </div>
+    </div>
+    <div class="row">
+        <ul class="thumblist">
+            {% for object in object_list%}
+            {% if object.author == request.user%}
+            <li><img src="{{object.image.url}}" alt="" class="post-thumbnail" /></li>
+            {% endif %}
+            {% endfor%}
+        </ul>
+    </div>
+</div>
 
 
 {% endblock content %}
@@ -52,9 +107,51 @@
         data: {
 
         },
-        methods: {
+        computed: {
+            userPostCount() {
+                return this.$el.querySelectorAll(".hidden-object").length;
+            },
+            userLikeCount() {
+                const likes = this.$el.querySelectorAll(".hidden-like");
+                var likeCount = 0;
 
+                for (var i in likes) {
+                    if (likes[i].value != undefined)
+                        likeCount += parseInt(likes[i].value);
+                }
+
+                return likeCount;
+            }
         },
+        mounted() {
+            if (this.$el.querySelector(".post-thumbnail").src != undefined) {
+                const imgs = this.$el.querySelectorAll(".post-thumbnail");
+                for (var i in imgs) {
+                    if (imgs[i].src != undefined) {
+                        console.log(imgs[i].src);
+                        var img = new Image();
+                        /*      img.onload = function () {
+                                 console.log(this);
+                                 if (this.width > this.height) {
+                                     this.classList.add("width-100");
+                                 }
+                                 else {
+                                     this.classList.add("height-100");
+                                 }
+                             } */
+                        img.src = imgs[i].src;
+                        console.log(img.width);
+                        console.log(img.height);
+                        if (img.width > img.height) {
+                            imgs[i].classList.add("height-100");
+                        }
+                        else {
+                            imgs[i].classList.add("width-100");
+                        }
+                    }
+                }
+            }
+        }
     })
 </script>
 {% endblock extra-script %}

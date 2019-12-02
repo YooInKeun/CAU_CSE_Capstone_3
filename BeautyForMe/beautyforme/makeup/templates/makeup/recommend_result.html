@@ -141,6 +141,30 @@
         padding: 3px;
     }
 
+    .video-description-row {
+        color: gray;
+        font-size: 12px;
+        padding-top: 5px;
+    }
+
+    .video-rank {
+        font-weight: bold;
+        color: black;
+        font-size: 14px;
+        width: 22px;
+        height: 22px;
+        border: 1.5px solid pink;
+        border-radius: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .video-number {
+        font-weight: bold;
+        color: black;
+    }
+
     .right-col {
         border-left: 0.5px solid lightgray;
         margin-bottom: 2px;
@@ -227,6 +251,7 @@
                 </div>
             </div>
             {% for cosmetic in context.cosmetics %}
+            <input type="hidden" class="hidden-cosmetic-id" value="{{cosmetic.id}}">
             <div class="container-fluid p-0 mt-1 mb-1 cosmetic-container cosmetic-row">
                 <div class="row m-0" @click="selectCosmetic($event, {{ forloop.counter0 }}, {{ cosmetic.id }})">
                     <div class="col-3 col-md-5 col-lg-3 col-content d-flex justify-content-center align-items-center">
@@ -269,7 +294,14 @@
                 </div>
             </div>
             {% for video in context.videos %}
-            <div class="container-fluid p-0 mt-1 mb-1 row cosmetic-container video-row">
+            <div class="container-fluid p-0 mt-1 mb-1 cosmetic-container video-row">
+                <div class="row m-0 d-flex justify-content-start align-items-center video-description-row">
+                    <div class="video-rank ml-3">{{ forloop.counter }}</div>
+                    <div class="video-description ml-2">영상에 쓰인 <span
+                            class="video-number">{{ video.cosmetics_size }}개</span>의 화장품 중
+                        <span class="video-number">{{ video.containedCosmetics|length }}개</span>를 포함하고
+                        있습니다.</div>
+                </div>
                 <div class="row m-0" @click="selectVideo($event, {{ forloop.counter0 }}, {{ video.id }})">
                     <div
                         class="thumbnail col-3 col-md-6 col-lg-3 col-content d-flex justify-content-center align-items-center">
@@ -315,37 +347,6 @@
 <script>
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
-    function cosmeticInsert(data) {
-        var imageLink;
-
-        if (data.cosmetic.product.image_link)
-            imageLink = data.cosmetic.product.image_link;
-        else
-            imageLink = data.cosmetic.image_link;
-
-        var tagNames = [];
-        for (var tag_index in data.cosmetic.product.tag_names)
-            tagNames.push(data.cosmetic.product.tag_names[tag_index].tag_name);
-        const smallCategory = data.cosmetic.product.category.small_category.replace("-", "<br/>");
-
-        var cosmetic = {
-            id: data.cosmetic.id,
-            brandName: data.cosmetic.product.brand.brand_name,
-            productName: data.cosmetic.product.product_name,
-            typeName: data.cosmetic.type_name,
-            imageLink: imageLink,
-            tagNames: tagNames,
-            smallCategory: smallCategory,
-            smallCategoryId: data.cosmetic.product.category.id,
-            rgbValue: data.cosmetic.rgb_value,
-            similarCosmetics: data.cosmetic.similar_cosmetics,
-            selectedCosmetics: [],
-            showSimilar: false,
-            similarCosmetics: [],
-        };
-        return cosmetic;
-    }
 
     var vm = new Vue({
         delimiters: ['[[', ']]'],
@@ -404,7 +405,7 @@
             },
             selectAll() {
                 var cosmeticRows = document.querySelectorAll(".cosmetic-row");
-
+                console.log(this.selectedCosmetics);
                 if (this.isSelectAll) {
                     this.selectedCosmetics = [];
                     for (var index = 0; index < cosmeticRows.length; index++) {
@@ -417,6 +418,7 @@
                     this.selectedCosmetics = [];
                     for (var index = 0; index < cosmeticRows.length; index++) {
                         cosmeticRows[index].classList.add("select-row");
+                        console.log("??", this.cosmetics[index]);
                         this.selectedCosmetics.push({
                             arrayIndex: index,
                             cosmeticId: this.cosmetics[index].id
@@ -425,6 +427,7 @@
                     this.btnOn(document.querySelector(".select-all-btn"));
                     this.isSelectAll = true;
                 }
+                console.log(this.selectedCosmetics);
             },
             addInterested() {
                 console.log(this.selectedCosmetics);
@@ -530,6 +533,18 @@
                         console.log("GET FAIL", err);
                     });
             },
+        },
+        mounted() {
+            const cosmeticRaw = this.$el.querySelectorAll(".hidden-cosmetic-id");
+            this.cosmetics = [];
+
+            for (var i in cosmeticRaw) {
+                if (cosmeticRaw[i].value != undefined) {
+                    this.cosmetics.push({
+                        id: cosmeticRaw[i].value
+                    });
+                }
+            }
         }
     })
 </script>

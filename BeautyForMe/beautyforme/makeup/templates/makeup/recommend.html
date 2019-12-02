@@ -374,6 +374,9 @@
                     <div class="row black-line"></div>
                 </div>
             </div>
+            <div v-if="basketCosmetics.length == 0" class="text-center mt-5 mb-5">바구니에 화장품을 담고<br />
+                '결과보기' 버튼을 눌러주세요.
+            </div>
             <div v-for="(cosmetic, index) in basketCosmetics" :key="cosmetic.id"
                 class="container p-0 mt-1 mb-1 cosmetic-container basket-row">
                 <div class="row m-0" @click="selectBasketCosmetic($event, index, cosmetic.id)">
@@ -391,8 +394,8 @@
                         </div>
                     </div>
                     <div class="col-1 col-content d-inline-flex justify-content-center align-items-center">
-                        <button v-if="cosmetic.similarCosmetics" class="btn btn-primary tag-btn similar-btn"
-                            @click="showSilmilarCosmetic(cosmetic)">보기</button>
+                        <button v-show="cosmetic.similarCosmetics" class="btn btn-primary tag-btn similar-btn"
+                            @click="showSilmilarCosmetic($event, cosmetic)">보기</button>
                     </div>
                 </div>
                 <div class="gray-line"></div>
@@ -415,7 +418,8 @@
                                 </div>
                             </div>
                             <div class="col-1 col-content d-inline-flex justify-content-center align-items-center">
-                                <button class="btn btn-primary tag-btn similar-btn"
+                                <button v-if="isInBasket(similarCosmetic.id) == false"
+                                    class="btn btn-primary tag-btn similar-btn"
                                     @click="directInsert(similarCosmetic, false, index, similarIndex)">담기</button>
                             </div>
                             <div class="gray-line"></div>
@@ -827,7 +831,10 @@
                     }
                     else {
                         this.similarCosmetics.splice(similarIndex, 1);
-                        console.log(this.similarCosmetics);
+                        if (this.similarCosmetics.length == 0) {
+                            this.$el.querySelectorAll(".similar-btn")[index].innerText = "보기";
+                            this.basketCosmetics[index].showSimilar = false;
+                        }
                         this.basketCosmetics.splice(index + 1, 0, cosmetic);
                     }
                 }
@@ -863,6 +870,13 @@
                 }
             },
             selectBasketAll() {
+                if (this.basketCosmetics.length == 0) {
+                    this.btnOff(document.querySelector(".select-basket-all-btn"));
+                    this.isSelectBasketAll = false;
+
+                    return;
+                }
+
                 for (var i in this.basketCosmetics) {
                     this.basketCosmetics[i].showSimilar = false;
                 }
@@ -910,12 +924,26 @@
             submitBasket() {
                 console.log(this.selectedBasketCosmetics)
             },
-            showSilmilarCosmetic(cosmetic) {
+            showSilmilarCosmetic(event, cosmetic) {
                 for (var i in this.basketCosmetics) {
-                    if (cosmetic.id != this.basketCosmetics[i].id)
+                    if (cosmetic.id != this.basketCosmetics[i].id) {
                         this.basketCosmetics[i].showSimilar = false;
+                        const similarBtn = this.$el.querySelectorAll(".similar-btn")[i];
+                        if (similarBtn != undefined)
+                            similarBtn.innerText = "보기";
+                    }
                 }
-                cosmetic.showSimilar = !cosmetic.showSimilar;
+
+                if (cosmetic.showSimilar) {
+                    event.target.innerText = "보기";
+                    cosmetic.showSimilar = false;
+                }
+                else {
+                    event.target.innerText = "닫기";
+                    cosmetic.showSimilar = true;
+                }
+
+                console.log(event.target);
 
                 this.similarCosmetics = [];
                 axios.get(`/api/cosmetic/similar/${cosmetic.id}/`)
@@ -995,6 +1023,12 @@
 
                 return result;
             },
+            isInBasket(cosmeticId) {
+                if (this.basketCosmeticIds.includes(cosmeticId))
+                    return true;
+                else
+                    return false;
+            }
         },
         updated() {
             if (this.allowEffectOne) {

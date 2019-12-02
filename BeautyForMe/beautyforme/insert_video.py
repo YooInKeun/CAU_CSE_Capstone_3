@@ -6,8 +6,8 @@ from cosmetic.models import *
 from makeup.models import *
 import csv
 
-youtuber = "Lamuque"
-file_name = "lamuque_matched"
+youtuber = "Haneul"
+file_name = "haneul_matched"
 
 if __name__=='__main__':
     with open(f'db_insert_data/All Data/{file_name}.csv') as csvDataFile:

@@ -113,7 +113,7 @@
                         {% endif %}
                         <a href="{% url 'sns:favorite' object.id %}" class="float-right btn-favorite {%if user in object.favorite.all %}active{%endif%}"></a>
                     </li>
-                    <li class="list-group-item">게시일 : {{ object.created|date:'Y년 m월 d일' }}</li>
+                    <li class="list-group-item">게시일 : {{ object.created|date:'Y년 m월 d일 H시 i분' }}</li>
     
                 </ul>
                 <div v-if="showComments" class="card-body row">

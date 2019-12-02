@@ -294,6 +294,7 @@
                 </div>
             </div>
             {% for video in context.videos %}
+            <input type="hidden" class="hidden-video-id" value="{{video.id}}">
             <div class="container-fluid p-0 mt-1 mb-1 cosmetic-container video-row">
                 <div class="row m-0 d-flex justify-content-start align-items-center video-description-row">
                     <div class="video-rank ml-3">{{ forloop.counter }}</div>
@@ -542,6 +543,17 @@
                 if (cosmeticRaw[i].value != undefined) {
                     this.cosmetics.push({
                         id: cosmeticRaw[i].value
+                    });
+                }
+            }
+
+            const videoRaw = this.$el.querySelectorAll(".hidden-video-id");
+            this.videos = [];
+
+            for (var i in videoRaw) {
+                if (videoRaw[i].value != undefined) {
+                    this.videos.push({
+                        id: videoRaw[i].value
                     });
                 }
             }

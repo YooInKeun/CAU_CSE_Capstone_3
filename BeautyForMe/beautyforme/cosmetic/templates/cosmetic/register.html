@@ -605,6 +605,24 @@
             },
             submitCosmetic() {
                 if (this.kindSelect == "myCosmetic") {
+                    if (this.monthValue > 120) {
+                        this.monthValue = 0;
+                        alert("화장품 사용기한은 10년 이내만 가능합니다.");
+                        return;
+                    }
+                    else if (this.monthValue < 0) {
+                        this.monthValue = 0;
+                        alert("화장품 사용기한이 0보다 작습니다.");
+                        return;
+
+                    }
+
+                    const nowYear = new Date().getFullYear();
+                    if (!isNaN(Date.parse(this.expirationData)) && this.expirationData.split("-")[0] > nowYear + 10) {
+                        alert("화장품 유통기한이 10년 이상 남았습니다. 다시 한번 확인해주세요.");
+                        return;
+                    }
+
                     if (this.cosmeticID && this.expirationData && this.alarmCycle >= 0) {
                         console.log("폼 진행");
 
@@ -661,6 +679,7 @@
                     else {
                         event.preventDefault()
                         console.log("입력사항을 확인해주세요");
+                        alert("모든 사항은 필수입니다. 다시 한번 확인해주세요.");
                     }
                 }
                 else {
@@ -725,6 +744,7 @@
                     else {
                         event.preventDefault()
                         console.log("입력사항을 확인해주세요");
+                        alert("모든 사항은 필수입니다. 다시 한번 확인해주세요.");
                     }
                 }
             },
@@ -789,13 +809,14 @@
                         }
                     };
                 }
+
                 console.log(this.searching)
                 axios.get('/api/cosmetic/', postData)
                     .then((res) => {
                         console.log("GET SUCCESS", res);
 
                         this.searchResults = [];
-                        if (this.searching == false)
+                        if (res.config.params.is_keyuped == false)
                             this.staticResults = [];
 
                         var responseCosmetics = [];
@@ -814,7 +835,8 @@
                                 if (this.searchPages.length == 10)
                                     break;
                             }
-                            this.searchPages[0].class = "active";
+                            if (this.searchPages[0] != undefined)
+                                this.searchPages[0].class = "active";
                             this.searchResultLength = res.data.cosmetic_size;
                         }
 
@@ -822,7 +844,7 @@
                             const data = responseCosmetics[i];
                             const result = this.parsingCosmetics(data);
 
-                            if (this.searching)
+                            if (res.config.params.is_keyuped)
                                 this.searchResults.push(result);
                             else
                                 this.staticResults.push(result);
@@ -830,6 +852,7 @@
                     })
                     .catch((err) => {
                         console.log("GET FAIL", err);
+                        searching = false;
                     });
             },
             searchOtherPage(event, pageNum) {

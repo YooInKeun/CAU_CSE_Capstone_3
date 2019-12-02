@@ -613,6 +613,7 @@
                 btnElement.classList.add("btn-outline-primary");
             },
             changeToMy() {
+                window.scrollTo(0, 0);
                 this.showMyCosmetic = true;
                 this.btnOn(document.querySelector(".my-cosmetic-btn"));
                 this.btnOff(document.querySelector(".interested-cosmetic-btn"));
@@ -624,6 +625,7 @@
                 this.allowSwitching = true;
             },
             changeToInterested() {
+                window.scrollTo(0, 0);
                 this.showMyCosmetic = false;
                 this.btnOff(document.querySelector(".my-cosmetic-btn"));
                 this.btnOn(document.querySelector(".interested-cosmetic-btn"));
@@ -1069,8 +1071,9 @@
         },
         updated() {
             if (this.onceChange) {
-                if(this.myCosmetics[0] == undefined)
+                if (this.myCosmetics[0] == undefined)
                     return;
+                window.scrollTo(0, 0);
                 this.changeToMy();
                 this.onceChange = false;
             }

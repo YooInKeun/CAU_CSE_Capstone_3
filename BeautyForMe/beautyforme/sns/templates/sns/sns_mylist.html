@@ -58,7 +58,11 @@
 <div id="app" class="container">
     <div class="row">
         <div class="col-6 mt-5 mb-5 pr-5 d-flex justify-content-end">
+            {% if user.profile.profile_photo %}
             <img src="{{user.profile.profile_photo.url}}" class="profile-img">
+            {% else %}
+            <img src="{% static 'img/123123123123.png' %}" class="profile-img">
+            {% endif %}
         </div>
         <div class="col-6 mt-5 mb-5 pl-5 d-flex flex-column justify-content-center">
             {% for object in object_list %}
@@ -68,7 +72,7 @@
             {% endif %}
             {% endfor %}
             <div class="profile-name mb-3">{{user.username}}님의 스토리</div>
-            <div class="post-count">게시글 : [[ userPostCount ]]</div>
+            <div class="post-count">게시글 : [[ userPostCount ]]개</div>
             <div class="like-count">{{user.username}}님은 [[ userLikeCount ]]개의 좋아요를 받았습니다.</div>
         </div>
     </div>

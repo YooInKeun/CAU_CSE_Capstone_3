@@ -177,22 +177,23 @@
                     {% for comment in object.comment.all %}
                     <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}"
                         class="comment {% if request.user == comment.author %} col-8 {% else %} col-8 {% endif %} text-left">
-                        <p><b>{{ comment.author.username }}</b> &nbsp {{ comment.content }}</p>
+                        <p class="m-0"><b>{{ comment.author.username }}</b> &nbsp {{ comment.content }}</p>
                     </div>
                     <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}"
-                        class="comment-button-container col-3 text-right">
+                        class="comment-button-container col-3 text-right d-flex">
                         {% if request.user == comment.author or request.user == object.author %}
                         <form action="{% url 'comment:comment-delete' pk=comment.pk %}" method="post"
                             style="float:left;margin:0;">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.path }}">
-                            <button class="btn comment-delete" onclick="return confirm('정말로 삭제합니까?');">삭제</button>
+                            <button class="btn comment-delete p-0 mb-1"
+                                onclick="return confirm('정말로 삭제합니까?');">삭제</button>
                         </form>
                         {% endif %}
                         {% if request.user == comment.author %}
                         <form action="{% url 'comment:comment-update' pk=comment.pk %}" method="post">
                             {% csrf_token %}
-                            <button class="btn comment-edit">수정</button>
+                            <button class="btn comment-edit p-0 mb-1">수정</button>
                         </form>
                         {% endif %}
                     </div>

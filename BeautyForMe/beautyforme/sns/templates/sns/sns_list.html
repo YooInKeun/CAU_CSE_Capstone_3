@@ -45,7 +45,6 @@
 
     .card-img-profile {
         width: 350px;
-        height: 420px;
     }
 
     .card-profile {
@@ -85,15 +84,14 @@
                         </h5>
                         <form action="{% url 'sns:imageindex' %}" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
-                            {% ifequal user.profile.profile_photo "" %}
-                            <img @click="changeImage" id="foo" name="profile_photo"
-                                src="{% static 'img/123123123123.png' %}" class="noProfile" width="350px"
-                                height="350px">
-                            {% endifequal %}
-                            {% ifnotequal user.profile.profile_photo "" %}
-                            <img src="{{user.profile.profile_photo.url}}" @click="changeImage" id="foo"
-                                name="profile_photo" width="350px" height="350px">
-                            {% endifnotequal %}
+                            {% if user.profile.profile_photo %}
+                            <img @click="changeImage" class="card-img-profile" src="{{user.profile.profile_photo.url}}"
+                                width="350px" height="350px">
+                            {% else %}
+                            <img @click="changeImage" src="{% static 'img/123123123123.png' %}" class="noProfile"
+                                width="350px" height="350px">
+                            {% endif %}
+
                             <div class="card-body" style="text-align: center;">
                                 <p class="card-text">회원님의 스토리를 확인해보세요!</p>
                                 <img @click="changeImage" src="{% static 'img/312312312312312.png' %}" class="noProfile"

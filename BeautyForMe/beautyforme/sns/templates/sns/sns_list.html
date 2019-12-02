@@ -118,32 +118,31 @@
                 </ul>
                 <div v-if="showComments" class="card-body row">
                     {% for comment in object.comment.all %}
-                        <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}" class="comment {% if request.user == comment.author %} col-9 {% else %} col-12 {% endif %} text-left">
-                            <p> 
-                                <b> {{ comment.author.username }}</b> &nbsp {{ comment.content }}
-                            </p>
+                        <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}" class="comment {% if request.user == comment.author %} col-8 {% else %} col-8 {% endif %} text-left">
+                            <p><b>{{ comment.author.username }}</b> &nbsp {{ comment.content }}</p>
                         </div>
-                        {% if request.user == comment.author or  request.user == object.author %}
-                            <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}"class="comment-button-container col-3 text-right">
-                                <div class="row">
-                                <form action="{% url 'comment:comment-delete' pk=comment.pk %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.path }}">
-                                    <button class="btn comment-delete" onclick="return confirm('정말로 삭제합니까?');">삭제</button>
-                                </form>
-                                <form action="{% url 'comment:comment-update' pk=comment.pk %}" method="post">
-                                    {% csrf_token %}
-                                    <button class="btn comment-edit">수정</button>
-                                </form>
-                            </div>
-                            </div>
+                        <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}" class="comment-button-container col-3 text-right">
+                        {% if request.user == comment.author or request.user == object.author %}
+                            <form action="{% url 'comment:comment-delete' pk=comment.pk %}" method="post" style="float:left;margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button class="btn comment-delete" onclick="return confirm('정말로 삭제합니까?');">삭제</button>
+                            </form>
                         {% endif %}
+                        {% if request.user == comment.author %}
+                            <form action="{% url 'comment:comment-update' pk=comment.pk %}" method="post">
+                                {% csrf_token %}
+                                <button class="btn comment-edit">수정</button>
+                            </form>
+                        {% endif %}
+                        </div>
                     {% endfor %}
-                    <span>
-                    <button v-if="{{object.comment.all.count}} > commentCount[{{object.id}}] "@click="addCount({{object.id}})" class="btn btn-outline-primary">더 보기 </button>
-                    <br/>
-                    </span>
-
+                    <div>
+                        <span>
+                            <button v-if="{{object.comment.all.count}} > commentCount[{{object.id}}] "@click="addCount({{object.id}})" class="btn btn-outline-primary">더 보기</button>
+                            <br/>
+                        </span>
+                    </div>
                     
                     <div class="comment-creator-div row" >
                         <div class="comment-form col-12">

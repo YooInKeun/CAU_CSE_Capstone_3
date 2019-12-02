@@ -1,40 +1,314 @@
 {% extends 'base.html' %}
-{% block title %}
+{% load crispy_forms_tags %}
+
+
+{% load staticfiles %}
+
+{% block extra-style %}
+
+<style>
+    .wrapper {
+        position: fixed;
+    }
+
+    .hiding-profile-btn {
+        color: gray;
+        position: absolute;
+        left: 15px;
+    }
+
+    .hiding-profile-btn:hover,
+    .show-btn-wrapper:hover {
+        color: black;
+    }
+
+    .show-btn-wrapper {
+        position: fixed;
+        width: 50px;
+        height: 50px;
+        border: 1px solid rgb(235, 235, 235);
+        border-radius: 5px;
+        background-color: rgb(245, 245, 245);
+        color: gray;
+        margin-top: 25px;
+        margin-left: -50px;
+    }
+
+    .custom-dropdown .dropdown-toggle::after {
+        content: none;
+    }
+
+    .custom-dropdown .dropdown-menu {
+        top: -43px !important;
+        left: 80px !important;
+    }
+
+    .card-img-profile {
+        width: 350px;
+        height: 420px;
+    }
+
+    .card-profile {
+        border: 1px solid;
+        padding: 10px;
+        background-color: white;
+        box-shadow: 0 0 10px 5px pink;
+        transform: scale(0.85);
+        border-color: pink;
+    }
+
+    .comment-creator-div,
+    .controls,
+    .control-group,
+    form {
+        width: 100%;
+    }
+</style>
+{% endblock extra-style %}
+
+{% block navbar%}
+{% include 'navbar.html' %}
 {% endblock %}
 
 {% block content %}
 
-<div class="row">
-    <div class="col"></div>
-    <div class="col-12 col-xl-4 col-md-4">
-        <div class="card" style="">
-            <img src ="{{object.image.url}}" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-tilte">{{object.author}}</h5>
-                <p class="card-text">{{object.text}}</p>
-            </div>
-            <ul class="list-group list-group-flush">
-                {% if user.is_authenticated %}
-                <li class="list-group-item">
-                    <a href="{% url 'sns:like' object.id %}" class = "float-left btn-like" {%if user in object.like.all%} active {%endif%}>좋아요!</a>
-                    {% if object.like.all.cout %}
-                    <span class = "float-left">
-                        {{object.like.all.count}}
-                    </span>
-                    {% endif %}
-                    <a href="{% url 'sns:favorite' object.id %}" class = "float-right btn-favorite" {%if user in object.favorite.all%} active {%endif%}>저장!</a>
-                </li>
-                {% endif %}
-                <li class="list-group-item">생성일 : {{ object.created}}</li>
-                <li class="list-group-item">
+<div id='app' class='sumfeed'>
+    <div class="row justify-content-center m-0">
+        <div v-if="isprofile" class="col-3 mr-4">
+            <div class="wrapper">
+                <div class="left" id="sidebar">
+                    {% load static %}
+                    <div class="card-profile">
+                        <h5 class="card-title" style="text-align: center;">
+                            <i @click="isprofile = false;"
+                                class="fas fa-angle-double-left hiding-profile-btn"></i>{{user.username}}님의 프로필
+                        </h5>
+                        <form action="{% url 'sns:imageindex' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% ifequal user.profile.profile_photo "" %}
+                            <img @click="changeImage" id="foo" name="profile_photo"
+                                src="{% static 'img/123123123123.png' %}" class="noProfile" width="350px"
+                                height="350px">
+                            {% endifequal %}
+                            {% ifnotequal user.profile.profile_photo "" %}
+                            <img src="{{user.profile.profile_photo.url}}" @click="changeImage" id="foo"
+                                name="profile_photo" width="350px" height="350px">
+                            {% endifnotequal %}
+                            <div class="card-body" style="text-align: center;">
+                                <p class="card-text">회원님의 스토리를 확인해보세요!</p>
+                                <img @click="changeImage" src="{% static 'img/312312312312312.png' %}" class="noProfile"
+                                    width="50px" height="50px">
+                                <a href="{% url 'sns:mylist' %}" class="btn btn-primary">스토리 이동 </a>
+                                <input id="imgInp" type="file" style="display:none;" name="file"
+                                    class="image-change-btn" />
+                                <input type="submit" value="저장완료" class="btn btn-primary">
+                            </div>
+                        </form>
                     </div>
-                </li>
-            </ul>
-            <div class="card-body">
-                <a href="{% url 'sns:update' object.id %}" class="card-link">수정</a>
-                <a href="{% url 'sns:delete' object.id %" class="card-link">삭제</a>
+                </div>
             </div>
+        </div>
+        <div v-else>
+            <div @click="isprofile = true;" class="show-btn-wrapper d-flex justify-content-center align-items-center">
+                <i class="fas fa-angle-double-right"></i>
+            </div>
+        </div>
+        <div class="col-5">
+            <input type="hidden" class="hidden-path" value="{{ request.path }}">
+            {% for object in object_list %}
+            <input type="hidden" class="object-card" value="{{object.id}}" />
+            <div v-if="postId == {{ object.id }}" class="card mt-3 mb-2">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="col-6">
+                        <b> {{ object.author }}</b>
+                    </div>
+                    <div class="col-6 d-flex justify-content-end">
+                        {% if request.user == object.author %}
+                        <div class="dropdown custom-dropdown">
+                            <a class="dropdown-toggle" href="#" role="button" id="settingMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img src='{% static "img/톱니.png" %}' @click="changeFeed" class="delete-update"
+                                    width="40px" height="40px" alt="...">
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'sns:update' object.id %}"
+                                    class="dropdown-menu card-link">수정하기</a>
+                                <a class="dropdown-item" href="{% url 'sns:delete' object.id %}"
+                                    class="dropdown-menu card-link">삭제하기</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if request.user == object.author %}
+
+                    {% endif %}
+                </div>
+
+
+                <img src=" {{ object.image.url }}" class="card-img-top" alt="...">
+                <div class="card-body">
+
+                    <div class="uploader col-3"><b>{{ object.author }}</b></div>
+                    <div class="content col-9">{{ object.text }}</div>
+
+                </div>
+                <ul class="list-group list-group-flush">
+
+                    <li class="list-group-item  d-flex align-items-end">
+                        <a class="float-left btn-like {%if user in object.like.all %} active {%endif%}"
+                            v-on:click="likeChange({{ object.id }})">
+                            {% if user in object.like.all %}
+                            <img src='{% static "img/red_heart.png" %}' width="50px" :key="isHeart">
+                            {% else %}
+                            <img src='{% static "img/GG.png" %}' width="40px" :key="isHeart">
+                            {% endif %}
+                        </a>
+                        {% if object.like.all.count %}
+                        <span class="float-left" style="font-size : 14px;">
+                            {{object.like.all.count}} 명이 좋아합니다.
+                        </span>
+                        {% endif %}
+                        <a href="{% url 'sns:favorite' object.id %}"
+                            class="float-right btn-favorite {%if user in object.favorite.all %}active{%endif%}"></a>
+                    </li>
+                    <li class="list-group-item">게시일 : {{ object.created|date:'Y년 m월 d일 H시 i분' }}</li>
+
+                </ul>
+                <div v-if="showComments" class="card-body row">
+                    {% for comment in object.comment.all %}
+                    <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}"
+                        class="comment {% if request.user == comment.author %} col-8 {% else %} col-8 {% endif %} text-left">
+                        <p><b>{{ comment.author.username }}</b> &nbsp {{ comment.content }}</p>
+                    </div>
+                    <div v-if="commentCount[{{object.id}}] > {{forloop.counter0}}"
+                        class="comment-button-container col-3 text-right">
+                        {% if request.user == comment.author or request.user == object.author %}
+                        <form action="{% url 'comment:comment-delete' pk=comment.pk %}" method="post"
+                            style="float:left;margin:0;">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <button class="btn comment-delete" onclick="return confirm('정말로 삭제합니까?');">삭제</button>
+                        </form>
+                        {% endif %}
+                        {% if request.user == comment.author %}
+                        <form action="{% url 'comment:comment-update' pk=comment.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn comment-edit">수정</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <div>
+                        <span>
+                            <button v-if="{{object.comment.all.count}} > commentCount[{{object.id}}] "
+                                @click="addCount({{object.id}})" class="btn btn-outline-primary">더 보기</button>
+                            <br />
+                        </span>
+                    </div>
+
+                    <div class="comment-creator-div row m-0">
+                        <div class="comment-form col-12">
+                            <form action="{% url 'comment:comment-create' feed_pk=object.pk %}" method="post"
+                                class="d-flex justify-content-end">
+                                {% csrf_token %}
+                                {{ comment_form | crispy }}
+                                <input type="submit" value="댓글작성" class="btn btn-primary"
+                                    style="margin-left:5px; height:50px;" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
     </div>
-    <div class="col"></div>
 </div>
+
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}
+
+{% block extra-script %}
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    var vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            userObjectsAll: null,
+            user: null,
+            isHeart: null,
+            isprofile: true,
+            commentCount: [],
+            showComments: true,
+            postId: 0,
+        },
+        methods: {
+            likeChange(object_id) {
+                var postData = object_id
+                axios.post('/sns/like/' + postData + '/')
+                    .then(function (response) {
+                        console.log(response);
+                        location.reload()
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            changeImage() {
+                const changeBtn = this.$el.querySelector(".image-change-btn");
+                changeBtn.click();
+            },
+            changeFeed() {
+                const changeBtn = this.$el.querySelector(".navbar-toggle");
+                changeBtn.click();
+            },
+            addCount(id) {
+                this.commentCount[id] += 3;
+                console.log(this.commentCount[id], id);
+                this.showComments = false;
+            }
+        },
+        mounted() {
+            const objectAll = document.querySelectorAll(".object-card");
+            for (var i in objectAll) {
+                if (this.commentCount[objectAll[i].value] == undefined) {
+                    for (var j = this.commentCount.length; j <= objectAll[i].value; j++) {
+                        this.commentCount.push(3);
+                    }
+                }
+            }
+
+            const parameter = document.querySelector(".hidden-path").value.split('/');
+            this.postId = parameter[3];
+        },
+        updated() {
+            if (this.showComments == false)
+                this.showComments = true;
+        }
+    })
+
+</script>
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#foo').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $("#imgInp").change(function () {
+        readURL(this);
+    });
+</script>
+{% endblock extra-script %}
+{% block javascript %}
+<script type="text/javascript" src="{% static 'sns/js/feed_list_js.js' %}"></script>
 {% endblock %}

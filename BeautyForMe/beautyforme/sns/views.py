@@ -108,7 +108,7 @@ class SnsDelete(DeleteView):
 class SnsDetail(FormMixin, ListView):
     form_class = CommentForm
     model = Sns
-    template_name_suffix = '_list'
+    template_name_suffix = '_detail'
 
     def get_context_data(self, **kwargs):
         # superclass의 get_context_data를 부른다

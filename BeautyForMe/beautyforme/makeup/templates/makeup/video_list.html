@@ -65,6 +65,7 @@
 
     .content-cosmetic {
         font-size: 15px;
+        margin-top: 5px;
     }
 
     .cosmetic-row:hover {
@@ -287,7 +288,8 @@
         </div>
     </div>
     <div class="row d-flex align-items-center position-relative" style="height:120px;">
-        <h5 class="m-0">뷰티 동영상 목록</h5>
+        <h5 v-if="showMy" class="m-0">뷰티 동영상 스크랩 목록</h5>
+        <h5 v-else class="m-0">뷰티 동영상 전체 목록</h5>
         <div class="all-video-btn">
             <button v-if="showMy" @click="showAllVideos" class="btn btn-primary btn-sm">전체 동영상 보기</button>
             {% if user.is_authenticated %}
@@ -327,7 +329,8 @@
                     </div>
                     <div class="row gray-line"></div>
                     <div class="row ml-0 mr-0 mt-1 mb-1">
-                        <div class="col-7 col-title pl-3">추천 영상</div>
+                        <div v-if="showMy" class="col-7 col-title pl-3">스크랩한 영상</div>
+                        <div v-else class="col-7 col-title pl-3">메이크업 영상</div>
                         <div class="col-5 col-title pl-3">포함 제품</div>
                     </div>
                     <div class="row black-line"></div>
@@ -353,7 +356,7 @@
                         </div>
                     </div>
                     <div class="col-5 col-content d-flex flex-column justify-content-center pl-4 right-col">
-                        <div v-for="cosmetic in video.cosmetics" class="row content-cosmetic">
+                        <div v-for="cosmetic in video.cosmetics" class="row content-cosmetic mb-1">
                             <span class="content-brand mr-1">[[ cosmetic.brandName ]]</span> [[ cosmetic.productName ]]
                             [[ cosmetic.typeName ]]
                         </div>

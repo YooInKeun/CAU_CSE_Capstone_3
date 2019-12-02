@@ -3137,7 +3137,7 @@ button.close {
 .modal-open {
   overflow: hidden; }
 
-.modal {
+.modal, .modal-boot {
   position: fixed;
   top: 0;
   right: 0;

@@ -24,3 +24,8 @@ class Sns(models.Model):
 
     def get_absolute_url(self):
         return reverse('sns:detail', args=[self.id])
+
+    @property
+    def created_korean_time(self):
+        korean_timezone = timezone(settings.TIME_ZONE)
+        return self.created.astimezone(korean_timezone)

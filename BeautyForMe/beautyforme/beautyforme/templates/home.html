@@ -78,7 +78,8 @@
 
     .close-btn {
         font-size: 14px;
-        padding: 3px 5px;
+        padding: 0 10px;
+        background-color: #f6648C;
     }
 
     input:checked+.slider {
@@ -170,7 +171,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-boot fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -189,27 +191,28 @@
                 {% for alarm_cosmetic in alarm_cosmetics %}
                 <div class="row m-0">
                     <div class="col-5 d-flex flex-column justify-content-center">
-                        <div class="row justify-content-center content-cosmetic">
+                        <div class="row justify-content-center content-cosmetic text-center m-1">
                             {{alarm_cosmetic.cosmetic.product.product_name}}
                         </div>
                     </div>
                     <div class="col-3 d-flex flex-column justify-content-center">
-                        <div class="row justify-content-center content-category">
+                        <div class="row justify-content-center content-category m-1">
                             {{alarm_cosmetic.cosmetic.product.category.small_category}}
                         </div>
                     </div>
                     <div class="col-4 d-flex flex-column justify-content-center">
-                        <div class="row justify-content-center content-expiration">
+                        <div class="row justify-content-center content-expiration m-1">
                             {{alarm_cosmetic.expiration_date|date:'Y-m-d'}}</div>
                     </div>
                     <div class="gray-line"></div>
                 </div>
                 {% endfor %}
             </div>
-            <a class="text-center link-to-cosmetic" href="{% url 'cosmetic:registered' %}">확인하러 가기</a>
+            <a class="text-center link-to-cosmetic" href="{% url 'cosmetic:registered' %}" style="color:#f6648C;">확인하러
+                가기</a>
             <div class="modal-footer d-flex justify-content-between">
                 <div class="col-6 text-start p-0 m-0">
-                    <input id="check" name="check" type='checkbox' class="dont-show">
+                    <input id="checkbox" name="check" type='checkbox' class="dont-show">
                     <span class="dont-show-desc">오늘 하루 이 창을 열지 않음</span>
                 </div>
                 <div class="col-6 text-right">
@@ -304,6 +307,14 @@
                         평소 관심 있던 유튜버가 사용하는 나의 화장품을 만나보세요!
                     </p>
                     {% if user.is_authenticated %}
+                    <div class="center bottom-button">
+                        <button type="button"
+                            class="modalButton btn z-depth-0 pink lighten-2 waves-effect waves-red modal-trigger"
+                            data-toggle="modal" data-target="#myModal"
+                            style="font-family: 'LotteMartDream', sans-serif !important;">
+                            유통기한 알림
+                        </button>
+                    </div>
                     {% else %}
                     <div class="center bottom-button">
                         <a href="{% url 'accounts:signup' %}">
@@ -321,7 +332,8 @@
         </div>
     </main>
 </div>
-<button id="modalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+<button type="button" class="modalButton btn btn-primary" data-toggle="modal" data-target="#myModal"
+    style="display:none;">
     유통기한 알림
 </button>
 <input id="is_alarm_time" value={{is_alarm_time}}>
@@ -329,17 +341,24 @@
 <script>
     $(document).ready(function () {
         $('.parallax').parallax();
-    });
-    $(document).ready(function () {
-        $('.parallax').parallax();
         var is_alarm_time = document.getElementById("is_alarm_time").value
         $("#is_alarm_time").hide();
-        $("#modalButton").hide();
         var result = getCookie('popup');
 
         if (is_alarm_time == "True" && result != "end") {
-            $("#modalButton").trigger('click');
+            $(".modalButton").trigger('click');
         }
+
+        $('.dont-show-desc').click(function () {
+            if ($('#checkbox').is(":checked") == false) {
+                console.log($('#checkbox').is(":checked"));
+                $('#checkbox').prop('checked', true);
+            }
+            else {
+                console.log($('#checkbox').is(":checked"));
+                $('#checkbox').prop('checked', false);
+            }
+        });
     });
 
     function getCookie(name) {

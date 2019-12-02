@@ -1,13 +1,16 @@
 branch-defaults:
   default:
-    environment: null
+    environment: bfm-test
     group_suffix: null
 environment-defaults:
   beautyforme-website:
     branch: null
     repository: null
+  bfm-test:
+    branch: null
+    repository: null
 global:
-  application_name: beautyforme
+  application_name: beautyforme-test
   branch: null
   default_ec2_keyname: beautyforme-eb
   default_platform: arn:aws:elasticbeanstalk:us-west-2::platform/Python 3.6 running

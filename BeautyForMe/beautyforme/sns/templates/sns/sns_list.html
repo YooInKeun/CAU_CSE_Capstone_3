@@ -67,10 +67,12 @@
             <input type="hidden" class="object-card" value="{{object.id}}"/>
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                  <div>
-                    <b> {{ object.author }}</b>
-                    <img src= '{% static "img/톱니.png" %}' @click="changeFeed" class="delete-update" width="40px" height="40px" alt="..."  >
-                  </div>
+                    <div>
+                        <b> {{ object.author }}</b>
+                        {% if request.user == object.author %}                      
+                        <img src= '{% static "img/톱니.png" %}' @click="changeFeed" class="delete-update" width="40px" height="40px" alt="..."  >
+                        {% endif %}
+                    </div>
                     {% if request.user == object.author %}
                     <button type="button" style="visibility:hidden;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
                     <div class="navbar-collapse collapse">

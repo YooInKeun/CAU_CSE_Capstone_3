@@ -71,7 +71,7 @@
                     <b> {{ object.author }}</b>
                     <img src= '{% static "img/톱니.png" %}' @click="changeFeed" class="delete-update" width="40px" height="40px" alt="..."  >
                   </div>
-                 
+                    {% if request.user == object.author %}
                     <button type="button" style="visibility:hidden;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
                     <div class="navbar-collapse collapse">
                         <ul class="select_box">
@@ -79,6 +79,7 @@
                             <li><a href="{% url 'sns:delete' object.id %}" class="card-link">삭제하기</a></li>
                         </ul>
                     </div><!--/.nav-collapse -->
+                    {% endif %}
                 </div>
 
                 

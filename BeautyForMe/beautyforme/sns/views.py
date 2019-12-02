@@ -94,7 +94,7 @@ class SnsUpdate(UpdateView):
 class SnsDelete(DeleteView):
     model = Sns
     template_name_suffix = '_delete'
-    success_url = '/'
+    success_url = '/sns'
 
     def dispatch(self, request, *args, **kwargs):
         object = self.get_object()

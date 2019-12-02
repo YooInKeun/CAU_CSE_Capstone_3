@@ -303,6 +303,8 @@
                         유튜브 영상을 추천해드립니다.
                         평소 관심 있던 유튜버가 사용하는 나의 화장품을 만나보세요!
                     </p>
+                    {% if user.is_authenticated %}
+                    {% else %}
                     <div class="center bottom-button">
                         <a href="{% url 'accounts:signup' %}">
                             <button class="btn z-depth-0 pink lighten-2 waves-effect waves-red modal-trigger"
@@ -310,6 +312,7 @@
                                 하기</button>
                         </a>
                     </div>
+                    {% endif %}
                 </div>
                 <div class="col l4 offset-l1 d-flex align-items-center">
                     <img src="{% static 'img/bottom.jpg' %}" class="w-100">

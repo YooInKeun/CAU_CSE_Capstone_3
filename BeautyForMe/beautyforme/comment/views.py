@@ -46,7 +46,7 @@ class CommentUpdateView(UpdateView):
     success_url = reverse_lazy('sns:index')
 
 
-class CommentDeleteView(ValidAuthorRequiredMixin, DeleteView):
+class CommentDeleteView(DeleteView):
     model = Comment
 
     def get_success_url(self):

@@ -169,7 +169,7 @@ class SnsLikeList(ListView):
         # user = self.request.user
         # queryset = user.like_post.all().order_by("-like")[0:5]
         queryset = Sns.objects.annotate(
-            q_count=Count('like')).order_by('-q_count')[0:5]
+            q_count=Count('like')).order_by('-q_count')[0:3]
         # print(queryset[0].like(user=self.request.user))
         print(queryset)
 

@@ -2,10 +2,10 @@
 
 CAU_CSE_Capstone_3(Tuesday Class)
 ----------------------------------
-### 배포 테스트 URL
+### 최종 배포 URL
 
 ```
-http://bfm-test.2tkqxpj42m.us-west-2.elasticbeanstalk.com/
+http://beutyforme-env5.33hgsnrwug.us-west-2.elasticbeanstalk.com/
 ```
 
 ### Django Version & DRF

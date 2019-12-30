@@ -64,7 +64,7 @@ SECRET_KEY = ' '
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['bfm-test.2tkqxpj42m.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'http://beutyforme-env5.33hgsnrwug.us-west-2.elasticbeanstalk.com/']
 
 
 # Application definition

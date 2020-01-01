@@ -1,31 +1,35 @@
-# CAU_CSE_Capstone_3
+# Beautyforme Project
 
-CAU_CSE_Capstone_3(Tuesday Class)
-----------------------------------
-### 최종 배포 URL
+화장품 관리 및 화장법 추천 서비스
+-
+
+### 서비스 소개
 
 ```
+1. 화장품 조회, 등록 및 유통기한(사용기한) 관리
+
+2. 내 화장품 또는 관심 화장품이 포함된 뷰티 동영상 추천
+
+3. 자신만의 화장법을 공유할 수 있는 SNS 기능
+```
+<br>
+
+### 사이트 URL 
+
 http://beutyforme-env5.33hgsnrwug.us-west-2.elasticbeanstalk.com/
-```
 
-### Django Version & DRF
+<br>
 
-```
-(Django 2.1.1)
-
-pip install django==2.1.1 
-pip install djangorestframework
-```
-
-### mysql Version
+### 기술 스택
 
 ```
-(mysql Ver 8.0.17 Win 64)
+- Django 2.1.1 & Django Rest framework
 
-pip install mysqlclient
--> 오류시 mysqlclient-1.4.4-cp37-cp37m-win32.whl 수동 다운 후, pip install mysqlclient-1.4.4-cp37-cp37m-win32 실행
-pip install pymysql
+- mysql 8.0.17
+
+- Cloud: AWS ElasticBeanstalk
 ```
+<br>
 
 ### settings.py 경로 및 코드
 

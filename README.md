@@ -3,7 +3,7 @@
 화장품 관리 및 화장법 추천 서비스
 -
 
-### 서비스 소개
+### ① 서비스 소개
 
 ```
 1. 화장품 조회, 등록 및 유통기한(사용기한) 관리
@@ -14,13 +14,7 @@
 ```
 <br>
 
-### 사이트 URL 
-
-http://beutyforme-env5.33hgsnrwug.us-west-2.elasticbeanstalk.com/
-
-<br>
-
-### 기술 스택
+### ② 기술 스택
 
 ```
 - Django 2.1.1 & Django Rest framework
@@ -29,3 +23,8 @@ http://beutyforme-env5.33hgsnrwug.us-west-2.elasticbeanstalk.com/
 
 - Cloud: AWS ElasticBeanstalk
 ```
+<br>
+
+### ③ 사이트 URL 
+
+http://beutyforme-env5.33hgsnrwug.us-west-2.elasticbeanstalk.com/

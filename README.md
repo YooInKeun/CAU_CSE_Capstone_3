@@ -17,7 +17,9 @@
 ### ② 기술 스택
 
 ```
-- Django 2.1.1 & Django Rest framework
+- Vue.js(Front-end)
+
+- Django 2.1.1 & Django Rest framework(Back-end)
 
 - sqlite3
 

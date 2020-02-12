@@ -36,6 +36,6 @@
 ```
 <br>
 
-### ④ 사이트 URL 
+### ④ 사이트 URL (배포 중단)
 
 http://beutyforme-env5.33hgsnrwug.us-west-2.elasticbeanstalk.com/

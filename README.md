@@ -38,4 +38,4 @@
 
 ### ④ 사이트 URL
 
-http://beautyforme-env.eba-msk2d6qc.us-west-2.elasticbeanstalk.com
+http://www.beauty4me.xyz

@@ -23,7 +23,7 @@
 
 - sqlite3
 
-- Cloud: AWS ElasticBeanstalk
+- Cloud: AWS Lightsail
 ```
 <br>
 

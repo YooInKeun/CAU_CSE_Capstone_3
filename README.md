@@ -3,6 +3,9 @@
 화장품 관리, 화장법 추천 및 SNS 서비스
 -
 
+http://www.beauty4me.xyz
+
+
 ### 서비스 소개
 
 ```
@@ -12,7 +15,6 @@
 
 - 자신만의 화장법을 공유할 수 있는 SNS 기능
 ```
-<br>
 
 ### 기술 스택
 
@@ -25,7 +27,6 @@
 
 - Cloud: AWS Lightsail
 ```
-<br>
 
 ### 데이터베이스
 
@@ -34,8 +35,3 @@
 
 - 추천 유튜버: Haneul, Sunny, Lamuque, Risabae, Ssin, Pony
 ```
-<br>
-
-### 서비스 URL
-
-http://www.beauty4me.xyz

@@ -26,7 +26,7 @@ jsonfield==2.0.2
 openpyxl==3.0.0
 pathspec==0.5.9
 phonenumbers==8.10.21
-Pillow==6.2.1
+Pillow==9.3.0
 pycparser==2.19
 PyMySQL==0.9.3
 python-dateutil==2.8.0

@@ -3,7 +3,7 @@
 화장품 관리, 화장법 추천 및 SNS 서비스
 -
 
-http://www.beauty4me.xyz
+http://www.beauty4me.xyz (서버 비용 이슈로 중단 상태)
 
 
 ### 서비스 소개
